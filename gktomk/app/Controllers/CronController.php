@@ -3,8 +3,11 @@
 
 namespace GKTOMK\Controllers;
 
+use GKTOMK\Models\CronModel;
 use GKTOMK\Models\LeadsModel;
+use GKTOMK\Models\MissingTrialModel;
 use GKTOMK\Models\MoyklassModel;
+use GKTOMK\Models\StatisticsModel;
 
 class CronController
 {
@@ -14,10 +17,42 @@ class CronController
         $LeadsModel = new LeadsModel();
         $LeadsModel->cronHandlerUsers();
 
+
+        // Запускам обработку пропусков
+        $MissingTrial = new MissingTrialModel();
+        $MissingTrial->handleMissings();
+
+
+        $CronModel = new CronModel();
+        $CronModel->startCron();
+
        //var_dump(  );
 
         //var_dump(MoyklassModel::getSubscriptions());
 
+
+    }
+
+    /*
+     * Метод для обновления пропусков
+     * */
+    public function getLoadVisits($period = 0){
+
+        $stats = new StatisticsModel();
+
+        switch($period){
+
+            default:
+            case'everyhour': // Каждый час обновляем инфу об
+                 $datestart = '2020-10-10';
+                $dateend = '2020-11-07';
+                break;
+
+            case'everyday':
+
+                break;
+        }
+        $stats->getLoadVisits($datestart, $dateend);
 
     }
 

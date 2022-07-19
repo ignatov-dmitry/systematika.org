@@ -93,6 +93,7 @@ class HandlerModel
 
 
         if (empty($this->userMk) or !isset($this->userMk['id']) or empty($this->userMk['id'])) {
+            $this->resultHandle(['status' => 'notice', 'code' => 'usernotfound', 'text' => 'Пользователь не найден!', 'debug' => $this->userMk]);
             $userCreate = $this->createUser();
             if (!isset($userCreate['id']) or empty($userCreate['id'])) {
                 $this->resultHandle(['status' => 'error_createuser', 'code' => 'createuser', 'text' => 'Ошибка при создании пользователя!', 'debug' => $userCreate]);
@@ -125,11 +126,13 @@ class HandlerModel
         $result = MoyklassModel::createUser($dataCreate);
 
         //{"code":"RequestValidationError","message":"\/phone: pattern should match pattern \"^[0-9]{10,15}$\""}
-        if($result['code'] and $result['code']=='RequestValidationError'){ // Если номер не приняли, создаем юзера без номера
+        // Если номер не приняли, создаем юзера без номера
+        if($result['code'] and $result['code']=='RequestValidationError'){
             unset($dataCreate['phone']);
             $result = MoyklassModel::createUser($dataCreate);
         }
 
+        return $result;
     }
 
     private function resultHandle($result = [])
@@ -174,11 +177,16 @@ class HandlerModel
         if(CONFIG['startGroup'] <= 0)
             return 0;
 
-        $result = MoyklassModel::setJoins(['userId'=>$this->userMk ['id'], 'classId'=> intval(CONFIG['startGroup']), 'statusId' => 2]);
-        if(isset($result['id']) and !empty($result['id'])){ // Успешно создано
-            $this->resultHandle(['status' => 'addstartgroup', 'code' => 'addstartgroup', 'text' => 'Добавлен в стартовую группу!', 'debug' => $result]);
-        } else { // Произошла какая-то ошибка
-            $this->resultHandle(['status' => 'error_addstartgroup', 'code' => 'addstartgroup', 'text' => 'Ошибка при добавлении в стартовую группу!', 'debug' => $result]);
+        // Добавляем в группу в том случае, если пользователя нет в группах вообще
+        if (empty($this->userMk['joins']) or empty($this->userMk['joins'][0]['classId'])) {
+
+            $result = MoyklassModel::setJoins(['userId' => $this->userMk['id'], 'classId' => intval(CONFIG['startGroup']), 'statusId' => 2]);
+            if (isset($result['id']) and !empty($result['id'])) { // Успешно создано
+                $this->resultHandle(['status' => 'addstartgroup', 'code' => 'addstartgroup', 'text' => 'Добавлен в стартовую группу!', 'debug' => $result]);
+            } else { // Произошла какая-то ошибка
+                $this->resultHandle(['status' => 'error_addstartgroup', 'code' => 'addstartgroup', 'text' => 'Ошибка при добавлении в стартовую группу!', 'debug' => $result]);
+            }
+
         }
 
     }
@@ -189,6 +197,7 @@ class HandlerModel
 
     private function createSubscription($subscription, $summa)
     {
+        $this->loadUserMk(); // Обновляем данные о пользователе
         $classId = $this->userMk['joins'][0]['classId'];
         // Проверяем, есть ли у клиента в МойКласс участие в группах
         if (empty($classId)) {

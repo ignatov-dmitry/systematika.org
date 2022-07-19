@@ -7,6 +7,7 @@ use GKTOMK\Config;
 
 class MoyklassModel
 {
+    private static $cache = [];
     /**
      * @var string
      */
@@ -14,6 +15,7 @@ class MoyklassModel
     private static $versionApi = 'v1'; // Версия API к которой мы будем обращаться
     private static $accessKeyApi;
     private static $accessTokenApi;
+
 
 
     public function __construct()
@@ -47,12 +49,19 @@ class MoyklassModel
 
 
         if (!empty($data) and $method == 'GET') {
-            $query = http_build_query($data);
+            $query = urldecode(http_build_query($data));
             $url .= '?' . $query;
+
+            $url = str_replace('date[0]', 'date[]', $url);
+            $url = str_replace('date[1]', 'date[]', $url);
         }
         //var_dump($url);
 
-        $curl = curl_init(self::$urlApi . '/' . self::$versionApi . '/' . $url);
+        $url = self::$urlApi . '/' . self::$versionApi . '/' . $url;
+
+        //print($url);
+
+        $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_USERAGENT, 'Integration by NekrasovOnline.RU');
 
@@ -63,22 +72,10 @@ class MoyklassModel
 
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_HEADER, 0);
-        //curl_setopt($curl, CURLOPT_VERBOSE, 1);
+
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($curl, CURLOPT_TIMEOUT, 120);
-
-        // $authorization = "Authorization: Bearer " . $access_token; // Prepare the authorisation token
-        // curl_setopt($curl, CURLOPT_HTTPHEADER, array($authorization)); // Inject the token into the header
-
-        /*        $authorization = "Authorization: Bearer ".$access_token; // Prepare the authorisation token
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $query);
-                curl_setopt($curl, CURLOPT_HTTPHEADER, [
-                    'Content-Type: application/json',
-                    'Content-Length: ' . strlen($query),
-                    $authorization
-                ]);
-                */
 
         if (!empty(self::$accessTokenApi)) $headers[] = 'x-access-token: ' . self::$accessTokenApi;
         if (!empty($data) and ($method == 'POST' or $method == 'DELETE')) {
@@ -86,17 +83,11 @@ class MoyklassModel
             $query = json_encode($data);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $query);
             $headers[] = 'Content-Length: ' . strlen($query);
-
         }
 
         if (!empty($headers)) curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
-
-        //print_r($headers);
-
-
         $body = curl_exec($curl);
-
 
         $result['status_code'] = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $result['body'] = $body;
@@ -110,6 +101,29 @@ class MoyklassModel
     public static function getUserById($filter = ['userId' => ''])
     {
         return self::startApi('company/users/' . $filter['userId'], '', 'GET');
+    }
+
+    /*
+     * Находит пользователя по email
+     * */
+    public static function getUserByEmail($email)
+    {
+        $finds = self::getFindUsers(['email' => $email]);
+
+        if(!isset($finds) or $finds['stats']['totalItems'] < 1)
+            return 0;
+
+        if($finds['stats']['totalItems'] == 1){
+            return $finds['users'][0];
+        }else if($finds['stats']['totalItems'] > 1){
+            foreach ($finds as $find) {
+                if($find['email'] == $email){
+                    return $find;
+                }
+            }
+        }
+
+        return 0;
     }
 
     /*
@@ -181,6 +195,22 @@ class MoyklassModel
         return self::startApi('company/classes', '', 'GET');
     }
 
+    public static function getClassById($classId){
+
+        if(!isset(self::$cache['classes']['time']) or (self::$cache['classes']['time'] + 300) < time()){
+            self::$cache['classes']['time'] = time();
+            self::$cache['classes']['data'] = self::getClasses();
+        }
+
+        $classes = self::$cache['classes']['data'];
+
+        foreach ($classes as $class) {
+            if($classId and $classId==$class['id']){
+                return $class;
+            }
+        }
+    }
+
     /**
      * Возвращает конкретное занятие с фильтром
      * @param $lessonId
@@ -204,8 +234,64 @@ class MoyklassModel
             }
         }
 
-
         return 0;
+    }
+
+    public static function getLessonById($lesson_id, $filter = []){
+        return self::startApi('company/lessons/' . $lesson_id, $filter, 'GET');
+    }
+
+    /**
+     * Возвращает последнее занятие для пользователя
+     *
+     * @param $userId
+     * @return mixed
+     */
+    public static function getLessonVisitLast($userId){
+        $lessons = self::getLessons(['userId'=>$userId, 'includeRecords' => 'true']);
+        $lessons = $lessons['lessons'];
+        for ($i=count($lessons)-1;$i>=0; $i--) {
+            $lesson = $lessons[$i];
+
+            $records = $lesson['records'];
+
+            foreach ($records as $record) {
+                if($record['userId'] == $userId and $record['visit']==1)
+                    return $lesson;
+            }
+        }
+    }
+
+    /**
+     * Возвращает последнее пробное занятие для пользователя
+     *
+     * @param $userId
+     * @return mixed
+     */
+    public static function getLessonVisitLastTest($userId){
+        /*$res = self::getLessons(['userId'=>$userId]);
+        if(function_exists('array_key_last')){
+            $last = array_key_last($res['lessons']);
+            $last_lesson = $res['lessons'][$last];
+        }else{
+            $last = end(array_keys($res['lessons']));
+            $last_lesson = $res['lessons'][$last];
+        }
+        return $last_lesson;*/
+        $lessons = self::getLessons(['userId'=>$userId, 'includeRecords' => 'true']);
+        $lessons = $lessons['lessons'];
+
+
+        for ($i=count($lessons)-1;$i>=0; $i--) {
+            $lesson = $lessons[$i];
+
+            $records = $lesson['records'];
+
+            foreach ($records as $record) {
+                if($record['userId'] == $userId and $record['visit']== 1 and $record['test'] == 1)
+                    return $lesson;
+            }
+        }
     }
 
     /**
@@ -310,6 +396,7 @@ class MoyklassModel
     {
         return self::startApi('company/invoices', $filter, 'GET');
     }
+
 
 
 }

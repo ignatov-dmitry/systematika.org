@@ -2,9 +2,13 @@
 
 namespace GKTOMK\Controllers;
 
-class Controller {
+class Controller
+{
 
-    public function answerAjax($data){
+    private $timer;
+
+    public function answerAjax($data)
+    {
         exit(json_encode($data));
     }
 
@@ -22,6 +26,20 @@ class Controller {
     }
 
 
+    /*
+     * Метод позволяет считать время выполнения кусков кода
+     * */
+    public function genTime($name)
+    {
+        if(!isset($this->timer[$name]))
+            $this->timer[$name] = microtime(true);
+        else if ($this->timer[$name] and !empty($this->timer[$name])) {
+            $time = round(microtime(true) - $this->timer[$name], 4);
+            unset($this->timer[$name]);
+            return $time;
+        }
+        return 1;
+    }
 
 
 }

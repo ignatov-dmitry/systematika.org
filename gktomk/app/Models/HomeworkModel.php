@@ -20,6 +20,7 @@ class HomeworkModel
         $homework->mk_userId = $data['userId'];
         $homework->mk_lessonId = $data['lessonId'];
         $homework->visit = $data['visit'];
+        $homework->test = $data['test'];
         $homework->date_add = time();
         $homework->date_update = time();
         $homework->status = 'new';
@@ -88,6 +89,17 @@ class HomeworkModel
      * */
     public function findGroup($desc){
         preg_match('@\[([^[]*)\]@', $desc, $matches);
-        return '['.@$matches[1].']';
+        if(isset($matches[1]))
+            return '['.@$matches[1].']';
+        else
+            return 0;
+    }
+
+
+    /*
+     * Отдает список уникальных пользователей
+     * */
+    public function getUnicUsers(){
+        return DB::getAll('SELECT `mk_user_id` FROM `homework` GROUP by `mk_user_id`');
     }
 }

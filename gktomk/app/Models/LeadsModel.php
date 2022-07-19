@@ -63,6 +63,10 @@ class LeadsModel
 
     public function createUser($data)
     {
+        // Оставляем только цифры в номере телефона
+        $data['phone'] = @preg_replace('/[^0-9]/', '', $data['phone']); // Убираем из номера +
+
+
         $users = DB::dispense('users');
         $users->gk_order = $data['order_id'];
         $users->gk_uid = $data['uid'];
@@ -247,6 +251,11 @@ class LeadsModel
         return DB::load('users', $userId)->export();
     }
 
+    public function getUserByGkUid($gk_uid)
+    {
+        return DB::getRow('SELECT * FROM `users` WHERE `gk_uid` = :uid ORDER BY `id` DESC LIMIT 1', ['uid' => $gk_uid]);
+    }
+
     public function getUserByEmail($userEmail)
     {
         return DB::getAll('SELECT * FROM `users` WHERE `gk_email` = :email ORDER BY `id` DESC LIMIT 1', ['email' => $userEmail]);
@@ -254,7 +263,7 @@ class LeadsModel
 
     public static function getFindUserByEmail($email)
     {
-        $mk_user = MoyklassModel::getFindUsers(['email' => $email, 'includeJoins' => 'false']);
+        $mk_user = MoyklassModel::getFindUsers(['email' => $email, 'includeJoins' => 'true']);
         // Если поиск по юзерам вернул больше 1 значения, тогда ищем первое наиболее подходящее
 
         if (!empty($mk_user['users']) and count($mk_user['users']) > 1) {

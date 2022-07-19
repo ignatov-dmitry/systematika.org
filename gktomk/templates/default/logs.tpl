@@ -65,7 +65,7 @@
 
 </div>
 
-<div class="modal fade" id="modalAddclass" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalAddclass_bak" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -91,5 +91,29 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="modalAddclass" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="syncModalLabel">Добавление пользователя<span id="addclassUserEmail"><</span> в Группу</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+ <div class="modal-body" id="addclassContent">
+
+</div>
+
+
+
+
+        </div>
+    </div>
+</div>
+
 
 <script defer type="text/javascript" src="{*URL_SITE*}/templates/{*TPL_NAME*}/js/logs.addclass.js?r={*@rand(1000000, 99999999)*}"></script>

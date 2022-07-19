@@ -1,17 +1,14 @@
 let addclass;
 addclass = {
 
+    email: '',
+
     openModal: function (email) {
 
-        // Регистрируем событие отправки формы
-        $('#formAddclass').submit(
-            function (event) {
-                addclass.add.sendForm();
-                event.preventDefault();
-            }
-        );
+        addclass.email = email;
 
-        $('#addclassFormUserEmail').val(email);
+        $('#addclassUserEmail').html(' ('+email+')');
+
         this.loadClasses.init();
         $('#modalAddclass').modal('show');
 
@@ -31,55 +28,33 @@ addclass = {
         load: function () {
             if (!addclass.loadClasses.dataClasses)
                 $.ajax({
-                    'url': SETT.URL_SITE + '/mk-courses',
+                    'url': SETT.URL_SITE + '/mkcourse',
                     'type': 'GET',
                     success: function (response) {
-
+                        /*console.log(response);*/
                         addclass.loadClasses.dataClasses = response;
-                        addclass.loadClasses.buildSelect();
+                        addclass.loadClasses.build();
 
                     }
 
                 });
 
         },
-        buildSelect: function (selectedId = 0) {
-
-            let data = this.dataClasses;
-            let selected;
-            data = JSON.parse(data);
-            $('#addclassFormSelectClasses').html('');
-            data.forEach(course => {
-                //console.log(course);
-
-
-                $('#addclassFormSelectClasses').append(`<optgroup label="${course["name"]}">`);
-
-                course["classes"].forEach(clas => {
-                    // console.log(clas);
-                    if (selectedId && selectedId === clas["id"])
-                        selected = ' selected';
-                    else
-                        selected = '';
-
-                    $('#addclassFormSelectClasses optgroup[label="' + course["name"] + '"]').append(`<option value="${clas["id"]}"${selected}>${clas["name"]}</option>`);
-                });
-                //
-
-
-            });
-
-
+        build: function () {
+            $('#addclassContent').html(this.dataClasses);
         }
     },
 
     add: {
 
-        sendForm: function () {
+        send: function (classId) {
+
+
+
             $.ajax({
                 'url': SETT.URL_SITE + '/addclass',
                 'method': 'post',
-                'data': $('#formAddclass').serialize(),
+                'data': { 'addclass': {'userEmail': addclass.email, 'classId': classId}  },
                 'dataType': 'json',
                 success: function (answer) {
                     $('#result_div').html(answer);
