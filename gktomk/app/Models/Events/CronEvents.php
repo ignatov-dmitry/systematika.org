@@ -5,6 +5,8 @@ namespace GKTOMK\Models\Events;
 
 
 use GKTOMK\Models\Events;
+use GKTOMK\Models\HandlerHwkModel;
+use GKTOMK\Models\MissingTrialModel;
 use GKTOMK\Models\StatisticsModel;
 
 class CronEvents extends Events
@@ -43,6 +45,20 @@ class CronEvents extends Events
         $dateend = date("Y-m-d", $period);
 
         $stats->getLoadVisits($datestart, $dateend);
+    }
+
+    // Обработка выдачи домашних заданий
+    private function homeworks_every1minute(){
+        $HandlerHwkModel = new HandlerHwkModel();
+        $res = $HandlerHwkModel->cronHandle();
+       // var_dump($res);
+    }
+
+    // Обработка пропусков
+    private function missings_every1minute(){
+        // Запускам обработку пропусков
+        $MissingTrial = new MissingTrialModel();
+        $MissingTrial->handleMissings();
     }
 
     

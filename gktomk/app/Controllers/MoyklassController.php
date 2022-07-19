@@ -34,8 +34,6 @@ class MoyklassController extends Controller
             // Добавляем занятие на проверку пропусков. Даелаем отметку в гк, если человек пропустил занятие
             $MissingTrial = new MissingTrialModel();
             $MissingTrial->addMissing($input['object']['lessonId']);
-            // Запускам обработку пропусков
-            $MissingTrial->handleMissings();
         }
 
         // Запускаем событие
@@ -50,7 +48,6 @@ class MoyklassController extends Controller
     {
         $HandlerHwkModel = new HandlerHwkModel();
         $HandlerHwkModel->cronHandle();
-
     }
 
     public function getTest()

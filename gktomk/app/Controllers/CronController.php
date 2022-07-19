@@ -4,6 +4,7 @@
 namespace GKTOMK\Controllers;
 
 use GKTOMK\Models\CronModel;
+use GKTOMK\Models\HandlerHwkModel;
 use GKTOMK\Models\LeadsModel;
 use GKTOMK\Models\MissingTrialModel;
 use GKTOMK\Models\MoyklassModel;
@@ -83,5 +84,4 @@ class CronController
         }
         var_dump($mk_user);
     }
-
 }

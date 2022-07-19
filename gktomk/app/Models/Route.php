@@ -39,10 +39,6 @@ class Route {
 		for($i=0;$i<count($controllers);$i++){
 			$router->controller('/'.$controllers[$i], ucfirst($controllers[$i]).'Controller');
 		}
-		
-		
-		
-		//$router->get('/controller', 'TestController@main');
 
 		$router->run();
 		

@@ -41,9 +41,6 @@ class EventsMoyklass extends Events
         $homework = new HomeworkModel();
         $homework->sendRecords($res['records']);
 
-        // Запускаем обработку выдачи домашних заданий
-        $HandlerHwkModel = new HandlerHwkModel();
-        $HandlerHwkModel->cronHandle();
     }
 
 }
