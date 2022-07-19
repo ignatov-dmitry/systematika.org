@@ -23,9 +23,9 @@ class MoyklassModel
 
     public static function init()
     {
-        if(empty(CONFIG)) Config::init();
-        if(empty(self::$accessKeyApi)) self::$accessKeyApi = CONFIG['mk_api_key'];
-        if(empty(self::$accessTokenApi)) self::getToken(); // Получаем вначале токен
+        if (empty(CONFIG)) Config::init();
+        if (empty(self::$accessKeyApi)) self::$accessKeyApi = CONFIG['mk_api_key'];
+        if (empty(self::$accessTokenApi)) self::getToken(); // Получаем вначале токен
 
     }
 
@@ -58,8 +58,7 @@ class MoyklassModel
 
         if ($method == 'GET') curl_setopt($curl, CURLOPT_HTTPGET, 1);
         elseif ($method == 'POST') curl_setopt($curl, CURLOPT_POST, 1);
-        else if($method == 'DELETE') curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-
+        else if ($method == 'DELETE') curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
 
 
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -105,26 +104,8 @@ class MoyklassModel
         $data = json_decode($body, 1);
         return $data;
     }
-    /*
-     * Производит запуск модели
-     * */
-    private static function startApi($url = '', $data = array(), $method = 'POST')
-    {
 
-        self::init();
 
-        if(empty(self::$accessKeyApi)){
-            return 'Error access key api';
-        }elseif(empty(self::$accessTokenApi)){
-            return 'Error access token api';
-        }
-
-        return self::callCurlAPI($url, $data, $method);
-    }
-
-    /*
-     * Ищем юзера по MK ID
-     * */
 
     public static function getUserById($filter = ['userId' => ''])
     {
@@ -132,8 +113,27 @@ class MoyklassModel
     }
 
     /*
+    * Производит запуск модели
+    * */
+
+    private static function startApi($url = '', $data = array(), $method = 'POST')
+    {
+
+        self::init();
+
+        if (empty(self::$accessKeyApi)) {
+            return 'Error access key api';
+        } elseif (empty(self::$accessTokenApi)) {
+            return 'Error access token api';
+        }
+
+        return self::callCurlAPI($url, $data, $method);
+    }
+
+    /*
      * Ищем юзеров используя фильтр по емейлу и/или телефону (фильтр можно указать любой исходя из документации по апи МК)
      * */
+
     public static function getFindUsers($filter = ['email' => '', 'phone' => ''])
     {
         return self::startApi('company/users/', $filter, 'GET');
@@ -182,11 +182,39 @@ class MoyklassModel
     }
 
     /**
+     * Возвращает конкретное занятие с фильтром
+     * @param $lessonId
+     * @param array $data
+     * @return array|mixed|string
+     */
+    public static function getLesson($lessonId, $userId = 0)
+    {
+
+        $data = [];
+
+        if (!empty($userId))
+            $data['userId'] = $userId;
+
+        $lessons = self::getLessons($data);
+        If (!empty($lessons)) {
+            foreach ($lessons['lessons'] as $lesson) {
+                if (isset($lesson['id']) and $lesson['id'] == $lessonId) {
+                    return $lesson;
+                }
+            }
+        }
+
+
+        return 0;
+    }
+
+    /**
      * Возвращает список уроков по фильтру или без него
      * @param array $data
      * @return array|mixed|string
      */
-    public static function getLessons($data = []){
+    public static function getLessons($data = [])
+    {
         return self::startApi('company/lessons', $data, 'GET');
     }
 
@@ -196,7 +224,8 @@ class MoyklassModel
      * @param array $data
      * @return array|mixed|string
      */
-    public static function setLessonRecords($data = ['userId', 'lessonId']){
+    public static function setLessonRecords($data = ['userId', 'lessonId'])
+    {
         return self::startApi('company/lessonRecords', $data, 'POST');
     }
 
@@ -205,7 +234,8 @@ class MoyklassModel
      * @param array $data
      * @return array|mixed|string
      */
-    public static function setJoins($data = ['userId', 'classId', 'statusId', 'autoJoin' => true]){
+    public static function setJoins($data = ['userId', 'classId', 'statusId', 'autoJoin' => true])
+    {
         return self::startApi('company/joins', $data, 'POST');
     }
 
@@ -214,15 +244,17 @@ class MoyklassModel
      * @param array $data
      * @return array|mixed|string
      */
-    public static function deleteJoins($data = ['joinId']){
-        return self::startApi('company/joins/'.$data['joinId'], '', 'DELETE');
+    public static function deleteJoins($data = ['joinId'])
+    {
+        return self::startApi('company/joins/' . $data['joinId'], '', 'DELETE');
     }
 
     /**
      * Справочник. Возвращает список возможных способов заведения клиентов и заявок
      *
      * */
-    public static function getCreateSources(){
+    public static function getCreateSources()
+    {
         return self::startApi('company/createSources', '', 'GET');
     }
 
@@ -259,21 +291,25 @@ class MoyklassModel
      * */
     public static function getSubscription($subscription_id)
     {
-        return self::startApi('company/subscriptions/'.$subscription_id,'', 'GET');
+        return self::startApi('company/subscriptions/' . $subscription_id, '', 'GET');
     }
 
     /*
      * Создает платеж для пользователя
      * optype = income - приход, debit - списание, refund - возврат
      * */
-    public static function createPaymentUser($data = ['userId', 'date', 'summa', 'optype']){
+    public static function createPaymentUser($data = ['userId', 'date', 'summa', 'optype'])
+    {
         return self::startApi('company/payments', $data, 'POST');
     }
 
     /**
      * Получает счета
      * */
-    public static function getInvoices($filter = []){
+    public static function getInvoices($filter = [])
+    {
         return self::startApi('company/invoices', $filter, 'GET');
     }
+
+
 }

@@ -109,7 +109,7 @@ class HandlerModel
 
 
     /*
-     * Проверяет, существует ли пользователь. Если нет, то создает нового
+     * Непосредственно создает нового пользователя
      * */
     private function createUser()
     {
@@ -122,7 +122,14 @@ class HandlerModel
         if (!empty($this->userSys['gk_phone'])) {
             $dataCreate['phone'] = $this->userSys['gk_phone'];
         }
-        return MoyklassModel::createUser($dataCreate);
+        $result = MoyklassModel::createUser($dataCreate);
+
+        //{"code":"RequestValidationError","message":"\/phone: pattern should match pattern \"^[0-9]{10,15}$\""}
+        if($result['code'] and $result['code']=='RequestValidationError'){ // Если номер не приняли, создаем юзера без номера
+            unset($dataCreate['phone']);
+            $result = MoyklassModel::createUser($dataCreate);
+        }
+
     }
 
     private function resultHandle($result = [])

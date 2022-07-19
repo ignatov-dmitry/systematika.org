@@ -1,5 +1,8 @@
 <?php
-
+/*
+ * Модель для построения и логов
+ *
+ * */
 
 namespace GKTOMK\Models;
 
@@ -24,6 +27,35 @@ class LogsModel
        // var_dump($logs);
         return $new_logs;
     }
+    /*
+     * Создает список логов обработки домашних заданий
+     * */
+    public function buildLogsHwk()
+    {
+        $HomeworkModel = new HomeworkModel();
+        $logs = $HomeworkModel->getAllHwk();
+
+        $LeadsModel = new LeadsModel();
+
+
+
+        $new_logs = [];
+
+        foreach($logs as $log){
+            if(!$log['gk_uid']){
+                $log['gk_uid'] = @$LeadsModel->getUserByEmail($log['email'])[0]['gk_uid'];
+            }
+            $new_logs[] = $log;
+        }
+
+       //  var_dump($new_logs);
+        return $new_logs;
+
+
+
+    }
+
+
 
     public static function timeFormat($time) { // преобразовываем время в нормальный вид
         date_default_timezone_set('Europe/Moscow');

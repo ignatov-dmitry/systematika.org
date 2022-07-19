@@ -19,6 +19,7 @@ class GetcourseController
         $request = $_REQUEST;
         if (!empty($request['uid'])) {
             $LeadsModel = new LeadsModel();
+            $request['gk_phone'] = @preg_replace('/[^0-9]/', '', $request['gk_phone']); // Убираем из номера +
             $LeadsModel->createUser($request);
         }
     }

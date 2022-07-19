@@ -49,6 +49,20 @@ class IndexController extends Controller
         $this->View->parseTpl('logs', false)->parseTpl('main')->output();
     }
 
+    public function getHomework(){
+        $LogsModel = new LogsModel();
+        $all_hwk = $LogsModel->buildLogsHwk();
+
+        $this->View->setVar('Logs',  $LogsModel);
+        $this->View->regFunc('GKTOMK\Models\LogsModel::timeFormat');
+
+       // var_dump($all_hwk);
+        $this->View->setVar('LOGS', $all_hwk);
+
+        // Вызываем шаблонизатор
+        $this->View->parseTpl('logs_hwk', false)->parseTpl('main')->output();
+    }
+
 
     public function getSettConn()
     {

@@ -247,6 +247,11 @@ class LeadsModel
         return DB::load('users', $userId)->export();
     }
 
+    public function getUserByEmail($userEmail)
+    {
+        return DB::getAll('SELECT * FROM `users` WHERE `gk_email` = :email ORDER BY `id` DESC LIMIT 1', ['email' => $userEmail]);
+    }
+
     public static function getFindUserByEmail($email)
     {
         $mk_user = MoyklassModel::getFindUsers(['email' => $email, 'includeJoins' => 'false']);

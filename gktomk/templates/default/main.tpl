@@ -36,11 +36,15 @@
     </button>
 
     <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample10">
-        <a class="navbar-brand" href="{*URL_SITE*}/">Интеграция GetCourse и MoyKlass</a>
+        <a class="navbar-brand" href="{*URL_SITE*}/">GetCourse + MoyKlass</a>
+        <br/>
         <ul class="navbar-nav">
-           /* <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link" href="{*URL_SITE*}/">Главная</a>
-            </li> */
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{*URL_SITE*}/homework">Логи ДЗ</a>
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="dropdown10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Настройки</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown10">
