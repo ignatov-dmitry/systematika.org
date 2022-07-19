@@ -91,14 +91,14 @@ class HandlerHwkModel extends HomeworkModel
        // $users = $this->getUnicUsers();
 
         if(!isset($_SESSION['subscriptions'])) {
-            $_SESSION['subscriptions'] = MoyklassModel::getUserSubscriptions(['ststusId']);
+            $_SESSION['subscriptions'] = MoyklassModel::getUserSubscriptions(['statusId'=>'2']);
         }
 
             $subscriptions = $_SESSION['subscriptions'];
 
 
 
-        var_dump($subscriptions);
+        //var_dump($subscriptions);
 
 
         $users_ = [];
@@ -107,7 +107,7 @@ class HandlerHwkModel extends HomeworkModel
         }
 
 
-        return;
+       // return;
         $users_ = array_diff($users_, $_SESSION['users_']);
 
 
@@ -141,7 +141,7 @@ class HandlerHwkModel extends HomeworkModel
                 $result = $GetcourseModel->createUser($dataCreate);
 
 
-                var_dump($result);
+              //  var_dump($result);
 
 
                 $cnt++;
@@ -150,7 +150,7 @@ class HandlerHwkModel extends HomeworkModel
             }
         }
 
-        $left = count($users) - count($_SESSION['users_']);
+        $left = count($users_) - count($_SESSION['users_']);
         echo 'Еще осталось: '.$left;
 
 

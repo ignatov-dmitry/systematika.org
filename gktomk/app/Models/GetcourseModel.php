@@ -116,6 +116,8 @@ class GetcourseModel
 
         $userMk = MoyklassModel::getUserByEmail($email);
 
+        //var_dump($userMk);
+
         if(!isset($userMk) or !isset($userMk['email']))
             return 'mk user not found';
 

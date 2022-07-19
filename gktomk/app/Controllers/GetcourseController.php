@@ -47,12 +47,81 @@ class GetcourseController
     }
 
     /*
+     * Метод позволяет заправшивать обновление для конкретного пользователя в гк
+     *
+     * */
+    public function getUpdateUserByIdUserMk($userId)
+    {
+
+        $user = MoyklassModel::getUserById(['userId' => $userId]);
+        $email = $user['email'];
+        $GetCourse = new GetcourseModel();
+        $GetCourse->updateUserSubscriptions($email);
+        return $GetCourse->updateUserDateVisit($email);
+        echo 'OK ' . $email .' ';
+    }
+
+    /*
      * Проверка пробных песещений для занятия
      * */
     public function getUpdateLesson(){
         $lesson = MoyklassModel::getLessonById(5524226, ['includeRecords' => 'true']);
 
         var_dump($lesson);
+    }
+
+    /* Обновляет всех клиентов из моего класса
+     *
+     * */
+
+    public function getUpdateAllMkUsers(){
+        session_start();
+
+
+
+        if(!isset($_SESSION['lessons']) or isset($_GET['new'])){
+            $_SESSION['lessons'] = MoyklassModel::getLessons(['date' => ['2021-03-01', '2021-03-16'], 'includeRecords' => 'true']);
+        }
+        $lessons = $_SESSION['lessons'];
+
+       // var_dump($lessons);
+
+        $users = [];
+        foreach ($lessons['lessons'] as $lesson) {
+            foreach ($lesson['records'] as $record) {
+                if($record['visit']==true)
+                    $users[] = $record['userId'];
+            }
+        }
+
+        $users = array_unique($users);
+
+        echo count(array_unique($users)) . PHP_EOL;
+        //$_SESSION['users'] = [];
+        if(!isset( $_SESSION['users'])) $_SESSION['users'] = [];
+
+        $_SESSION['users'] = array_unique($_SESSION['users']);
+        $users = array_diff($users, $_SESSION['users']);
+
+        $num = 1;
+        foreach ($users as $user) {
+            $res = $this->getUpdateUserByIdUserMk($user);
+            $this->writeToLog([$res], '', 'updateMK');
+            //var_dump($res);
+
+            echo $num . '. User Id: '.$user.' update<br/>'. PHP_EOL;
+            $num++;
+            $_SESSION['users'][] = $user;
+            if($num==10){ echo '<meta http-equiv="refresh" content="5">'; break; }
+            usleep(250);
+        }
+
+        $left = count($users) - count($_SESSION['users']);
+        echo count($users) . PHP_EOL;
+        echo count(array_unique($_SESSION['users']));
+        echo 'Еще осталось: '.$left;
+        
+        
     }
 
     public function writeToLog($data, $title = '', $logFile = 'log')

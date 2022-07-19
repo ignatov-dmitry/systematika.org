@@ -110,15 +110,17 @@ class MoyklassModel
     {
         $finds = self::getFindUsers(['email' => $email]);
 
+       // var_dump($finds);
+
         if(!isset($finds) or $finds['stats']['totalItems'] < 1)
             return 0;
 
         if($finds['stats']['totalItems'] == 1){
             return $finds['users'][0];
         }else if($finds['stats']['totalItems'] > 1){
-            foreach ($finds as $find) {
-                if($find['email'] == $email){
-                    return $find;
+            foreach ($finds['users'] as $user) {
+                if($user['email'] == $email){
+                    return $user;
                 }
             }
         }
@@ -265,17 +267,33 @@ class MoyklassModel
      */
     public static function getLessonVisitLast($userId){
         $lessons = self::getLessons(['userId'=>$userId, 'includeRecords' => 'true']);
+
+       // var_dump($lessons);
+
         $lessons = $lessons['lessons'];
-        for ($i=count($lessons)-1;$i>=0; $i--) {
+        $dataLesson = [];
+        $maxTimeLesson = 0;
+        for ($i=0;$i<count($lessons); $i++) {
             $lesson = $lessons[$i];
             //echo '123';
             $records = $lesson['records'];
 
             foreach ($records as $record) {
-                if($record['userId'] == $userId and $record['visit']==true)
-                    return $lesson;
+                if($record['userId'] == $userId and $record['visit']==true){
+
+                    $dateLesson = strtotime($lesson['date']);
+                    if($maxTimeLesson < $dateLesson){
+                        $maxTimeLesson = $dateLesson;
+                        $dataLesson = $lesson;
+                    }
+
+                }
+
             }
         }
+
+
+        return $dataLesson;
     }
 
     /**
@@ -297,17 +315,25 @@ class MoyklassModel
         $lessons = self::getLessons(['userId'=>$userId, 'includeRecords' => 'true']);
         $lessons = $lessons['lessons'];
 
-
-        for ($i=count($lessons)-1;$i>=0; $i--) {
+        $dataLesson = [];
+        $maxTimeLesson = 0;
+        for ($i=0;$i<count($lessons); $i++) {
             $lesson = $lessons[$i];
 
             $records = $lesson['records'];
 
             foreach ($records as $record) {
-                if($record['userId'] == $userId and $record['visit']== 1 and $record['test'] == 1)
-                    return $lesson;
+                if($record['userId'] == $userId and $record['visit']== 1 and $record['test'] == 1){
+                    $dateLesson = strtotime($lesson['date']);
+                    if($maxTimeLesson < $dateLesson) {
+                        $maxTimeLesson = $dateLesson;
+                        $dataLesson = $lesson;
+                    }
+                }
+
             }
         }
+        return $dataLesson;
     }
 
     /**

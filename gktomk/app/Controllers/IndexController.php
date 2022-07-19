@@ -6,6 +6,7 @@ namespace GKTOMK\Controllers;
 //use \GKTOMK\Views\IndexView;
 use GKTOMK\Models\AddclassModel;
 use GKTOMK\Models\GetcourseModel;
+use GKTOMK\Models\HandlerHwkModel;
 use GKTOMK\Models\LeadsModel;
 use GKTOMK\Models\LogsModel;
 use GKTOMK\Models\MoyklassModel;
@@ -439,10 +440,20 @@ class IndexController extends Controller
 
     public function getTesting(){
 
+        /*$user = MoyklassModel::getUserById(['userId' => 883119]);
 
-        $res = MoyklassModel::getLessons(['date' => ['2021-03-01', '2021-03-15']]);
+       // $res->startCountUserSubscriptions();
 
-        print_r($res);
+        print_r($user);
+
+        $userMk = MoyklassModel::getUserByEmail($user['email']);*/
+
+
+
+        $gk = new GetcourseController();
+        $res = $res = $gk->getUpdateUserByIdUserMk(765892); // 765892
+
+        var_dump($res);
     }
 
 
