@@ -1,0 +1,33 @@
+{
+  "name": "nekrasovonline/gktomk",
+  "description": "Integration GetCourse and MyClass",
+  "authors": [
+    {
+      "name": "Alexandr Nekrasov",
+      "email": "admin@nekrasovonline.ru",
+      "homepage": "https://nekrasovonline.ru",
+      "role": "Developer"
+    }
+  ],
+  "version": "1.0.0",
+  "license": "proprietary",
+  "require": {
+    "izniburak/router": "^1.5",
+    "gabordemooij/redbean": "dev-master",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "getcourse-ru/getcourse-php-sdk": "dev-master"
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/getcourse-ru/GetCourse-PHP-SDK"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "GKTOMK\\": "app/"
+    }
+  }
+}
