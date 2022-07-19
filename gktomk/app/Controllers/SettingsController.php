@@ -15,12 +15,14 @@ class SettingsController
     {
         session_start();
         if (!empty($_GET['password']))
-            $_SESSION['passwords'] = $_GET['password'];
-        if (isset($_REQUEST['password']) and $_REQUEST['password'] != CONFIG['admin_password']) {
-            die('Access error!');
+            $_SESSION['password'] = $_GET['password'];
+
+        if (empty($_SESSION['password']) or !in_array($_SESSION['password'], CONFIG['admin_password'])) {
+            die('Access error! ' . $_REQUEST['password']);
         }
         $this->View = new \GKTOMK\Views\IndexView();
 
+        $this->View->setVar('PASSWORD', $_REQUEST['password']);
         $this->View->setVar('URL_GK', CONFIG['url_gk']);
     }
 

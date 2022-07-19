@@ -1,64 +1,97 @@
-<div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom pb-2 mb-0">Расписание занятий</h6>
-    <div class="monthly" id="mycalendar"></div>
-/*
-    Mikhail Ovchinnikov, [12.03.21 11:16]
-    [In reply to Mikhail Ovchinnikov]
-    По вёрстке и внешнему виду вот так
-    Выводим только запланированные (те, что будут или идут сейчас)
-    Перестаем выводить урок через 2 часа после его начала
+<div class="lessons">
+    <h3>Расписание занятий</h6>
+        <!--div class="monthly" id="mycalendar"></div-->
 
-    Колонки
-    Дата | время |программа | группа | ссылка
+        <script language="JavaScript">
+            function openNewWin(url) {
+                myWin= open(url);
+            }
 
-    Mikhail Ovchinnikov, [12.03.21 11:18]
-    12 марта, пт       17:15 - 18:15      Олимпиадная математика   3-1-5   https://us02web.zoom.us/j/839670....
+            function copytext(el) {
+                var $tmp = $("<textarea>");
 
+                $("body").append($tmp);
+                $tmp.val($(el).text()).select();
+                document.execCommand("copy");
+                $tmp.remove();
+                $(el).next().append('<div class="copied">скопировано</div>');
 
-    */
+                $(el).next().fadeOut( "slow" );
+            }
+        </script>
 
+        <style>
+            body {background-color: #ffffff !important;}
+            .lessons{background:#ffffff;}
 
+            .lessons-table {
+                width: 100%;
+                table-layout: fixed;
+                border-collapse: collapse;
+            }
+            .lessons-table tr{
+                border-bottom: solid 1px #cccccc;
+            }
 
-    <style>
+            .lessons-button{
+                background:#fde005;
+                padding: 4px 15px;
+                border:0;
+                color:#333333;
+                border-radius:20px;
+                font-family: "SFProText", sans-serif;
+                font-size: 14px;
+                letter-spacing: -0.4px;
+            }
 
-        table {
-            width: 100%;
-            table-layout: fixed;
+            td {
+                width: 100%;
+                word-wrap: break-word;
+                vertical-align: top;
+                font-size: 14px;
+                padding: 10px 0px 10px 0px;
+            }
+            th {
+                vertical-align: bottom;
+                font-size: 18px;
+            }
+            .far{font-size: 20px; cursor:pointer;}
+            .copied{background-color:#d2e8b9; padding:3px;border-radius:4px;}
 
-        }
-        td {
-            width: 100%;
-            word-wrap: break-word;
-        }
+        </style>
 
-    </style>
+        <table class="lessons-table">
+            <thead>
+            <tr>
+                <th>Дата и время</th>
+                <th>Группа</th>
+                <th>Ссылка</th>
+            </tr>
+            </thead>
+            <tbody>
+            {%*LESSONS*}
 
-    <table class="table table-sm table-bordered">
-        <thead>
-        <tr>
-            <th>Дата</th>
-            <th>Время</th>
-            <th>Программа</th>
-            <th>Группа</th>
-            <th>Ссылка</th>
-        </tr>
-        </thead>
-        <tbody>
-        {%*LESSONS*}
+            <tr>
+                <td>
+                    {*LESSONS:daynumber*} {*LESSONS:monthtxt*}, {*LESSONS:weekday*}
+                    <br>
+                    <div class="lessons-time">{*LESSONS:beginTime*} - {*LESSONS:endTime*}</div></td>
+                <td>{*LESSONS:COURSE.name*}
+                    <div class="lessons-group">{*LESSONS:CLASS.name*}</div>
 
-<tr>
-<th>{*LESSONS:date*}</th>
-<th>{*LESSONS:beginTime*} - {*LESSONS:endTime*}</th>
-<th>{*LESSONS:COURSE.name*}</th>
-<th>{*LESSONS:CLASS.name*}</th>
-<td>{*LESSONS:topic*}</td>
-</tr>
-        {*LESSONS*%}
-        </tbody>
+                </td>
+                <td><input type="button" value="Перейти" class="lessons-button" onclick="openNewWin('{*LESSONS:url*}');">&nbsp; <i class="far fa-copy" onclick="copytext('#lesson-url{*LESSONS:index*}');"></i>
+                    <div id="lesson-url{*LESSONS:index*}"style="display:none;">{*LESSONS:url*}</div><span></span>
+                    <!-- {*LESSONS:topic*} -->
+
+                </td>
+            </tr>
+            {*LESSONS*%}
+            </tbody>
         </table>
 
 
-       /* <small class="d-block text-end mt-3">
+        /* <small class="d-block text-end mt-3">
             <a href="#">All updates</a>
         </small>*/
 

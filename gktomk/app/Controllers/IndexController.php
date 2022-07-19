@@ -5,8 +5,7 @@ namespace GKTOMK\Controllers;
 
 //use \GKTOMK\Views\IndexView;
 use GKTOMK\Models\AddclassModel;
-use GKTOMK\Models\GetcourseModel;
-use GKTOMK\Models\HandlerHwkModel;
+use GKTOMK\Models\EventsMoyklass;
 use GKTOMK\Models\LeadsModel;
 use GKTOMK\Models\LogsModel;
 use GKTOMK\Models\MoyklassModel;
@@ -24,11 +23,15 @@ class IndexController extends Controller
         session_start();
         if (!empty($_GET['password']))
             $_SESSION['password'] = $_GET['password'];
-        if (isset($_REQUEST['password']) and $_REQUEST['password'] != CONFIG['admin_password']) {
-            die('Access error!');
+
+        if (empty($_SESSION['password']) or !in_array($_SESSION['password'], CONFIG['admin_password'])) {
+            die('Access error! ' . $_REQUEST['password']);
         }
+
+
         $this->View = new \GKTOMK\Views\IndexView();
 
+        $this->View->setVar('PASSWORD', $_REQUEST['password']);
         $this->View->setVar('URL_GK', CONFIG['url_gk']);
     }
 
@@ -291,7 +294,6 @@ class IndexController extends Controller
                                                 $color = 'green';
 
 
-
                                             $statText .= " <span style=\"color: $color\">" . $stat['num_records'] . "</span>";
                                         }
 
@@ -371,8 +373,7 @@ class IndexController extends Controller
 
     public function postAddclass()
     {
-         //var_dump($_REQUEST);
-
+        //var_dump($_REQUEST);
 
 
         $addclass = $_POST['addclass'];
@@ -405,10 +406,14 @@ class IndexController extends Controller
     public function getTest()
     {
 
-        $Addclass = new AddclassModel();
-        $res = $Addclass->addClass(27, 118283);
+        // $Addclass = new AddclassModel();
+        //$res = $Addclass->addClass(27, 118283);
 
-        var_dump($res);
+
+        $res = new EventsMoyklass(['object' => ['lessonId' => '7450211']]);
+
+
+        $res->lesson_start_hours();
 
 
         /*$LeadsModel = new LeadsModel();
@@ -438,7 +443,8 @@ class IndexController extends Controller
         //print_r($result);
     }
 
-    public function getTesting(){
+    public function getTesting()
+    {
 
         /*$user = MoyklassModel::getUserById(['userId' => 883119]);
 
@@ -449,14 +455,11 @@ class IndexController extends Controller
         $userMk = MoyklassModel::getUserByEmail($user['email']);*/
 
 
-
         $gk = new GetcourseController();
         $res = $res = $gk->getUpdateUserByIdUserMk(765892); // 765892
 
         var_dump($res);
     }
-
-
 
 
 }

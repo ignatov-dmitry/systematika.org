@@ -16,7 +16,7 @@ class HomeworkModel
     {
         $homework = DB::dispense('homework');
 
-        $homework->mk_lessonRecordId = $data['lessonRecordId'];
+        $homework->mk_lessonRecordId = $data['id'];
         $homework->mk_userId = $data['userId'];
         $homework->mk_lessonId = $data['lessonId'];
         $homework->visit = $data['visit'];
@@ -30,6 +30,23 @@ class HomeworkModel
     public function getAllHwk()
     {
         return DB::exportAll(DB::findAll('homework', 'ORDER BY `id` DESC'));
+    }
+
+
+    /** Метод отправляет учеников конкретного урока на открытие домашних заданий
+     *
+     * @param $records
+     * @return bool
+     */
+    public function sendRecords($records)
+    {
+        if(!is_array($records))
+            return false;
+
+        foreach ($records as $record){
+            $this->createHwk($record);
+        }
+        return true;
     }
 
 
