@@ -19,7 +19,8 @@ class EventsMoyklass extends Events
     {
             $userMk = MoyklassModel::getUserById(['userId' => $this->request['object']['userId']]);
             $GetCourse = new GetcourseModel();
-            return $GetCourse->updateUserDateVisit($userMk['email']);
+            $GetCourse->updateUserDateVisit($userMk['email']);
+            $GetCourse->updateUserSubscriptions($userMk['email']);
     }
 
 }

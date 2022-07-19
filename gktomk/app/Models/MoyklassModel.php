@@ -268,11 +268,11 @@ class MoyklassModel
         $lessons = $lessons['lessons'];
         for ($i=count($lessons)-1;$i>=0; $i--) {
             $lesson = $lessons[$i];
-
+            //echo '123';
             $records = $lesson['records'];
 
             foreach ($records as $record) {
-                if($record['userId'] == $userId and $record['visit']==1)
+                if($record['userId'] == $userId and $record['visit']==true)
                     return $lesson;
             }
         }

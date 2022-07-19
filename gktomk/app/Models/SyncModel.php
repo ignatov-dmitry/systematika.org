@@ -11,12 +11,13 @@ class SyncModel
         DB::init();
     }
 
-    public function createSync($program, $offer, $subscription)
+    public function createSync($program, $offer, $subscription, $demo)
     {
         $sync = DB::dispense('sync');
         $sync->program = $program;
         $sync->gk_offer = $offer; // Оффер в ГК
         $sync->mk_sub = $subscription; // Абонемент в МК
+        $sync->demo = $demo;
         return DB::store($sync);
     }
 
@@ -29,6 +30,8 @@ class SyncModel
             $sync->gk_offer = $dataSync['gk_offer'];
         if (!empty($dataSync['mk_sub']))
             $sync->mk_sub = $dataSync['mk_sub'];
+        if (!empty($dataSync['demo']))
+            $sync->demo = $dataSync['demo'];
         return DB::store($sync);
     }
 

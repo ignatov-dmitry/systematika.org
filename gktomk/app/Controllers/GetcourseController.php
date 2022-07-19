@@ -43,6 +43,7 @@ class GetcourseController
         $GetCourse = new GetcourseModel();
         $GetCourse->updateUserSubscriptions($email);
         $GetCourse->updateUserDateVisit($email);
+        echo 'OK ' . $email;
     }
 
     /*

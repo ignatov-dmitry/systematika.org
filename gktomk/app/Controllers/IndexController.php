@@ -4,6 +4,8 @@ namespace GKTOMK\Controllers;
 //use \GKTOMK\Lib\Controller;
 
 //use \GKTOMK\Views\IndexView;
+use GKTOMK\Models\AddclassModel;
+use GKTOMK\Models\GetcourseModel;
 use GKTOMK\Models\LeadsModel;
 use GKTOMK\Models\LogsModel;
 use GKTOMK\Models\MoyklassModel;
@@ -368,7 +370,9 @@ class IndexController extends Controller
 
     public function postAddclass()
     {
-        // var_dump($_REQUEST);
+         //var_dump($_REQUEST);
+
+
 
         $addclass = $_POST['addclass'];
 
@@ -384,42 +388,14 @@ class IndexController extends Controller
         $LeadsModel = new LeadsModel();
         $mk_user = $LeadsModel->getFindUserByEmail($addclass['userEmail']);
 
+        $lead = $LeadsModel->getUserById($addclass['idlead']);
+
         if (empty($mk_user) or empty($mk_user['id'])) {
             $this->answerAjax(['status' => 'error', 'data' => 'user not found']);
         }
 
-
-        // Проверяем, есть ли клиент в стартовой группе и нужно ли его удалять оттуда
-        if (!empty(CONFIG['startGroup']) and CONFIG['startGroup'] > 0 and CONFIG['startGroup_delete']) {
-            $start_join = 0;
-            foreach ($mk_user['joins'] as $join) {
-                if ($join['classId'] == CONFIG['startGroup']) {
-                    $start_join = $join['id'];
-                }
-            }
-            if ($start_join > 0) {
-                // Удаляем из стартовой группы
-                MoyklassModel::deleteJoins(['joinId' => $start_join]);
-            }
-        }
-
-
-        // Преобразуем в массив, если он не был таким
-        if (isset($addclass['classId']) and !is_array($addclass['classId'])) $addclass['classId'] = [$addclass['classId']];
-
-        foreach ($addclass['classId'] as $classid) {
-            // $results[] = $classid;
-            $result = MoyklassModel::setJoins(['userId' => $mk_user['id'], 'classId' => intval($classid), 'statusId' => 2, 'autoJoin' => true]);
-            if (isset($result['id']) and !empty($result['id'])) { // Успешно создано
-                $answer = ['status' => 'success', 'data' => $result];
-            } else { // Произошла какая-то ошибка
-                $answer = ['status' => 'error', 'data' => $result];
-            }
-
-            $results[] = $answer;
-        }
-
-        // $result = MoyklassModel::setJoins(['userId'=>$mk_user['id'], 'classId'=> intval($addclass['classId']), 'statusId' => 2]);
+        $Addclass = new AddclassModel();
+        $results = $Addclass->addClass($addclass['idlead'], $addclass['classId']);
 
         $this->answerAjax(['results' => @$results]);
 
@@ -428,60 +404,48 @@ class IndexController extends Controller
     public function getTest()
     {
 
-        // $HandlerModel = new HandlerModel();
+        $Addclass = new AddclassModel();
+        $res = $Addclass->addClass(27, 118283);
 
-        //  var_dump($HandlerModel->handle(27));
+        var_dump($res);
 
-        // $result = MoyklassModel::getCourses(['includeClasses'=>'true']);
 
-        // $mk_user = MoyklassModel::getFindUsers(['email' => 'anekrasov123@mail.ru'])['users'][0];
+        /*$LeadsModel = new LeadsModel();
+        $lead = $LeadsModel->getUserById(27);
 
-        /*//var_dump($mk_user);
-        $start_join = 0;
-        foreach($mk_user['joins'] as $join){
-            if($join['classId']=='122055'){
-                $start_join = $join['id'];
-            }
+        $Sync = new SyncModel();
+        $sync = $Sync->getSync(['gk_offer' => $lead['gk_offers']]);
+
+        if($sync['demo']==1){ // Пробное занятие
+
         }
-        echo 'Start join ID: '.$start_join;
 
-        $result = MoyklassModel::deleteJoins(['joinId' => $start_join]);*/
-        ////  var_dump($mk_user);
-
-        // $class = MoyklassModel::getClasses();
-
-        //var_dump($class);
-
-        // $lessons = MoyklassModel::getLessons(['classId'=>'107265'])['lessons'];
-        // $lessons = MoyklassModel::getLessons(['userId'=>834428])['lessons'];
-
-        /*foreach($lessons as $lesson){
-            echo $lesson['id'].'<br/>';
-        }*/
+       // print_r($sync);
 
 
-        // var_dump($lessons);
+        $mk_user = $LeadsModel->getFindUserByEmail('anekrasov123@mail.ru');
 
-        // $result = MoyklassModel::setJoins(['userId'=>834428, 'classId'=> intval('107265'), 'statusId' => 2]);
-
-        //$result =  MoyklassModel::getCreateSources();
-        // var_dump($result);
+        print_r($mk_user);
 
 
-        // $LeadsModel->addLogUser(27, 'test', 'Тестовый лог', 'Информация для дебага');
+        $statusId = 31034; // Статус "Записан"
 
+        */
 
-        //var_dump($LeadsModel->getLogUser('27'));
+        //$result = MoyklassModel::setJoins(['userId' => $mk_user['id'], 'classId' => intval('140461'), 'statusId' => $statusId, 'autoJoin' => false]);
 
-        // $LeadsModel->delLogUser(27);
-        $datestart = '2020-10-10';
-        $dateend = '2020-11-07';
-
-        $stat = new StatisticsModel();
-        $stat->getLoadVisits($datestart, $dateend);
-
-
+        //print_r($result);
     }
+
+    public function getTesting(){
+
+
+        $res = MoyklassModel::getLessons(['date' => ['2021-03-01', '2021-03-15']]);
+
+        print_r($res);
+    }
+
+
 
 
 }

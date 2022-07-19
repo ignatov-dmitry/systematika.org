@@ -226,7 +226,7 @@ class HandlerHwkModel extends HomeworkModel
             'group' => $groupGK,
         ];
 
-
+/*
         // Обновляем дату последнего пробного
         $lesson_last_test = MoyklassModel::getLessonVisitLastTest($this->hwkData['mk_user_id']);
         if (isset($lesson_last_test) and !empty($lesson_last_test)) {
@@ -251,7 +251,7 @@ class HandlerHwkModel extends HomeworkModel
             $dataCreate['count_user_subscriptions'] = $user_subscriptions['stats']['totalItems'];
             $dataCreate['user_subscriptions_left_visits'] = ($user_subscriptions['stats']['totalVisits'] - $user_subscriptions['stats']['totalVisited']);
         }
-
+*/
 
         $result = $GetcourseModel->createUser($dataCreate);
 

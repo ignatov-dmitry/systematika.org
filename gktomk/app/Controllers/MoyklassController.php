@@ -31,7 +31,7 @@ class MoyklassController extends Controller
         if (!empty($input['event']) and ($input['event'] == 'lesson_record_new' or $input['event'] == 'lesson_record_changed') and ($input['object']['visit'] and $input['object']['visit'] == 1)) {
             $this->Hwk->createHwk($input['object']);
 
-            // Запускаем обработку
+            // Запускаем обработку выдачи домашних заданий
             $HandlerHwkModel = new HandlerHwkModel();
             $HandlerHwkModel->cronHandle();
 

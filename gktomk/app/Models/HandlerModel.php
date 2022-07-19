@@ -9,8 +9,8 @@ namespace GKTOMK\Models;
 class HandlerModel
 {
 
-    private $userId;
     protected $stopped;
+    private $userId;
     /**
      * @var LeadsModel
      */
@@ -27,7 +27,8 @@ class HandlerModel
         $this->LeadsModel = new LeadsModel();
     }
 
-    public function handle($userId){
+    public function handle($userId)
+    {
         $this->userId = $userId;
         $this->startHandler();
         return $this;
@@ -36,19 +37,13 @@ class HandlerModel
     /*
      * Возвращает статус обработки
      * */
-    public function getStatus(){
-        return $this->statusHandle;
-    }
 
-    /*
-     * Обработка записи юзера
-     * */
     private function startHandler()
     {
 
         // Нашли клиента в нашей БД
         $this->userSys = $this->LeadsModel->getUserById($this->userId);
-        if(empty($this->userSys['id']))
+        if (empty($this->userSys['id']))
             return 0;
 
         // Ищем нашего клиента в МК
@@ -81,9 +76,8 @@ class HandlerModel
 
     }
 
-
     /*
-     * Выполняет загрузку пользователя МК в класс
+     * Обработка записи юзера
      * */
 
     private function loadUserMk()
@@ -110,8 +104,24 @@ class HandlerModel
 
 
     /*
+     * Выполняет загрузку пользователя МК в класс
+     * */
+
+    private function resultHandle($result = [])
+    {
+        $this->LeadsModel->setStatusUser($this->userId, ['status' => $result['status']]);
+        if (isset($result['debug']) and is_array($result['debug']))
+            $result['debug'] = json_encode($result['debug']);
+        $this->LeadsModel->addLogUser($this->userId, @$result['code'], @$result['text'], @$result['debug']);
+        $this->statusHandle = $result['status'];
+        return 1;
+    }
+
+
+    /*
      * Непосредственно создает нового пользователя
      * */
+
     private function createUser()
     {
         $dataCreate['name'] = $this->userSys['gk_first_name'] . ' ' . $this->userSys['gk_last_name'];
@@ -127,7 +137,7 @@ class HandlerModel
 
         //{"code":"RequestValidationError","message":"\/phone: pattern should match pattern \"^[0-9]{10,15}$\""}
         // Если номер не приняли, создаем юзера без номера
-        if($result['code'] and $result['code']=='RequestValidationError'){
+        if ($result['code'] and $result['code'] == 'RequestValidationError') {
             unset($dataCreate['phone']);
             $result = MoyklassModel::createUser($dataCreate);
         }
@@ -135,15 +145,98 @@ class HandlerModel
         return $result;
     }
 
-    private function resultHandle($result = [])
+    /**
+     * Метод добавляет пользователя в стартовую группу
+     */
+    public function addStartGroup()
     {
-        $this->LeadsModel->setStatusUser($this->userId, ['status' => $result['status']]);
-        if (isset($result['debug']) and is_array($result['debug']))
-            $result['debug'] = json_encode($result['debug']);
-        $this->LeadsModel->addLogUser($this->userId, @$result['code'], @$result['text'], @$result['debug']);
-        $this->statusHandle = $result['status'];
-        return 1;
+
+        // Не добавляем в группу, если функция отключена
+        if (CONFIG['startGroup'] <= 0)
+            return 0;
+
+        $this->loadUserMk();
+
+        // Добавляем в группу в том случае, если пользователя нет в группах вообще
+        //$classId = $this->userMk['joins'][0]['classId'];
+        $classId = $this->getUserJoinIdDontIndividual($this->userMk['joins']); // Исключает индивидуальные группы
+        if (empty($this->userMk['joins']) or empty($classId)) {
+
+            $result = MoyklassModel::setJoins(['userId' => $this->userMk['id'], 'classId' => intval(CONFIG['startGroup']), 'statusId' => 2]);
+            if (isset($result['id']) and !empty($result['id'])) { // Успешно создано
+                $this->resultHandle(['status' => 'addstartgroup', 'code' => 'addstartgroup', 'text' => 'Добавлен в стартовую группу!', 'debug' => $result]);
+            } else { // Произошла какая-то ошибка
+                $this->resultHandle(['status' => 'error_addstartgroup', 'code' => 'addstartgroup', 'text' => 'Ошибка при добавлении в стартовую группу!', 'debug' => $result]);
+            }
+
+        } elseif ($this->checkGroupStatusRecordedByJoins($this->userMk['joins'], CONFIG['statusGroup']['recorded'])) { // Случай, когда есть запись в группу со статусом записан
+            $classId = $this->checkStatusLessonRecordedForlast14dayByUserId($this->userMk['id']);
+            if(!empty($classId)){
+                // Выдаем доступ к группе
+                $result = MoyklassModel::setJoins(['userId' => $this->userMk['id'], 'classId' => intval($classId), 'statusId' => 2]);
+                if (isset($result['id']) and !empty($result['id'])) { // Успешно создано
+                    $this->resultHandle(['status' => 'addstartgroup', 'code' => 'addstartgroup', 'text' => 'Добавлен группу тест группу за 14 дней - ID'.$classId, 'debug' => $result]);
+                } else { // Произошла какая-то ошибка
+                    $this->resultHandle(['status' => 'error_addstartgroup', 'code' => 'addstartgroup', 'text' => 'Ошибка при добавлении тест группу за 14 дней!', 'debug' => $result]);
+                }
+            }
+        }
+
     }
+
+    private function getUserJoinIdDontIndividual($joins)
+    {
+        $result_classId = 0;
+        foreach ($joins as $join) {
+            $class = MoyklassModel::getClassById($join['classId']);
+            if ($class['courseId'] !== 0) {
+                $result_classId = $join['classId'];
+                break;
+            }
+        }
+        return $result_classId;
+    }
+
+    private function checkGroupStatusRecordedByJoins($joins = [], $statusId)
+    {
+        foreach ($joins as $join) {
+            if ($join['statusId'] == $statusId)
+                return $join['id'];
+        }
+        return 0;
+    }
+
+    /*
+        * Возвращает ID группы по занятиям которые посетил человек
+        * */
+    private function checkStatusLessonRecordedForlast14dayByUserId($userId){
+
+        $days = 60 * 60 * 24 * 14;
+
+        $nowTime = time();
+        $period1 = date('Y.m.d', $nowTime);
+        $period2 = date('Y.m.d', ($nowTime-$days));
+
+        $lessons = MoyklassModel::getLessons(['userId'=>$userId, 'includeRecords' => 'false', 'date[0]' => '2021.01.14',
+            'date[1]' => '2021.01.27']);
+
+        foreach ($lessons['lessons'] as $lesson) {
+
+            foreach ($lesson['records']  as $record) {
+                if($record['test'] == 1)
+                    $classIds[] = $lessons['classId'];
+            }
+        }
+
+        if(!empty($classIds) and count($classIds) == 1)
+            return $classIds[0];
+
+        return 0;
+    }
+
+    /*
+     * Указывает статус обработки
+     * */
 
     private function setMoney($summa)
     {
@@ -168,37 +261,18 @@ class HandlerModel
     }
 
 
-    /**
-    * Метод добавляет пользователя в стартовую группу
-     */
-    public function addStartGroup(){
-
-        // Не добавляем в группу, если функция отключена
-        if(CONFIG['startGroup'] <= 0)
-            return 0;
-
-        // Добавляем в группу в том случае, если пользователя нет в группах вообще
-        if (empty($this->userMk['joins']) or empty($this->userMk['joins'][0]['classId'])) {
-
-            $result = MoyklassModel::setJoins(['userId' => $this->userMk['id'], 'classId' => intval(CONFIG['startGroup']), 'statusId' => 2]);
-            if (isset($result['id']) and !empty($result['id'])) { // Успешно создано
-                $this->resultHandle(['status' => 'addstartgroup', 'code' => 'addstartgroup', 'text' => 'Добавлен в стартовую группу!', 'debug' => $result]);
-            } else { // Произошла какая-то ошибка
-                $this->resultHandle(['status' => 'error_addstartgroup', 'code' => 'addstartgroup', 'text' => 'Ошибка при добавлении в стартовую группу!', 'debug' => $result]);
-            }
-
-        }
-
-    }
-
     /*
-     * Указывает статус обработки
-     * */
+   * Функция исключает из списка заявок на группы - индивидуальные
+   * Это нужно, чтоб не давать абонементы на индивидуальные занятия
+   * */
 
     private function createSubscription($subscription, $summa)
     {
         $this->loadUserMk(); // Обновляем данные о пользователе
-        $classId = $this->userMk['joins'][0]['classId'];
+
+        //$classId = $this->userMk['joins'][0]['classId']; - старое
+        $classId = $this->getUserJoinIdDontIndividual($this->userMk['joins']); // Исключает индивидуальные группы
+
         // Проверяем, есть ли у клиента в МойКласс участие в группах
         if (empty($classId)) {
             $this->resultHandle(['status' => 'error_createsubscription', 'code' => 'createsubscription', 'text' => 'Ошибка при создании абонемента - не указана группа!', 'debug' => $classId]);
@@ -210,7 +284,6 @@ class HandlerModel
             return 0;
         }
 
-
         // Создаем абонемент для клиента в МК
         $result_subscription = MoyklassModel::createUserSubscriptions([
             'userId' => $this->userMk['id'],
@@ -219,8 +292,8 @@ class HandlerModel
             'beginDate' => '' . date("Y-m-d", time()) . '', // Дата начала действия абонемента
             'classIds' => [$classId],
             'mainClassId' => $classId,
-
         ]);
+
         if (empty($result_subscription) or !isset($result_subscription['id']) or empty($result_subscription['id'])) {
             $this->resultHandle(['status' => 'error_createsubscription', 'code' => 'createsubscription', 'text' => 'Ошибка при создании абонемента!', 'debug' => $result_subscription]);
             $this->stopped = 1;
@@ -253,6 +326,15 @@ class HandlerModel
         }
 
 
+    }
+
+    /*
+     * Узнает, есть ли заявки в группы с нужным статусом
+     * */
+
+    public function getStatus()
+    {
+        return $this->statusHandle;
     }
 
 

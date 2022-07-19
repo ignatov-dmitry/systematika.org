@@ -75,13 +75,14 @@ class SettingsController
             }
 
 
-            $SyncModel->createSync($sync['program'], $sync['gk_offer'], $sync['mk_sub']);
+            $SyncModel->createSync($sync['program'], $sync['gk_offer'], $sync['mk_sub'], $sync['demo']);
             return json_encode(['code' => 'success']);
         }
     }
 
     public function postSyncEdit()
     {
+        print_r($_POST);
         $SyncModel = new SyncModel();
         $SyncModel->editSync($_POST['sync']);
     }

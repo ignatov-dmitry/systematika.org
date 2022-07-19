@@ -36,11 +36,11 @@ class GetcourseModel
             ->setEmail($data['email'])
             //->setFirstName($data['first_name'])
             //->setLastName($data['last_name'])
-            ->setGroup(trim(CONFIG['gk_prefix_group'] . ' Пришел из МК'))
+            ->setGroup(trim('Пришел из МК')) // CONFIG['gk_prefix_group'] .
             ->setOverwrite();
         //->setSessionReferer('http://getcourse.ru')
         if(isset($data['group']) and !empty($data['group'])){
-            $User->setGroup(trim(CONFIG['gk_prefix_group'] . ' ' . $data['group']));
+            $User->setGroup(trim($data['group'])); // CONFIG['gk_prefix_group'] . ' ' .
         }
 
         // Ставим дату последнего посещения занятия
@@ -80,12 +80,12 @@ class GetcourseModel
             ->setEmail($data['email'])
             //->setFirstName($data['first_name'])
             //->setLastName($data['last_name'])
-            ->setGroup(trim(CONFIG['gk_prefix_group'] . ' Пришел из МК'))
+            ->setGroup(trim('Пришел из МК')) // CONFIG['gk_prefix_group'] .
             ->setOverwrite();
 
         if(isset($data['groups']) and count($data['groups']) > 0){
             foreach ($data['groups'] as $group) {
-                $this->DataUser->setGroup(trim(CONFIG['gk_prefix_group'] . ' ' . $group));
+                $this->DataUser->setGroup(trim($group)); // CONFIG['gk_prefix_group'] . ' ' .
             }
         }
 
@@ -144,6 +144,7 @@ class GetcourseModel
         return $this->createUser($dataUpdate);
     }
 
+    // Обновляет количество абонементов
     public function updateUserSubscriptions($email){
         $userMk = MoyklassModel::getUserByEmail($email);
 
@@ -159,6 +160,10 @@ class GetcourseModel
         if (!empty($user_subscriptions['subscriptions'])) {
             $dataUpdate['count_user_subscriptions'] = $user_subscriptions['stats']['totalItems'];
             $dataUpdate['user_subscriptions_left_visits'] = ($user_subscriptions['stats']['totalVisits'] - $user_subscriptions['stats']['totalVisited']);
+        }else{
+            $dataUpdate['count_user_subscriptions'] = 0;
+            $dataUpdate['user_subscriptions_left_visits'] = 0;
+
         }
 
         return $this->createUser($dataUpdate);
