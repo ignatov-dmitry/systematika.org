@@ -140,6 +140,8 @@ class IndexController extends Controller
 
             //$data[$cours['name']]['positions'] = ['1' => 0, '2' => 0, '3' => 0];
 
+
+            $np2 = 0;
             foreach ($cours['classes'] as $class) {
 
                 if ($class['status'] !== 'opened')
@@ -156,18 +158,39 @@ class IndexController extends Controller
                 $expName[0] = preg_replace("/[^0-9]/", '', $expName[0]);
 
 
+                /*
+                                if (isset($expName[1])) {
+                                    // echo (int)$expName[0];
+
+                                    $cnt = 0;
+                                    if(isset($data[$cours['name']][(int)$expName[0]][(int)$expName[1]])){
+                                        $cnt = count($data[$cours['name']][(int)$expName[0]][(int)$expName[1]]);
+                                    }
+                                    $cnt++;
+
+
+                                    $data[$cours['name']][(int)$expName[0]][(int)$expName[1]][$cnt] = $val;
+                                    ksort($data[$cours['name']][(int)$expName[0]]);
+                                    ksort($data[$cours['name']][(int)$expName[0]][(int)$expName[1]]);
+                                    ksort($data[$cours['name']][(int)$expName[0]][(int)$expName[1]][$cnt]);
+                                    $np2++;
+                                }*/
+
+
                 if (isset($expName[2])) {
-                    $data[$cours['name']][(int)$expName[0]][(int)$expName[2]][(int)$expName[1]] = $val;
+
+
+                    $data[$cours['name']][(int)$expName[0]][(int)$expName[1]][(int)$expName[2]][] = $val;
+
+
                     ksort($data[$cours['name']][(int)$expName[0]]);
-                    ksort($data[$cours['name']][(int)$expName[0]][(int)$expName[2]]);
-                    ksort($data[$cours['name']][(int)$expName[0]][(int)$expName[2]][(int)$expName[1]]);
+                    ksort($data[$cours['name']][(int)$expName[0]][(int)$expName[1]]);
+                    ksort($data[$cours['name']][(int)$expName[0]][(int)$expName[1]][(int)$expName[2]]);
                 } elseif (isset($expName[1])) {
                     // echo (int)$expName[0];
-                    $data[$cours['name']][(int)$expName[0]][1][(int)$expName[1]] = $val;
+                    $data[$cours['name']][(int)$expName[0]][(int)$expName[1]][][] = $val;
                     ksort($data[$cours['name']][(int)$expName[0]]);
-                } elseif (isset($expName[0])) {
-
-
+                    $np2++;
                 }
 
 
@@ -182,9 +205,10 @@ class IndexController extends Controller
 
         $POSITION = [];
         // Разбираем массив и формируем список групп
-
+        // print_r($data);
 
         $numProgram = 0;
+
         foreach ($data as $nameProgram => $p1) {
 
             // Если в программе нет групп - не показываем ее
@@ -210,61 +234,116 @@ class IndexController extends Controller
 
             echo '<table class="table table-sm table-bordered table-responsive " border="1">';
             $block = '0';
+
+
+            $p1num = 0;
             foreach ($p1 as $p1key => $p1value) {
 
                 if ($p1key == 'position')
                     continue;
 
 
-                foreach ($p1value as $p2key => $p2value) {
+                /// Разделитель по классам
+                if ($p1num > 0) {
+                    echo '<tr><td></td></tr>';
+                    echo '<tr><td></td></tr>';
+                    echo '<tr><td></td></tr>';
+                }
 
-                    if (isset($p2value['name'])) {
-                        continue;
-                    }
-
-                    if (!is_array($p2value))
-                        continue;
-
-
-                    $td = "";
-                    foreach ($p2value as $p3key => $p3value) {
+                echo '<tr>';
 
 
-                        $statText = '';
-                        $numStat = 0;
-                        $statTime = '';
-                        foreach ($p3value['stats'] as $stat) {
+                for ($i = 1; $i <= 7; $i++) {
 
-                            $numStat++;
-                            $statText .= ' ' . $stat['num_records'];
 
-                            if (isset($stat['num_visits'])) {
-                                $statText .= '(' . $stat['num_visits'] . ')';
+                    if (isset($p1value[$i])) {
+
+                        //print_r($p1value[$i]);
+
+                        $td = "";
+                        $num = 0;
+                        foreach ($p1value[$i] as $p3key => $p3value) {
+
+                            foreach ($p3value as $p4value) {
+                                $statText = '';
+                                $numStat = 0;
+                                $statTime = '';
+
+                                if (isset($p4value['stats']) and !empty($p4value['stats'])) {
+                                    foreach ($p4value['stats'] as $stat) {
+
+                                        $numStat++;
+                                        if (isset($stat['num_records'])) {
+
+
+                                            if ($stat['num_records'] >= 0 && $stat['num_records'] < 3)
+                                                $color = 'red';
+                                            else if ($stat['num_records'] == 3)
+                                                $color = 'orange';
+                                            else if ($stat['num_records'] == 4 or $stat['num_records'] == 5)
+                                                $color = '';
+                                            else if ($stat['num_records'] == 6 or $stat['num_records'] == 7)
+                                                $color = 'blue';
+                                            else if ($stat['num_records'] >= 8)
+                                                $color = 'green';
+
+
+
+                                            $statText .= " <span style=\"color: $color\">" . $stat['num_records'] . "</span>";
+                                        }
+
+                                        if (isset($stat['num_visits'])) {
+
+                                            if ($stat['num_visits'] >= 0 && $stat['num_visits'] < 3)
+                                                $color = 'red';
+                                            else if ($stat['num_visits'] == 3)
+                                                $color = 'orange';
+                                            else if ($stat['num_visits'] == 4 or $stat['num_visits'] == 5)
+                                                $color = '';
+                                            else if ($stat['num_visits'] == 6 or $stat['num_visits'] == 7)
+                                                $color = 'blue';
+                                            else if ($stat['num_visits'] >= 8)
+                                                $color = 'green';
+
+                                            $statText .= "(<span style=\"color: $color\">" . $stat['num_visits'] . "</span>)";
+                                        }
+
+                                        if (isset($stat['begin_time'])) {
+                                            $statTime = $stat['begin_time'];
+                                        }
+
+
+                                    }
+                                    $statTime = substr($statTime, 0, -3);
+                                }
+
+
+                                $text = "<a href='#' onclick='addclass.add.send(\"{$p4value['id']}\");'><span><b>{$p4value['name']}</b> {$statTime}</span><br/><span>{$statText}</span></a>";
+
+                                if ($num > 0) {
+                                    $td .= "<hr style='margin-top: 0.4rem; margin-bottom: 0.4rem;'/>";
+                                }
+                                $td .= "$text";
+
+                                $num++;
                             }
 
-                            $statTime = $stat['begin_time'];
                         }
 
 
-                        $statTime = substr($statTime, 0, -3);
-                        $text = "<a href='#' onclick='addclass.add.send(\"{$p3value['id']}\");'><span><b>{$p3value['name']}</b> {$statTime}</span><br/><span>{$statText}</span></a>";
-
-
-                        $td .= "<td>$text</td>";
-                    }
-
-                    if (!empty($td)) {
-                        echo "<tr>$td</tr>";
+                        echo "<td style=\"vertical-align: top;\" >$td</td>";
+                    } else {
+                        echo "<td></td>";
                     }
 
 
                 }
 
-                if ((int)$block < (int)$p1key) {
-                    $block = $p1key;
-                    echo "<tr><th><hr/></th></tr>";
-                }
 
+                echo '</tr>';
+
+
+                $p1num++;
             }
             echo '</table>
             </div>
