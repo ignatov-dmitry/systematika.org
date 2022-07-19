@@ -33,7 +33,7 @@
         {%*LOGS*}
             <tr>
                 <td><strong>{*LOGS:id*}</strong>{?*LOGS:gk_order*}<br/><a href="{*URL_GK*}/sales/control/deal/update/id/{*LOGS:gk_order*}" target="_blank">{*LOGS:gk_order*}</a>{?}</td>
-                <td><strong class="d-block text-gray-dark">{*LOGS:gk_first_name*} {*LOGS:gk_last_name*}</strong> <a href="#" onclick="addclass.openModal('{*LOGS:gk_email*}');">{*LOGS:gk_email*}</a> <br/> {*LOGS:gk_phone*}</td>
+                <td><strong class="d-block text-gray-dark">{*LOGS:gk_first_name*} {*LOGS:gk_last_name*}</strong> <a href="#" onclick="addclass.openModal('{*LOGS:gk_email*}', '{*LOGS:id*}');">{*LOGS:gk_email*}</a> <br/> {*LOGS:gk_phone*}</td>
                 <td><a href="{*URL_GK*}/user/control/user/update/id/{*LOGS:gk_uid*}"
                        target="_blank">GK</a> {?*LOGS:status="success" | LOGS:status="createsubscription" | LOGS:status="setmoney" | LOGS:status="error_setmoney" | LOGS:status="error_createsubscription"*}<a
                             href="{*URL_SITE*}/redirectmk/{*LOGS:gk_email*}" target="_blank">MK</a>{?}</td>

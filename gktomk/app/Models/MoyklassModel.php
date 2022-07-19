@@ -187,6 +187,22 @@ class MoyklassModel
         return self::startApi('company/courses', $data, 'GET');
     }
 
+    public static function getCourseById($courseId){
+
+        if(!isset(self::$cache['courses']['time']) or (self::$cache['courses']['time'] + 300) < time()){
+            self::$cache['courses']['time'] = time();
+            self::$cache['courses']['data'] = self::getCourses();
+        }
+
+        $courses = self::$cache['courses']['data'];
+
+        foreach ($courses as $course) {
+            if($courseId and $courseId==$course['id']){
+                return $course;
+            }
+        }
+    }
+
     /*
      * Возвращает список классов (группы)
      * */
@@ -333,6 +349,17 @@ class MoyklassModel
     public static function deleteJoins($data = ['joinId'])
     {
         return self::startApi('company/joins/' . $data['joinId'], '', 'DELETE');
+    }
+
+
+    /**
+     * Получает заявки
+     * @param array $data
+     * @return array|mixed|string
+     */
+    public static function getJoins($data = ['classId', 'userId'])
+    {
+        return self::startApi('company/joins', $data, 'GET');
     }
 
     /**

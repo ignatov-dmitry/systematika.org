@@ -59,6 +59,12 @@
                         <label for="exampleFormControlInput1">Предложение в ГК</label>
                         <input type="text" class="form-control" id="syncFormGKOFFER" name="sync[gk_offer]" required="required">
                     </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="1" id="syncFormDEMO" name="sync[demo]">
+                      <label class="form-check-label" for="syncFormDEMO">
+                        Пробное занятие
+                      </label>
+                    </div>
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Абонемент в МК</label>
                         <input type="text" class="form-control" id="syncFormMKSUB" name="sync[mk_sub]" required="required">

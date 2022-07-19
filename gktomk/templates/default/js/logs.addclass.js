@@ -2,10 +2,12 @@ let addclass;
 addclass = {
 
     email: '',
+    idlog: '',
 
-    openModal: function (email) {
+    openModal: function (email, idlead) {
 
         addclass.email = email;
+        addclass.idlead = idlead;
 
         $('#addclassUserEmail').html(' ('+email+')');
 
@@ -54,7 +56,7 @@ addclass = {
             $.ajax({
                 'url': SETT.URL_SITE + '/addclass',
                 'method': 'post',
-                'data': { 'addclass': {'userEmail': addclass.email, 'classId': classId}  },
+                'data': { 'addclass': {'userEmail': addclass.email, 'classId': classId, 'idlead': addclass.idlead}  },
                 'dataType': 'json',
                 success: function (answer) {
                     $('#result_div').html(answer);
@@ -73,7 +75,7 @@ addclass = {
                         }
                     }
 
-                    console.log(answer['results']);
+                    console.log(answer);
                     if (answer['results']) {
                         answer['results'].forEach(el => {
 

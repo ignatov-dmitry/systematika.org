@@ -7,6 +7,7 @@ class Controller
 
     private $timer;
 
+
     public function answerAjax($data)
     {
         exit(json_encode($data));

@@ -64,6 +64,7 @@ let sync = {
             $('#syncFormPROGRAM').val('');
             $('#syncFormGKOFFER').val('');
             $('#syncFormMKSUB').val('');
+            $('#syncFormDEMO').prop('checked', false);
             $('#modalSync').modal();
         },
 
@@ -102,6 +103,11 @@ let sync = {
                     $('#syncFormPROGRAM').val(el["program"]);
                     $('#syncFormGKOFFER').val(el["gk_offer"]);
                     $('#syncFormMKSUB').val(el["mk_sub"]);
+                    if(el["demo"])
+                        $('#syncFormDEMO').prop('checked', true);
+                    else
+                        $('#syncFormDEMO').prop('checked', false);
+
                 }
             });
             console.log(sync.list.data);
@@ -114,7 +120,7 @@ let sync = {
                 dataType: "html", //формат данных
                 data: $("#formSync").serialize(),  // Сеарилизуем объект
                 success: function (response) { //Данные отправлены успешно
-
+                    console.log(response);
                    // $('#result_form').html('Данные получены.');
                    // $('#result_form').html(response);
                     sync.list.load();
