@@ -65,6 +65,7 @@ let sync = {
             $('#syncFormGKOFFER').val('');
             $('#syncFormMKSUB').val('');
             $('#syncFormDEMO').prop('checked', false);
+            $('#syncFormINDIVIDUAL').prop('checked', false);
             $('#modalSync').modal();
         },
 
@@ -107,6 +108,10 @@ let sync = {
                         $('#syncFormDEMO').prop('checked', true);
                     else
                         $('#syncFormDEMO').prop('checked', false);
+                    if(el["individual"])
+                        $('#syncFormINDIVIDUAL').prop('checked', true);
+                    else
+                        $('#syncFormINDIVIDUAL').prop('checked', false);
 
                 }
             });

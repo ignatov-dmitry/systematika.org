@@ -77,7 +77,7 @@ class SettingsController
             }
 
 
-            $SyncModel->createSync($sync['program'], $sync['gk_offer'], $sync['mk_sub'], $sync['demo']);
+            $SyncModel->createSync($sync['program'], $sync['gk_offer'], $sync['mk_sub'], $sync['demo'], $sync['individual']);
             return json_encode(['code' => 'success']);
         }
     }

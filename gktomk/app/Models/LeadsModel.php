@@ -86,7 +86,7 @@ class LeadsModel
 
     public function getAllUsers()
     {
-        return DB::exportAll(DB::findAll('users', 'ORDER BY `id` DESC'));
+        return DB::exportAll(DB::findAll('users', 'ORDER BY `id` DESC LIMIT 250'));
     }
 
     /*

@@ -23,10 +23,7 @@
 
 
 <main role="main" class="container">
-
     {*CONTENT*}
-
-
 </main>
 
 

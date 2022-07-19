@@ -65,6 +65,12 @@
                         Пробное занятие
                       </label>
                     </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="1" id="syncFormINDIVIDUAL" name="sync[individual]">
+                      <label class="form-check-label" for="syncFormINDIVIDUAL">
+                        Индивидуальное занятие
+                      </label>
+                    </div>
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Абонемент в МК</label>
                         <input type="text" class="form-control" id="syncFormMKSUB" name="sync[mk_sub]" required="required">

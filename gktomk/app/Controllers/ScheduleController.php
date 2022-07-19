@@ -5,6 +5,7 @@ namespace GKTOMK\Controllers;
 
 
 use GKTOMK\Models\ScheduleModel;
+use GKTOMK\Models\SubscriptionsModel;
 use GKTOMK\Views\IndexView;
 
 class ScheduleController extends Controller
@@ -34,7 +35,16 @@ class ScheduleController extends Controller
         $Schedule = new ScheduleModel();
         $lessons = $Schedule->getSchedule($email);
 
+        $SubscriptionsModel = new SubscriptionsModel();
+        $countUserSubscriptions = $SubscriptionsModel->getCountSubscriptionsByEmail($email);
+
+
         $this->View->varTpl('LESSONS', $lessons);
+        $this->View->varTpl('COUNT_SUBSCRIPTIONS_REMIND', [
+            'individual' => $countUserSubscriptions['individual']['visitCount'] - $countUserSubscriptions['individual']['visitedCount'],
+            'group' => $countUserSubscriptions['group']['visitCount'] - $countUserSubscriptions['group']['visitedCount'],
+        ]);
+
 
         $this->View->parseTpl('schedule/index', false)->parseTpl('schedule/main')->output();
     }

@@ -74,6 +74,13 @@ class ScheduleModel
     }
 
     /*
+     * Отдает количество посещений на абонементах
+     * */
+    public function getUserSubscriptions($email = 'test@gk.ru'){
+
+    }
+
+    /*
     * Сортировка массива по дате, затем по времени
     * */
     function cmp($a, $b)

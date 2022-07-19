@@ -29,7 +29,7 @@ class HomeworkModel
 
     public function getAllHwk()
     {
-        return DB::exportAll(DB::findAll('homework', 'ORDER BY `id` DESC'));
+        return DB::exportAll(DB::findAll('homework', 'ORDER BY `id` DESC LIMIT 1000'));
     }
 
 
@@ -58,7 +58,7 @@ class HomeworkModel
 
     public function getCronHwk()
     {
-        return DB::findAll('homework', 'status = ?', ['new']);
+        return DB::findAll('homework', 'status = ? LIMIT 50', ['new']);
     }
 
 

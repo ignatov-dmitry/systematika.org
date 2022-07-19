@@ -1,110 +1,113 @@
 <div class="lessons">
-    <h3>Расписание занятий</h6>
-        <!--div class="monthly" id="mycalendar"></div-->
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h3>Расписание занятий</h3>
+            </div>
+            <div class="col">
+                Остаток посещений: {*COUNT_SUBSCRIPTIONS_REMIND.group*} групповых | {*COUNT_SUBSCRIPTIONS_REMIND.individual*} индивидуальных - <a href="https://online.systematika.org/study-payment" target="_blank">Пополнить</a>
+            </div>
+        </div>
+    </div>
 
-        <script language="JavaScript">
-            function openNewWin(url) {
-                myWin= open(url);
-            }
+    <!--div class="monthly" id="mycalendar"></div-->
 
-            function copytext(el) {
-                var $tmp = $("<textarea>");
+    <script language="JavaScript">
+        function openNewWin(url) {
+            myWin = open(url);
+        }
 
-                $("body").append($tmp);
-                $tmp.val($(el).text()).select();
-                document.execCommand("copy");
-                $tmp.remove();
-                $(el).next().append('<div class="copied">скопировано</div>');
+        function copytext(el) {
+            var $tmp = $("<textarea>");
 
-                $(el).next().fadeOut( "slow" );
-            }
-        </script>
+            $("body").append($tmp);
+            $tmp.val($(el).text()).select();
+            document.execCommand("copy");
+            $tmp.remove();
+            $(el).next().append('<div class="copied">скопировано</div>');
 
-        <style>
-            body {background-color: #ffffff !important;}
-            .lessons{background:#ffffff;}
+            $(el).next().fadeOut("slow");
+        }
+    </script>
 
-            .lessons-table {
-                width: 100%;
-                table-layout: fixed;
-                border-collapse: collapse;
-            }
-            .lessons-table tr{
-                border-bottom: solid 1px #cccccc;
-            }
+    <style>
+        body {background-color: #ffffff !important;} .lessons{background:#ffffff;} .lessons-table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
 
-            .lessons-button{
-                background:#fde005;
-                padding: 4px 15px;
-                border:0;
-                color:#333333;
-                border-radius:20px;
-                font-family: "SFProText", sans-serif;
-                font-size: 14px;
-                letter-spacing: -0.4px;
-            }
+        .lessons-table tr {
+            border-bottom: solid 1px #cccccc;
+        }
 
-            td {
-                width: 100%;
-                word-wrap: break-word;
-                vertical-align: top;
-                font-size: 14px;
-                padding: 10px 0px 10px 0px;
-            }
-            th {
-                vertical-align: bottom;
-                font-size: 18px;
-            }
-            .far{font-size: 20px; cursor:pointer;}
-            .copied{background-color:#d2e8b9; padding:3px;border-radius:4px;}
+        .lessons-button {
+            background: #fde005;
+            padding: 4px 15px;
+            border: 0;
+            color: #333333;
+            border-radius: 20px;
+            font-family: "SFProText", sans-serif;
+            font-size: 14px;
+            letter-spacing: -0.4px;
+        }
 
-        </style>
+        td {
+            width: 100%;
+            word-wrap: break-word;
+            vertical-align: top;
+            font-size: 14px;
+            padding: 10px 0px 10px 0px;
+        }
 
-        <table class="lessons-table">
-            <thead>
-            <tr>
-                <th>Дата и время</th>
-                <th>Группа</th>
-                <th>Ссылка</th>
-            </tr>
-            </thead>
-            <tbody>
-            {%*LESSONS*}
+        th {
+            vertical-align: bottom;
+            font-size: 18px;
+        }
 
-            <tr>
-                <td>
-                    {*LESSONS:daynumber*} {*LESSONS:monthtxt*}, {*LESSONS:weekday*}
-                    <br>
-                    <div class="lessons-time">{*LESSONS:beginTime*} - {*LESSONS:endTime*}</div></td>
-                <td>{*LESSONS:COURSE.name*}
-                    <div class="lessons-group">{*LESSONS:CLASS.name*}</div>
+        .far{font-size: 20px; cursor:pointer;} .copied
 
-                </td>
-                <td><input type="button" value="Перейти" class="lessons-button" onclick="openNewWin('{*LESSONS:url*}');">&nbsp; <i class="far fa-copy" onclick="copytext('#lesson-url{*LESSONS:index*}');"></i>
-                    <div id="lesson-url{*LESSONS:index*}"style="display:none;">{*LESSONS:url*}</div><span></span>
-                    <!-- {*LESSONS:topic*} -->
+        {background-color:#d2e8b9; padding:3px;border-radius:4px;}
 
-                </td>
-            </tr>
-            {*LESSONS*%}
-            </tbody>
-        </table>
+    </style>
 
+    <table class="lessons-table">
+        <thead>
+        <tr>
+            <th>Дата и время</th>
+            <th>Группа</th>
+            <th>Ссылка</th>
+        </tr>
+        </thead>
+        <tbody>
+        {%*LESSONS*}
 
-        /* <small class="d-block text-end mt-3">
-            <a href="#">All updates</a>
-        </small>*/
+        <tr>
+            <td>
+                {*LESSONS:daynumber*} {*LESSONS:monthtxt*}, {*LESSONS:weekday*}
+                <br>
+                <div class="lessons-time">{*LESSONS:beginTime*} - {*LESSONS:endTime*}</div>
+            </td>
+            <td>{*LESSONS:COURSE.name*}
+                <div class="lessons-group">{*LESSONS:CLASS.name*}</div>
 
+            </td>
+            <td><input type="button" value="Перейти" class="lessons-button" onclick="openNewWin('{*LESSONS:url*}');">&nbsp;
+                <i class="far fa-copy" onclick="copytext('#lesson-url{*LESSONS:index*}');"></i>
+                <div id="lesson-url{*LESSONS:index*}" style="display:none;">{*LESSONS:url*}</div>
+                <span></span>
+                <!-- {*LESSONS:topic*} -->
 
-
+            </td>
+        </tr>
+        {*LESSONS*%}
+        </tbody>
+    </table>
 
 
-
-
-
-
-
-
+    /* <small class="d-block text-end mt-3">
+        <a href="#">All updates</a>
+    </small>*/
 
 
 </div>

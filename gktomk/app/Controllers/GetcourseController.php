@@ -41,8 +41,9 @@ class GetcourseController
     public function getUpdateUser($email)
     {
         $GetCourse = new GetcourseModel();
-        $GetCourse->updateUserSubscriptions($email);
-        $GetCourse->updateUserDateVisit($email);
+        $GetCourse->updateUserSubscriptions($email)
+            ->updateUserDateVisit($email)
+            ->sendUser();
         echo 'OK ' . $email;
     }
 
@@ -56,8 +57,9 @@ class GetcourseController
         $user = MoyklassModel::getUserById(['userId' => $userId]);
         $email = $user['email'];
         $GetCourse = new GetcourseModel();
-        $GetCourse->updateUserSubscriptions($email);
-        return $GetCourse->updateUserDateVisit($email);
+        return $GetCourse->updateUserSubscriptions($email)
+            ->updateUserDateVisit($email)
+            ->sendUser();
         echo 'OK ' . $email .' ';
     }
 

@@ -8,7 +8,7 @@ class GetcourseModel
 {
 
     private $ObjectUser = ''; // Здесь хранится объект модели GK
-    private $DataUser = ''; // Здесь хранится объект с заполненными данными юзера
+    private $DataUser = []; // Здесь хранится объект с заполненными данными юзера
 
     public function __construct()
     {
@@ -63,6 +63,16 @@ class GetcourseModel
             $User->setUserAddField(CONFIG['gk_field_user_subscriptions_left_visits'], $data['user_subscriptions_left_visits']);
         }
 
+        // Заполняем поле количество оставшихся посещений индивидуальных
+        if(isset($data['user_subscriptions_left_visits_individual'])){
+            $User->setUserAddField(CONFIG['gk_field_user_subscriptions_left_visits_individual'], $data['user_subscriptions_left_visits_individual']);
+        }
+
+        // Заполняем поле количество оставшихся посещений групповых
+        if(isset($data['user_subscriptions_left_visits_group'])){
+            $User->setUserAddField(CONFIG['gk_field_user_subscriptions_left_visits_group'], $data['user_subscriptions_left_visits_group']);
+        }
+
         try {
             $result = $User->apiCall($action = 'add');
         } catch (Exception $e) {
@@ -70,6 +80,13 @@ class GetcourseModel
         }
 
         return $result;
+    }
+
+    /*
+     * Нужен для ручной отправки в гк с заполненными данными
+     * */
+    public function sendUser(){
+        return $this->createUser($this->DataUser);
     }
 
     public function init($data = []){
@@ -121,54 +138,48 @@ class GetcourseModel
         if(!isset($userMk) or !isset($userMk['email']))
             return 'mk user not found';
 
-        $dataUpdate = [
-            'email' => $userMk['email'],
-        ];
+        $this->DataUser['email'] = $userMk['email'];
 
         // Обновляем дату последнего пробного
         $lesson_last_test = MoyklassModel::getLessonVisitLastTest($userMk['id']);
         if (isset($lesson_last_test) and !empty($lesson_last_test)) {
             $date_last_lesson = @date("d.m.Y", strtotime($lesson_last_test['date']));
-            $dataUpdate['date_last_test_lesson'] = $date_last_lesson;
+            $this->DataUser['date_last_test_lesson'] = $date_last_lesson;
         } else { // Если даты нет, ставим "пустое значение поля"
-            $dataUpdate['date_last_test_lesson'] = '01.01.1970';
+            $this->DataUser['date_last_test_lesson'] = '01.01.1970';
         }
 
         // Дата последнего посещения урока
         $lesson_last = MoyklassModel::getLessonVisitLast($userMk['id']);
         if (isset($lesson_last) and !empty($lesson_last)) {
             $date_last_lesson = @date("d.m.Y", strtotime($lesson_last['date']));
-            $dataUpdate['date_last_lesson'] = $date_last_lesson;
+            $this->DataUser['date_last_lesson'] = $date_last_lesson;
         } else { // Если даты нет, ставим "пустое значение поля"
-            $dataUpdate['date_last_lesson'] = '01.01.1970';
+            $this->DataUser['date_last_lesson'] = '01.01.1970';
         }
 
-        return $this->createUser($dataUpdate);
+        return $this;
     }
 
     // Обновляет количество абонементов
     public function updateUserSubscriptions($email){
-        $userMk = MoyklassModel::getUserByEmail($email);
 
-        if(!isset($userMk) or !isset($userMk['email']))
-            return 'mk user not found';
+        $SubscriptionModel = new SubscriptionsModel();
+        $getCountSubscriptionsByEmail = $SubscriptionModel->getCountSubscriptionsByEmail($email);
 
-        $dataUpdate = [
-            'email' => $userMk['email'],
-        ];
-
-        // Обновляем количество абонементов у клиента
-        $user_subscriptions = MoyklassModel::getUserSubscriptions(['userId' => $userMk['id'], 'statusId' => '2']);
-        if (!empty($user_subscriptions['subscriptions'])) {
-            $dataUpdate['count_user_subscriptions'] = $user_subscriptions['stats']['totalItems'];
-            $dataUpdate['user_subscriptions_left_visits'] = ($user_subscriptions['stats']['totalVisits'] - $user_subscriptions['stats']['totalVisited']);
+        if (!empty($getCountSubscriptionsByEmail)) {
+            $this->DataUser['count_user_subscriptions'] = $getCountSubscriptionsByEmail['all']['itemCount'];
+            $this->DataUser['user_subscriptions_left_visits'] = ($getCountSubscriptionsByEmail['all']['visitCount'] - $getCountSubscriptionsByEmail['all']['visitedCount']);
+            $this->DataUser['user_subscriptions_left_visits_individual'] = ($getCountSubscriptionsByEmail['individual']['visitCount'] - $getCountSubscriptionsByEmail['individual']['visitedCount']);
+            $this->DataUser['user_subscriptions_left_visits_group'] = ($getCountSubscriptionsByEmail['group']['visitCount'] - $getCountSubscriptionsByEmail['group']['visitedCount']);
         }else{
-            $dataUpdate['count_user_subscriptions'] = 0;
-            $dataUpdate['user_subscriptions_left_visits'] = 0;
-
+            $this->DataUser['count_user_subscriptions'] = 0;
+            $this->DataUser['user_subscriptions_left_visits'] = 0;
+            $this->DataUser['user_subscriptions_left_visits_individual'] = 0;
+            $this->DataUser['user_subscriptions_left_visits_group'] = 0;
         }
 
-        return $this->createUser($dataUpdate);
+        return $this;
     }
 
 
