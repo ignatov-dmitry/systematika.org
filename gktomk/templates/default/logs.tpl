@@ -32,7 +32,7 @@
         <tbody>
         {%*LOGS*}
             <tr>
-                <td><strong>{*LOGS:id*}</strong>{?*LOGS:gk_order*}<br/><a href="{*URL_GK*}/sales/control/deal/update/id/{*LOGS:gk_order*}" target="_blank">{*LOGS:gk_order*}</a>{?}</td>
+                <th scope="row">{*LOGS:id*}</th>
                 <td><strong class="d-block text-gray-dark">{*LOGS:gk_first_name*} {*LOGS:gk_last_name*}</strong> <a href="#" onclick="addclass.openModal('{*LOGS:gk_email*}');">{*LOGS:gk_email*}</a> <br/> {*LOGS:gk_phone*}</td>
                 <td><a href="{*URL_GK*}/user/control/user/update/id/{*LOGS:gk_uid*}"
                        target="_blank">GK</a> {?*LOGS:status="success" | LOGS:status="createsubscription" | LOGS:status="setmoney" | LOGS:status="error_setmoney" | LOGS:status="error_createsubscription"*}<a
@@ -53,10 +53,7 @@
                      {?*LOGS:ownLog:text!="Пользователь создан!" & LOGS:ownLog:text!="Денежные средства начислены!" & LOGS:ownLog:text!="Абонемент создан!" & LOGS:ownLog:text!="Средства за абонемент списаны!"*}<span style="color: red;">{*LOGS:ownLog:text*}</span> {?}
 
 
-
-                {*LOGS:ownLog*%}{?*LOGS:status_result*}{*LOGS:status_result*}{*LOGS:status_result*?}
-                {?*LOGS:balans<0*}<span style="color: red;">Долг: {*LOGS:balans*}</span><br/>{?}
-                </td>
+                {*LOGS:ownLog*%}{?*LOGS:status_result*}{*LOGS:status_result*}{*LOGS:status_result*?}</td>
                 <td><i>{*LOGS:subscription_program*}</i></td>
             </tr>
             {*LOGS*%}
