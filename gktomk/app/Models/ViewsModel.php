@@ -94,6 +94,16 @@ class ViewsModel
         ]);
     }
 
+    public function parseTplcode($code)
+    {
+        $W = new Websun(array(
+            'data' => self::$DATATPL,
+            'templates_root' => false,
+            'no_global_vars' => false
+        ));
+        return $W->parse_template($code);
+    }
+
     public function parse(
         $data,
         $template_path

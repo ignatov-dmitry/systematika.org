@@ -17,7 +17,6 @@ class MoyklassModel
     private static $accessTokenApi;
 
 
-
     public function __construct()
     {
         self::init();
@@ -44,7 +43,7 @@ class MoyklassModel
     /*
      * Вызывает URL API MoyClass curl
      * */
-    private function callCurlAPI($url = '', $data = array(), $method = 'POST')
+    private static function callCurlAPI($url = '', $data = [], $method = 'POST')
     {
 
 
@@ -97,7 +96,6 @@ class MoyklassModel
     }
 
 
-
     public static function getUserById($filter = ['userId' => ''])
     {
         return self::startApi('company/users/' . $filter['userId'], '', 'GET');
@@ -106,31 +104,6 @@ class MoyklassModel
     /*
      * Находит пользователя по email
      * */
-    public static function getUserByEmail($email)
-    {
-        $finds = self::getFindUsers(['email' => $email]);
-
-       // var_dump($finds);
-
-        if(!isset($finds) or $finds['stats']['totalItems'] < 1)
-            return 0;
-
-        if($finds['stats']['totalItems'] == 1){
-            return $finds['users'][0];
-        }else if($finds['stats']['totalItems'] > 1){
-            foreach ($finds['users'] as $user) {
-                if($user['email'] == $email){
-                    return $user;
-                }
-            }
-        }
-
-        return 0;
-    }
-
-    /*
-    * Производит запуск модели
-    * */
 
     private static function startApi($url = '', $data = array(), $method = 'POST')
     {
@@ -143,7 +116,42 @@ class MoyklassModel
             return 'Error access token api';
         }
 
-        return self::callCurlAPI($url, $data, $method);
+        $i = 0;
+        do{
+            $result = self::callCurlAPI($url, $data, $method);
+            if(!empty($result['code']) and $result['code']=='TooManyRequests'){
+                usleep(rand(250, 500));
+                $i = $i + 1;
+            }else
+                return $result;
+        }while($i<5);
+
+    }
+
+    /*
+    * Производит запуск модели
+    * */
+
+    public static function getUserByEmail($email)
+    {
+        $finds = self::getFindUsers(['email' => $email]);
+
+        // var_dump($finds);
+
+        if (!isset($finds) or $finds['stats']['totalItems'] < 1)
+            return 0;
+
+        if ($finds['stats']['totalItems'] == 1) {
+            return $finds['users'][0];
+        } else if ($finds['stats']['totalItems'] > 1) {
+            foreach ($finds['users'] as $user) {
+                if ($user['email'] == $email) {
+                    return $user;
+                }
+            }
+        }
+
+        return 0;
     }
 
     /*
@@ -180,18 +188,34 @@ class MoyklassModel
 
     }
 
+    public static function getFindUserByEmail($email)
+    {
+        $mk_user = self::getFindUsers(['email' => $email]);
+        // Если поиск по юзерам вернул больше 1 значения, тогда ищем первое наиболее подходящее
+
+        if (!empty($mk_user['users']) and count($mk_user['users']) > 1) {
+
+            foreach ($mk_user['users'] as $user) {
+                if ($user['email'] == $email) {
+                    return $user;
+                }
+            }
+            $mk_user = NULL; // Пользователь не найден с указанным email
+        } else {
+            $mk_user = @$mk_user['users'][0];
+        }
+        return $mk_user;
+    }
+
     /*
     * Возвращает список программ
      * includeClasses = включает в ответ список групп (классов)
     * */
-    public static function getCourses($data = ['includeClasses' => 'false'])
+
+    public static function getCourseById($courseId)
     {
-        return self::startApi('company/courses', $data, 'GET');
-    }
 
-    public static function getCourseById($courseId){
-
-        if(!isset(self::$cache['courses']['time']) or (self::$cache['courses']['time'] + 300) < time()){
+        if (!isset(self::$cache['courses']['time']) or (self::$cache['courses']['time'] + 300) < time()) {
             self::$cache['courses']['time'] = time();
             self::$cache['courses']['data'] = self::getCourses();
         }
@@ -199,23 +223,25 @@ class MoyklassModel
         $courses = self::$cache['courses']['data'];
 
         foreach ($courses as $course) {
-            if($courseId and $courseId==$course['id']){
+            if ($courseId and $courseId == $course['id']) {
                 return $course;
             }
         }
     }
 
+    public static function getCourses($data = ['includeClasses' => 'false'])
+    {
+        return self::startApi('company/courses', $data, 'GET');
+    }
+
     /*
      * Возвращает список классов (группы)
      * */
-    public static function getClasses()
+
+    public static function getClassById($classId)
     {
-        return self::startApi('company/classes', '', 'GET');
-    }
 
-    public static function getClassById($classId){
-
-        if(!isset(self::$cache['classes']['time']) or (self::$cache['classes']['time'] + 300) < time()){
+        if (!isset(self::$cache['classes']['time']) or (self::$cache['classes']['time'] + 300) < time()) {
             self::$cache['classes']['time'] = time();
             self::$cache['classes']['data'] = self::getClasses();
         }
@@ -223,10 +249,41 @@ class MoyklassModel
         $classes = self::$cache['classes']['data'];
 
         foreach ($classes as $class) {
-            if($classId and $classId==$class['id']){
+            if ($classId and $classId == $class['id']) {
                 return $class;
             }
         }
+    }
+
+    public static function getClasses()
+    {
+        return self::startApi('company/classes', '', 'GET');
+    }
+
+    public static function getClassByIdMK($classId)
+    {
+        return self::startApi('company/classes/' . $classId, '', 'GET');
+    }
+
+    public static function getManagers()
+    {
+        return self::startApi('company/managers', '', 'GET');
+    }
+
+    public static function getManagersAssoc()
+    {
+        $teachers = self::getManagers();
+        $teachersAssoc = [];
+        foreach ($teachers as $teacher) {
+            $teachersAssoc[$teacher['id']] = $teacher;
+        }
+        return $teachersAssoc;
+    }
+
+
+    public static function getManagerById($managerId)
+    {
+        return self::startApi('company/managers/' . $managerId, '', 'GET');
     }
 
     /**
@@ -255,8 +312,126 @@ class MoyklassModel
         return 0;
     }
 
-    public static function getLessonById($lesson_id, $filter = []){
+    /**
+     * Возвращает список уроков по фильтру или без него
+     * @param array $data
+     * @return array|mixed|string
+     */
+    public static function getLessons($data = [])
+    {
+        return self::startApi('company/lessons', $data, 'GET');
+    }
+
+    public static function getLessonById($lesson_id, $filter = [])
+    {
         return self::startApi('company/lessons/' . $lesson_id, $filter, 'GET');
+    }
+
+    public static function getLessonRecord($record_id)
+    {
+        return self::startApi('company/lessonRecords/' . $record_id, [], 'GET');
+    }
+
+    public static function setLessonRecord($record_id, $data = [])
+    {
+        return self::startApi('company/lessonRecords/' . $record_id, $data, 'POST');
+    }
+
+    public static function deleteLessonRecord($record_id, $data = [])
+    {
+        return self::startApi('company/lessonRecords/' . $record_id, $data, 'DELETE');
+    }
+
+
+    /**
+     * Возвращает ближайшее платное и бесплатное занятие
+     */
+    public static function getNextPaidAndFreeRecording($userId)
+    {
+        $lessons = self::getLessons(['userId' => $userId, 'includeRecords' => 'true', 'date[0]' => date('Y-m-d'), 'date[1]' => date('Y-m-d', strtotime('+1 year'))]);
+        $lessons = $lessons['lessons'];
+
+        $nextDatePaid = '';
+        $nextDateFree = '';
+
+        for ($i = 0; $i < count($lessons); $i++) {
+
+            $lesson = $lessons[$i];
+            $records = $lesson['records'];
+
+            if (date('Y-m-d H:m') > $lesson['date'].' '.$lesson['beginTime']) {
+                continue;
+            }
+
+            foreach ($records as $record) {
+                if ($record['paid'] == true) {
+                    $nextDatePaid = $lesson['date'];
+                    break;
+                }
+
+            }
+
+            foreach ($records as $record) {
+                if ($record['free'] == true) {
+                    $nextDateFree = $lesson['date'];
+                    break;
+                }
+
+            }
+        }
+
+        $nextDatePaid = (bool)$nextDatePaid ? (new \DateTime($nextDatePaid))->format('d.m.Y') : '';
+        $nextDateFree = (bool)$nextDateFree ? (new \DateTime($nextDateFree))->format('d.m.Y') : '';
+
+
+        return ['date_next_paid_lesson' => $nextDatePaid, 'date_next_free_lesson' => $nextDateFree];
+    }
+
+    /**
+     * Возвращает дату последнего и пробного занятия
+     *
+     * */
+    public static function getLessonVisitLastByUserId($userId)
+    {
+        $lessons = self::getLessons(['userId' => $userId, 'includeRecords' => 'true']);
+
+        //print_r($lessons);
+
+        $lessons = $lessons['lessons'];
+        $dataLesson = [];
+        $dataLessonTest = [];
+        $maxTimeLesson = 0;
+        $maxTimeLessonTest = 0;
+        for ($i = 0; $i < count($lessons); $i++) {
+            $lesson = $lessons[$i];
+            //echo '123';
+            $records = $lesson['records'];
+
+            foreach ($records as $record) {
+                if ($record['userId'] == $userId and $record['visit'] == true) {
+
+                    /// Вычисляем последнее занятие
+                    $dateLesson = strtotime($lesson['date']);
+                    if ($maxTimeLesson < $dateLesson) {
+                        $maxTimeLesson = $dateLesson;
+                        $dataLesson = $lesson;
+                    }
+                    /// Вычисляем занятие тестовое
+                    if ($record['userId'] == $userId and $record['visit'] == 1 and $record['test'] == 1) {
+                        $dateLessonTest = strtotime($lesson['date']);
+                        if ($maxTimeLessonTest < $dateLessonTest) {
+                            $maxTimeLessonTest = $dateLessonTest;
+                            $dataLessonTest = $lesson;
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+
+        return ['date_last_test_lesson' => $dataLessonTest, 'date_last_lesson' => $dataLesson];
     }
 
     /**
@@ -265,24 +440,25 @@ class MoyklassModel
      * @param $userId
      * @return mixed
      */
-    public static function getLessonVisitLast($userId){
-        $lessons = self::getLessons(['userId'=>$userId, 'includeRecords' => 'true']);
+    public static function getLessonVisitLast($userId)
+    {
+        $lessons = self::getLessons(['userId' => $userId, 'includeRecords' => 'true']);
 
-       // var_dump($lessons);
+        // var_dump($lessons);
 
         $lessons = $lessons['lessons'];
         $dataLesson = [];
         $maxTimeLesson = 0;
-        for ($i=0;$i<count($lessons); $i++) {
+        for ($i = 0; $i < count($lessons); $i++) {
             $lesson = $lessons[$i];
             //echo '123';
             $records = $lesson['records'];
 
             foreach ($records as $record) {
-                if($record['userId'] == $userId and $record['visit']==true){
+                if ($record['userId'] == $userId and $record['visit'] == true) {
 
                     $dateLesson = strtotime($lesson['date']);
-                    if($maxTimeLesson < $dateLesson){
+                    if ($maxTimeLesson < $dateLesson) {
                         $maxTimeLesson = $dateLesson;
                         $dataLesson = $lesson;
                     }
@@ -302,7 +478,8 @@ class MoyklassModel
      * @param $userId
      * @return mixed
      */
-    public static function getLessonVisitLastTest($userId){
+    public static function getLessonVisitLastTest($userId)
+    {
         /*$res = self::getLessons(['userId'=>$userId]);
         if(function_exists('array_key_last')){
             $last = array_key_last($res['lessons']);
@@ -312,20 +489,20 @@ class MoyklassModel
             $last_lesson = $res['lessons'][$last];
         }
         return $last_lesson;*/
-        $lessons = self::getLessons(['userId'=>$userId, 'includeRecords' => 'true']);
+        $lessons = self::getLessons(['userId' => $userId, 'includeRecords' => 'true']);
         $lessons = $lessons['lessons'];
 
         $dataLesson = [];
         $maxTimeLesson = 0;
-        for ($i=0;$i<count($lessons); $i++) {
+        for ($i = 0; $i < count($lessons); $i++) {
             $lesson = $lessons[$i];
 
             $records = $lesson['records'];
 
             foreach ($records as $record) {
-                if($record['userId'] == $userId and $record['visit']== 1 and $record['test'] == 1){
+                if ($record['userId'] == $userId and $record['visit'] == 1 and $record['test'] == 1) {
                     $dateLesson = strtotime($lesson['date']);
-                    if($maxTimeLesson < $dateLesson) {
+                    if ($maxTimeLesson < $dateLesson) {
                         $maxTimeLesson = $dateLesson;
                         $dataLesson = $lesson;
                     }
@@ -334,16 +511,6 @@ class MoyklassModel
             }
         }
         return $dataLesson;
-    }
-
-    /**
-     * Возвращает список уроков по фильтру или без него
-     * @param array $data
-     * @return array|mixed|string
-     */
-    public static function getLessons($data = [])
-    {
-        return self::startApi('company/lessons', $data, 'GET');
     }
 
     /**
@@ -365,6 +532,16 @@ class MoyklassModel
     public static function setJoins($data = ['userId', 'classId', 'statusId', 'autoJoin' => true])
     {
         return self::startApi('company/joins', $data, 'POST');
+    }
+
+    /**
+     * Редактирует заявку (запись) в группу
+     * @param array $data
+     * @return array|mixed|string
+     */
+    public static function editJoins($userId, $data = ['price', 'statusId', 'statusChangeReasonId', 'autoJoin', 'comment', 'advSourceId', 'createSourceId'])
+    {
+        return self::startApi('company/joins/'.$userId, $data, 'POST');
     }
 
     /**
@@ -450,6 +627,13 @@ class MoyklassModel
         return self::startApi('company/invoices', $filter, 'GET');
     }
 
+    /**
+     * [Справочник] Получение аттрибутов (полей) пользователя
+     * */
+    public static function getUserAttributes()
+    {
+        return self::startApi('company/userAttributes', '', 'GET');
+    }
 
 
 }

@@ -6,8 +6,11 @@ namespace GKTOMK\Models\Events;
 
 use GKTOMK\Models\Events;
 use GKTOMK\Models\HandlerHwkModel;
+use GKTOMK\Models\LessonsModel;
 use GKTOMK\Models\MissingTrialModel;
 use GKTOMK\Models\StatisticsModel;
+use GKTOMK\Models\VideorecordsModel;
+use GKTOMK\Models\WhatsappModel;
 
 class CronEvents extends Events
 {
@@ -61,7 +64,27 @@ class CronEvents extends Events
         $MissingTrial->handleMissings();
     }
 
-    
+    // Обработка отмененных занятий
+    private function cancellesson_every5minute(){
+
+    }
+
+    private function videorecords_every1minute(){
+        $VideorecordsModel = new VideorecordsModel();
+        $VideorecordsModel->cronStart();
+
+    }
+
+
+    private function whatsapp_every1minute(){
+        $WhatsappModel = new WhatsappModel();
+        $WhatsappModel->cronStart();
+    }
+
+    private function synchronizationlessons_manual(){
+        $LessonsModel = new LessonsModel();
+        $LessonsModel->setSynchronizationByDate(time(), time());
+    }
 
 
 

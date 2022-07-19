@@ -68,11 +68,11 @@ class AddclassModel
         //print_r($r);
 
 
-        $lessonId = $this->getFirstLesson($classId);
-        echo 'Занятие такое-то: ' . $lessonId;
+       // $lessonId = $this->getFirstLesson($classId);
+       // echo 'Занятие такое-то: ' . $lessonId;
 
-        $res = $this->addRecordTest($mk_user['id'], $lessonId);
-        var_dump($res);
+        //$res = $this->addRecordTest($mk_user['id'], $lessonId);
+       // var_dump($res);
 
 
         //$recordId = $this->getFirstRecordLesson($lessonId, $mk_user['id']);
@@ -86,8 +86,8 @@ class AddclassModel
      *
      *
      * */
-    private function add($userId, $classId, $statusId, $autoJoin){
-        $result = MoyklassModel::setJoins(['userId' => $userId, 'classId' => intval($classId), 'statusId' => $statusId, 'autoJoin' => $autoJoin]);
+    public function add($userId, $classId, $statusId, $autoJoin){
+        $result = MoyklassModel::setJoins(['userId' => $userId, 'classId' => intval($classId), 'statusId' => intval($statusId), 'autoJoin' => $autoJoin]);
         return $result;
     }
 
@@ -101,7 +101,7 @@ class AddclassModel
 
 
 
-    private function getFirstLesson($classId){
+    public function getFirstLesson($classId){
         $lessons = MoyklassModel::getLessons(['classId' => $classId]);
         $startDate = strtotime(0);
         foreach($lessons['lessons'] as $lesson){

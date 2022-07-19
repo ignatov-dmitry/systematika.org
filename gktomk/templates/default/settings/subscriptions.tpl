@@ -2,7 +2,7 @@
     <h6 class="border-bottom border-gray pb-2 mb-0">Список абонементов в MoyKlass</h6>
 
 
-    <table class="table table-sm">
+    <table class="table table-sm table-responsive-sm">
         <thead>
         <tr>
             <th scope="col">#</th>

@@ -6,7 +6,7 @@
     <h6 class="border-bottom border-gray pb-2 mb-0">Логи домашних заданий</h6>
 <div id="result_div"></div>
 
-    <table class="table table-sm">
+    <table class="table table-sm table-responsive-sm">
         <thead>
         <tr>
             <th scope="col">#</th>

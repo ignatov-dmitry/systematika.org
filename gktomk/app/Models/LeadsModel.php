@@ -102,7 +102,7 @@ class LeadsModel
         foreach ($users as $user) {
 
             echo $user->gk_first_name . ' загружен <br/>';
-            echo 'ID пользователя в MK:' . $user->id;
+            echo 'ID пользователя в GKMK:' . $user->id;
             echo '<br/> Статус обработки:'.$handler->handle($user->id)->getStatus();
         }
     }

@@ -26,6 +26,7 @@ class MoyklassController extends Controller
         $input = json_decode(
             file_get_contents('php://input'), true
         );
+
         $this->writeToLog($input, 'Дебаг MK. Получение данных - php/input', 'mk');
 
         if (!empty($input['event']) and ($input['event'] == 'lesson_record_new' or $input['event'] == 'lesson_record_changed') and ($input['object']['visit'] and $input['object']['visit'] == 1)) {

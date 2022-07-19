@@ -16,11 +16,6 @@ function writeToLog($data, $title = '', $logFile='log') {
 
 // Load composer
 require_once __DIR__ . '/vendor/autoload.php';
-
-
-
-
 // Подключаем конфиг
 GKTOMK\Config::init();
-
 GKTOMK\Models\Route::init();

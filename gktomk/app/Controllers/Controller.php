@@ -2,11 +2,34 @@
 
 namespace GKTOMK\Controllers;
 
+use GKTOMK\Models\MemberModel;
+
 class Controller
 {
 
     private $timer;
+    /**
+     * @var MemberModel
+     */
+    protected $Member;
+    /**
+     * @var \GKTOMK\Views\IndexView
+     */
+    protected $View;
 
+    public function __construct()
+    {
+        $this->Member = new MemberModel();
+        $this->Member->session_start();
+
+        $this->View = new \GKTOMK\Views\IndexView();
+        $this->View->setVar('URL_GK', CONFIG['url_gk']);
+
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET, POST');
+        header("Access-Control-Allow-Headers: X-Requested-With");
+
+    }
 
     public function answerAjax($data)
     {

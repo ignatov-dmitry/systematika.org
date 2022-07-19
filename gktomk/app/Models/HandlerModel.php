@@ -95,7 +95,7 @@ class HandlerModel
                 return;
             } else {
                 $this->userMk = $userCreate;
-                $this->resultHandle(['status' => 'success', 'code' => 'createuser', 'text' => 'Пользователь создан!', 'debug' => $this->userMk]);
+                $this->resultHandle(['status' => 'success', 'code' => 'createuser', 'text' => 'Пользователь создан!', 'debug' => ['userMk' => $this->userMk, 'createUser' => $userCreate]]);
 
             }
         }
@@ -125,6 +125,10 @@ class HandlerModel
     private function createUser()
     {
         $dataCreate['name'] = $this->userSys['gk_first_name'] . ' ' . $this->userSys['gk_last_name'];
+        $dataCreate['attributes'][] = [
+            'attributeId' => 2236, // Доп. поле GK USER ID
+            'value' => $this->userSys['gk_uid'],
+        ];
 
         if (!empty($this->userSys['gk_email'])) {
             $dataCreate['email'] = $this->userSys['gk_email'];
@@ -137,7 +141,8 @@ class HandlerModel
 
         //{"code":"RequestValidationError","message":"\/phone: pattern should match pattern \"^[0-9]{10,15}$\""}
         // Если номер не приняли, создаем юзера без номера
-        if ($result['code'] and $result['code'] == 'RequestValidationError') {
+        if ($result['code'] or $result['code'] == 'RequestValidationError') {
+            $this->resultHandle(['status' => 'error_createuser', 'code' => 'createuser', 'text' => 'Ошибка при создании пользователя!', 'debug' => $result]);
             unset($dataCreate['phone']);
             $result = MoyklassModel::createUser($dataCreate);
         }
@@ -217,8 +222,8 @@ class HandlerModel
         $period1 = date('Y.m.d', $nowTime);
         $period2 = date('Y.m.d', ($nowTime-$days));
 
-        $lessons = MoyklassModel::getLessons(['userId'=>$userId, 'includeRecords' => 'false', 'date[0]' => '2021.01.14',
-            'date[1]' => '2021.01.27']);
+        $lessons = MoyklassModel::getLessons(['userId'=>$userId, 'includeRecords' => 'false', 'date[0]' => $period2,
+            'date[1]' => $period1]);
 
         foreach ($lessons['lessons'] as $lesson) {
 

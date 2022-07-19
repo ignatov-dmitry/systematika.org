@@ -17,12 +17,14 @@
     "ext-curl": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "getcourse-ru/getcourse-php-sdk": "dev-master"
+    "getcourse-ru/getcourse-php-sdk": "dev-master",
+    "firebase/php-jwt": "^5.4",
+    "longman/telegram-bot": "^0.74.0"
   },
   "repositories": [
     {
       "type": "git",
-      "url": "https://github.com/getcourse-ru/GetCourse-PHP-SDK"
+      "url": "https://github.com/getcourse-ru/getcourse-php-sdk"
     }
   ],
   "autoload": {

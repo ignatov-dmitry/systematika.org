@@ -17,7 +17,7 @@
    {*LOGS*%}*/
 <div id="result_div"></div>
 
-    <table class="table table-sm">
+    <table class="table table-sm table-responsive-sm">
         <thead>
         <tr>
             <th scope="col">#</th>
