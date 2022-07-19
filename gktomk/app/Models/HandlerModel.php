@@ -54,6 +54,13 @@ class HandlerModel
         // Ищем нашего клиента в МК
         $this->loadUserMk();
 
+        // Сохраняем текущий баланс
+        $this->LeadsModel->setUser($this->userSys['id'], ['balans' => $this->userMk['balans']]);
+
+        // Добавляем пользователя в стартовую группу
+        if (!$this->stopped) // Делаем проверку на тот случай, если произошла какая-то ошибка
+            $this->addStartGroup();
+
         // Нашли абонемент
         $subscription = $this->LeadsModel->findSubscriptionByOffer($this->userSys['gk_offers']);
         // Определеяем сумму
@@ -88,12 +95,13 @@ class HandlerModel
         if (empty($this->userMk) or !isset($this->userMk['id']) or empty($this->userMk['id'])) {
             $userCreate = $this->createUser();
             if (!isset($userCreate['id']) or empty($userCreate['id'])) {
-                $this->resultHandle(['status' => 'error_createuser', 'code' => 'createuser', 'text' => 'Ошибка при создании пользователя!', 'debug' => $this->userMk]);
+                $this->resultHandle(['status' => 'error_createuser', 'code' => 'createuser', 'text' => 'Ошибка при создании пользователя!', 'debug' => $userCreate]);
                 $this->stopped = 1;
                 return;
             } else {
-                $this->resultHandle(['status' => 'success', 'code' => 'createuser', 'text' => 'Пользователь создан!', 'debug' => $this->userMk]);
                 $this->userMk = $userCreate;
+                $this->resultHandle(['status' => 'success', 'code' => 'createuser', 'text' => 'Пользователь создан!', 'debug' => $this->userMk]);
+
             }
         }
 
@@ -141,12 +149,31 @@ class HandlerModel
         ]);
 
         if (empty($result) or !isset($result['id']) or empty($result['id'])) {
-            $this->resultHandle(['status' => 'error', 'code' => 'money', 'text' => 'Ошибка при начислении средств!', 'debug' => $result]);
+            $this->resultHandle(['status' => 'error_setmoney', 'code' => 'setmoney', 'text' => 'Ошибка при начислении средств!', 'debug' => $result]);
             $this->stopped = 1;
             return;
         } else {
             $this->resultHandle(['status' => 'setmoney', 'code' => 'setmoney', 'text' => 'Денежные средства начислены!', 'debug' => $result]);
         }
+    }
+
+
+    /**
+    * Метод добавляет пользователя в стартовую группу
+     */
+    public function addStartGroup(){
+
+        // Не добавляем в группу, если функция отключена
+        if(CONFIG['startGroup'] <= 0)
+            return 0;
+
+        $result = MoyklassModel::setJoins(['userId'=>$this->userMk ['id'], 'classId'=> intval(CONFIG['startGroup']), 'statusId' => 2]);
+        if(isset($result['id']) and !empty($result['id'])){ // Успешно создано
+            $this->resultHandle(['status' => 'addstartgroup', 'code' => 'addstartgroup', 'text' => 'Добавлен в стартовую группу!', 'debug' => $result]);
+        } else { // Произошла какая-то ошибка
+            $this->resultHandle(['status' => 'error_addstartgroup', 'code' => 'addstartgroup', 'text' => 'Ошибка при добавлении в стартовую группу!', 'debug' => $result]);
+        }
+
     }
 
     /*

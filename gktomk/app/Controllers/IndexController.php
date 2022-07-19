@@ -83,7 +83,19 @@ class IndexController extends Controller
     }
 
     public function getMkClasses(){
-        return json_encode(MoyklassModel::getClasses());
+
+        $classes = MoyklassModel::getClasses();
+
+        // Убираем из списка группы которые находятся в архвие
+        for($i=0; $i<count($classes); $i++){
+            if($classes[$i]['status']==="archive"){
+                unset($classes[$i]);
+                $classes[$i] = null;
+            }
+
+        }
+        //var_dump($classes);
+       return json_encode($classes);
     }
 
     public function getMkCourses(){
@@ -110,6 +122,24 @@ class IndexController extends Controller
         if(empty($mk_user) or empty($mk_user['id'])){
             $this->answerAjax(['status'=> 'error', 'data'=>'user not found']);
         }
+
+
+        // Проверяем, есть ли клиент в стартовой группе и нужно ли его удалять оттуда
+        if(!empty(CONFIG['startGroup']) and CONFIG['startGroup'] > 0 and CONFIG['startGroup_delete']){
+            $start_join = 0;
+            foreach($mk_user['joins'] as $join){
+                if($join['classId']==CONFIG['startGroup']){
+                    $start_join = $join['id'];
+                }
+            }
+            if($start_join > 0){
+                // Удаляем из стартовой группы
+                MoyklassModel::deleteJoins(['joinId' => $start_join]);
+            }
+        }
+
+
+
 
         // Преобразуем в массив, если он не был таким
         if(isset($addclass['classId']) and !is_array($addclass['classId'])) $addclass['classId'] = [$addclass['classId']];
@@ -140,8 +170,20 @@ class IndexController extends Controller
 
        // $result = MoyklassModel::getCourses(['includeClasses'=>'true']);
 
-       // $mk_user_id = MoyklassModel::getFindUsers(['email' => 'anekrasov123@mail.ru'])['users'][0];
-       // var_dump($mk_user_id);
+        $mk_user = MoyklassModel::getFindUsers(['email' => 'anekrasov123@mail.ru'])['users'][0];
+
+        /*//var_dump($mk_user);
+        $start_join = 0;
+        foreach($mk_user['joins'] as $join){
+            if($join['classId']=='122055'){
+                $start_join = $join['id'];
+            }
+        }
+        echo 'Start join ID: '.$start_join;
+
+        $result = MoyklassModel::deleteJoins(['joinId' => $start_join]);*/
+        var_dump($mk_user);
+
        // $class = MoyklassModel::getClasses();
 
         //var_dump($class);
@@ -161,10 +203,11 @@ class IndexController extends Controller
         //$result =  MoyklassModel::getCreateSources();
        // var_dump($result);
 
-        $LeadsModel = new LeadsModel();
+
        // $LeadsModel->addLogUser(27, 'test', 'Тестовый лог', 'Информация для дебага');
 
-       var_dump($LeadsModel->getLogUser('27'));
+
+       //var_dump($LeadsModel->getLogUser('27'));
 
        // $LeadsModel->delLogUser(27);
 

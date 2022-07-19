@@ -15,7 +15,7 @@ class LogsModel
         $new_logs = [];
 
         foreach($logs as $log){
-            $log['subscription_program'] = $SyncModel->getSync(['gk_offer'=>$log['gk_offers']])[0]['program'];
+            $log['subscription_program'] = @$SyncModel->getSync(['gk_offer'=>$log['gk_offers']])[0]['program'];
 
             $new_logs[] = $log;
             //echo $log['gk_offers'];

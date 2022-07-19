@@ -44,8 +44,7 @@ class MoyklassModel
      * */
     private function callCurlAPI($url = '', $data = array(), $method = 'POST')
     {
-        if ($method == 'GET') $curl_method = CURLOPT_HTTPGET;
-        elseif ($method == 'POST') $curl_method = CURLOPT_POST;
+
 
         if (!empty($data) and $method == 'GET') {
             $query = http_build_query($data);
@@ -56,7 +55,12 @@ class MoyklassModel
         $curl = curl_init(self::$urlApi . '/' . self::$versionApi . '/' . $url);
 
         curl_setopt($curl, CURLOPT_USERAGENT, 'Integration by NekrasovOnline.RU');
-        curl_setopt($curl, $curl_method, 1);
+
+        if ($method == 'GET') curl_setopt($curl, CURLOPT_HTTPGET, 1);
+        elseif ($method == 'POST') curl_setopt($curl, CURLOPT_POST, 1);
+        else if($method == 'DELETE') curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+
 
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_HEADER, 0);
@@ -78,7 +82,7 @@ class MoyklassModel
                 */
 
         if (!empty(self::$accessTokenApi)) $headers[] = 'x-access-token: ' . self::$accessTokenApi;
-        if (!empty($data) and $method == 'POST') {
+        if (!empty($data) and ($method == 'POST' or $method == 'DELETE')) {
             $headers[] = 'Content-Type: application/json';
             $query = json_encode($data);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $query);
@@ -203,6 +207,15 @@ class MoyklassModel
      */
     public static function setJoins($data = ['userId', 'classId', 'statusId', 'autoJoin' => true]){
         return self::startApi('company/joins', $data, 'POST');
+    }
+
+    /**
+     * Удаляет заявку (запись) в группу
+     * @param array $data
+     * @return array|mixed|string
+     */
+    public static function deleteJoins($data = ['joinId']){
+        return self::startApi('company/joins/'.$data['joinId'], '', 'DELETE');
     }
 
     /**

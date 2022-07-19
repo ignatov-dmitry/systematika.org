@@ -64,6 +64,7 @@ class LeadsModel
     public function createUser($data)
     {
         $users = DB::dispense('users');
+        $users->gk_order = $data['order_id'];
         $users->gk_uid = $data['uid'];
         $users->gk_first_name = $data['first_name'];
         $users->gk_last_name = $data['last_name'];
@@ -319,6 +320,14 @@ class LeadsModel
         return DB::store($user);
     }
 
+
+    public function setUser($user_id, $data = []){
+        $user = DB::load('users', $user_id);
+        foreach($data as $key => $value){
+            $user->{$key} = $value;
+        }
+        return DB::store($user);
+    }
     /**
      * Функция добавления логов для юзера
      * */
