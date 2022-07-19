@@ -152,4 +152,8 @@ class ViewsModel
         var_dump($WEBSUN_ALLOWED_CALLBACKS);
     }
 
+    /**
+     * Выводит
+     * */
+
 }

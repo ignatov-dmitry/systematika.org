@@ -161,6 +161,15 @@ class MoyklassModel
     }
 
     /*
+    * Возвращает список программ
+     * includeClasses = включает в ответ список групп (классов)
+    * */
+    public static function getCourses($data = ['includeClasses' => 'false'])
+    {
+        return self::startApi('company/courses', $data, 'GET');
+    }
+
+    /*
      * Возвращает список классов (группы)
      * */
     public static function getClasses()
@@ -170,16 +179,46 @@ class MoyklassModel
 
     /**
      * Возвращает список уроков по фильтру или без него
-     * */
+     * @param array $data
+     * @return array|mixed|string
+     */
     public static function getLessons($data = []){
         return self::startApi('company/lessons', $data, 'GET');
     }
 
+    /**
+     * Создает новую запись на занятие
+     *
+     * @param array $data
+     * @return array|mixed|string
+     */
+    public static function setLessonRecords($data = ['userId', 'lessonId']){
+        return self::startApi('company/lessonRecords', $data, 'POST');
+    }
 
-    /*
+    /**
+     * Создает новую заявку (запись) в группу
+     * @param array $data
+     * @return array|mixed|string
+     */
+    public static function setJoins($data = ['userId', 'classId', 'statusId', 'autoJoin' => true]){
+        return self::startApi('company/joins', $data, 'POST');
+    }
+
+    /**
+     * Справочник. Возвращает список возможных способов заведения клиентов и заявок
+     *
+     * */
+    public static function getCreateSources(){
+        return self::startApi('company/createSources', '', 'GET');
+    }
+
+    /**
      * Создает новый абонемент пользователю
      * subscriptionId - ID абонемента который подключить пользователю
-     * */
+     * @param array $data
+     * @return array|mixed|string
+     */
     public static function createUserSubscriptions($data = ['userId', 'subscriptionId', 'sellDate', 'classIds', 'mainClassId'])
     {
         return self::startApi('company/userSubscriptions', $data, 'POST');

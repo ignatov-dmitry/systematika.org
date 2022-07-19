@@ -10,6 +10,8 @@ class LogsModel
         $LeadsModel = new LeadsModel();
         $SyncModel = new SyncModel();
         $logs = $LeadsModel->getAllUsers();
+
+
         $new_logs = [];
 
         foreach($logs as $log){
@@ -18,6 +20,8 @@ class LogsModel
             $new_logs[] = $log;
             //echo $log['gk_offers'];
         }
+
+       // var_dump($logs);
         return $new_logs;
     }
 

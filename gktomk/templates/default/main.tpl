@@ -10,6 +10,19 @@
 
     <title>Интеграция GetCourse и МойКласс</title>
     <script>var SETT = { URL_SITE: '{*URL_SITE*}' }; </script>
+
+    <style>
+        #notifies {
+            position:fixed;
+            width:auto;
+            height:auto;
+            min-width: 300px;
+            top:30px;
+            right:5px;
+            z-index: 9999;
+        }
+    </style>
+
 </head>
 <body style="background-color: #f5f5f5;">
 
@@ -32,7 +45,8 @@
                 <a class="nav-link dropdown-toggle" href="#" id="dropdown10" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Настройки</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown10">
                     /*<a class="dropdown-item" href="{*URL_SITE*}/sett-conn">Подключение</a>*/
-                    <a class="dropdown-item" href="{*URL_SITE*}/sett-sync">Синхронизация</a>
+                    <a class="dropdown-item" href="{*URL_SITE*}/settings/sync">Синхронизация</a>
+                    <a class="dropdown-item" href="{*URL_SITE*}/subscriptions">Список абонементов</a>
                 </div>
             </li>
         </ul>
@@ -77,6 +91,40 @@
 </script>
 
 
-<div id="informer"></div>
+<div id="notifies"></div>
+
+<script>
+    Notify = {
+        TYPE_INFO: 0,
+        TYPE_SUCCESS: 1,
+        TYPE_WARNING: 2,
+        TYPE_DANGER: 3,
+
+        generate: function (aText, aOptHeader, aOptType_int) {
+            var lTypeIndexes = [this.TYPE_INFO, this.TYPE_SUCCESS, this.TYPE_WARNING, this.TYPE_DANGER];
+            var ltypes = ['alert-info', 'alert-success', 'alert-warning', 'alert-danger'];
+            var ltype = ltypes[this.TYPE_INFO];
+
+            if (aOptType_int !== undefined && lTypeIndexes.indexOf(aOptType_int) !== -1) {
+                ltype = ltypes[aOptType_int];
+            }
+
+            var lText = '';
+            if (aOptHeader) {
+                lText += "<h4>"+aOptHeader+"</h4>";
+            }
+            lText += "<p>"+aText+"</p>";
+            var lNotify_e = $("<div class='alert "+ltype+"' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button>"+lText+"</div>");
+
+            setTimeout(function () {
+                lNotify_e.alert('close');
+            }, 3000);
+            lNotify_e.appendTo($("#notifies"));
+        }
+    };
+
+
+
+</script>
 </body>
 </html>
