@@ -25,7 +25,7 @@ class ScheduleController extends Controller
 
         $this->View->varTpl('GET_EMAIL', @$_GET['email']);
 
-       /* $email = 'test@gk.ru';
+        $email = 'test@gk.ru';
 
         if (isset($_GET['email']))
             $email = $_GET['email'];
@@ -34,8 +34,7 @@ class ScheduleController extends Controller
         $Schedule = new ScheduleModel();
         $lessons = $Schedule->getSchedule($email);
 
-
-        $this->View->varTpl('LESSONS', $lessons);*/
+        $this->View->varTpl('LESSONS', $lessons);
 
         $this->View->parseTpl('schedule/index', false)->parseTpl('schedule/main')->output();
     }
