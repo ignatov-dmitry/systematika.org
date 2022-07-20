@@ -1,2 +1,5 @@
 /.idea/
 /Apache_2.4-PHP_7.2-7.4_vhost.conf
+/gktomk/composer.lock
+/gktomk/logs
+/gktomk/vendor
