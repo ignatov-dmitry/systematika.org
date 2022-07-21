@@ -179,21 +179,23 @@ class GetcourseController extends Controller
     {
         $users = MoyklassModel::getUsersNextFreeAndPaidLessons();
 
-        $User = new User();
-        $User::setAccountName(CONFIG['gk_account_name']);
-        $User::setAccessToken(CONFIG['gk_secret_key']);
-
         foreach ($users as $key => $user) {
+            $User = new User();
+            $User::setAccountName(CONFIG['gk_account_name']);
+            $User::setAccessToken(CONFIG['gk_secret_key']);
+
+
             $userMk = MoyklassModel::getUserById(['userId' => $key]);
 
             $User = $User->setEmail($userMk['email'])
                 ->setOverwrite();
 
-            if (isset($user['date_next_paid_lesson']))
-                $User->setUserAddField(CONFIG['gk_field_next_paid_recording'], (new \DateTime($user['date_next_paid_lesson']))->format('d.m.Y'));
+            $dateNextPaidLesson = isset($user['date_next_paid_lesson']) ? (new \DateTime($user['date_next_paid_lesson']))->format('d.m.Y') : '';
+            $dateNextFreeLesson = isset($user['date_next_free_lesson']) ? (new \DateTime($user['date_next_free_lesson']))->format('d.m.Y') : '';
 
-            if (isset($user['date_next_free_lesson']))
-                $User->setUserAddField(CONFIG['gk_field_next_free_recording'], (new \DateTime($user['date_next_free_lesson']))->format('d.m.Y'));
+            $User->setUserAddField(CONFIG['gk_field_next_paid_recording'], $dateNextPaidLesson);
+            $User->setUserAddField(CONFIG['gk_field_next_free_recording'], $dateNextFreeLesson);
+
 
             try {
                 $result = $User->apiCall($action = 'add');
