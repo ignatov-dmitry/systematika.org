@@ -2,6 +2,7 @@
 
 namespace GKTOMK\Controllers;
 
+use GKTOMK\Models\GetCourse\User;
 use GKTOMK\Models\GetcourseModel;
 use GKTOMK\Models\LeadsModel;
 use GKTOMK\Models\MissingTrialModel;
@@ -174,5 +175,34 @@ class GetcourseController extends Controller
        var_dump($miss);
     }
 
+    public function getUpdateNextLessons()
+    {
+        $users = MoyklassModel::getUsersNextFreeAndPaidLessons();
+
+        $User = new User();
+        $User::setAccountName(CONFIG['gk_account_name']);
+        $User::setAccessToken(CONFIG['gk_secret_key']);
+
+        foreach ($users as $key => $user) {
+            $userMk = MoyklassModel::getUserById(['userId' => $key]);
+
+            $User = $User->setEmail($userMk['email'])
+                ->setOverwrite();
+
+            if (isset($user['date_next_paid_lesson']))
+                $User->setUserAddField(CONFIG['gk_field_next_paid_recording'], (new \DateTime($user['date_next_paid_lesson']))->format('d.m.Y'));
+
+            if (isset($user['date_next_free_lesson']))
+                $User->setUserAddField(CONFIG['gk_field_next_free_recording'], (new \DateTime($user['date_next_free_lesson']))->format('d.m.Y'));
+
+            try {
+                $result = $User->apiCall($action = 'add');
+            } catch (\Exception $e) {
+                $result = $e->getMessage();
+                var_dump($result);
+                die();
+            }
+        }
+    }
 
 }
