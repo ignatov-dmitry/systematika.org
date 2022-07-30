@@ -152,7 +152,7 @@ class ScheduleModel
         /*
          * Если указан пользователь и не указан класс, то делаем выборку по нему
          * */
-        if($mk_uid and empty($classId)){
+       if($mk_uid and empty($classId)){
             $dataMK['userId'] = $mk_uid;
         }
 

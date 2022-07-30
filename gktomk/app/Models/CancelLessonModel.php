@@ -5,6 +5,7 @@ namespace GKTOMK\Models;
 
 use DateTime;
 use GKTOMK\Models\MemberModel;
+use GKTOMK\Models\MemberModel;
 
 /**
  * Модель для системы отмены записи учеников на занятия
@@ -96,32 +97,32 @@ class CancelLessonModel
      * */
     public function countCancelLimit($memberId, $date, $class_id=0)
     {
-/*
-        // Делаем выборку занятий за последние 28 дней
-        $month_now_first_day = date('Y-m-d', (time() - (60 * 60 * 24 * 28)));
-        $month_now_last_day = date('Y-m-d');
+        /*
+                // Делаем выборку занятий за последние 28 дней
+                $month_now_first_day = date('Y-m-d', (time() - (60 * 60 * 24 * 28)));
+                $month_now_last_day = date('Y-m-d');
 
-        $lessons = MoyklassModel::getLessons([
-            'userId' => $mkUid,
-            'date[0]' => $month_now_first_day,
-            'date[1]' => $month_now_last_day
-        ]);
+                $lessons = MoyklassModel::getLessons([
+                    'userId' => $mkUid,
+                    'date[0]' => $month_now_first_day,
+                    'date[1]' => $month_now_last_day
+                ]);
 
-        $countLessonsForLastMonth = count($lessons['lessons']);
+                $countLessonsForLastMonth = count($lessons['lessons']);
 
-        // Делаем выборку всех занятий с бесплатными отменами
-        $lastcancel = $this->getCancelTypeFreeForLastMonth($memberId);
+                // Делаем выборку всех занятий с бесплатными отменами
+                $lastcancel = $this->getCancelTypeFreeForLastMonth($memberId);
 
-        $countCancelFreeLessonForLastMonth = count(DB::exportAll($lastcancel));
+                $countCancelFreeLessonForLastMonth = count(DB::exportAll($lastcancel));
 
-        // Остаток на лимите бесплатных отмен
-        $countFreeLimitCancel = $this->getCountFreeCancelByFormula(
-            $countLessonsForLastMonth,
-            $countCancelFreeLessonForLastMonth,
-            4
-        );
+                // Остаток на лимите бесплатных отмен
+                $countFreeLimitCancel = $this->getCountFreeCancelByFormula(
+                    $countLessonsForLastMonth,
+                    $countCancelFreeLessonForLastMonth,
+                    4
+                );
 
-        return $countFreeLimitCancel;*/
+                return $countFreeLimitCancel;*/
 
         return $this->getFreeCancelCountByDate($memberId, $date, $class_id);
 
@@ -198,9 +199,9 @@ class CancelLessonModel
 
 
         $lessons = MoyklassModel::getLessons([
-            'userId' => $userId,
-            'date[0]' => $month_now_first_day,
-            'date[1]' => $month_now_last_day
+                'userId' => $userId,
+                'date[0]' => $month_now_first_day,
+                'date[1]' => $month_now_last_day
             ]
         );
 
@@ -212,7 +213,7 @@ class CancelLessonModel
         foreach ($individualGroups as $individualGroup) {
             $individualGroupIds[] = $individualGroup['group_id_mk'];
         }
-        
+
         $individualActive = false;
         if($classId>0 && in_array($classId, $individualGroupIds)){
             $individualActive = true;
@@ -258,7 +259,7 @@ class CancelLessonModel
             'count_free_cancel' => $free_cancel_cnt
         ];
 
-        //print_r($result);
+        print_r($result);
 
         return $cnt_res;
 

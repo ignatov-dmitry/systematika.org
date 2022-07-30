@@ -55,7 +55,7 @@ class DB extends R
         return self::exec("DELETE FROM `{$table}` WHERE `{$key}`='{$value}'");
     }
 
-    public static function getRowByKey($table, $key, $value, $selected = [])
+    public static function getRowByKey($table, $key, $value, $selected = [], $order = '')
     {
 
         if(empty($selected) or !is_array($selected))
@@ -71,7 +71,26 @@ class DB extends R
             $keys .= ",`{$item}`";
         }
 
-        return self::getRow("SELECT {$keys} FROM `{$table}` WHERE `{$key}`=:value", ['value' => $value]);
+        return self::getRow("SELECT {$keys} FROM `{$table}` WHERE `{$key}`=:value " . $order, ['value' => $value]);
+    }
+
+    public static function getAllByKey($table, $key, $value, $selected = [])
+    {
+
+        if(empty($selected) or !is_array($selected))
+            $selected = [$key];
+
+        $keys = '`id`';
+        foreach ($selected as $item) {
+            if($item == '*'){
+                $keys = '*';
+                break;
+            }
+
+            $keys .= ",`{$item}`";
+        }
+
+        return self::getAll("SELECT {$keys} FROM `{$table}` WHERE `{$key}`=:value", ['value' => $value]);
     }
 
     public static function getOption($table, $name)

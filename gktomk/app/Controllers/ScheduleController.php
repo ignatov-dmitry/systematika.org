@@ -72,7 +72,7 @@ class ScheduleController extends Controller
 
         $Schedule = new ScheduleModel();
         $lessons = $Schedule->getSchedule($this->userData['id'], $this->mk_uid);
-        //print_r($lessons);
+        print_r($lessons);
         //echo 'Gen time schedule: '.$this->genTime('schedule');
 
         $SubscriptionsModel = new SubscriptionsModel();

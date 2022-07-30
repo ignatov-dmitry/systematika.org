@@ -73,12 +73,6 @@ class GetcourseModel
             $User->setUserAddField(CONFIG['gk_field_user_subscriptions_left_visits_group'], $data['user_subscriptions_left_visits_group']);
         }
 
-        // Следующее бесплатное занятие
-        $User->setUserAddField(CONFIG['gk_field_next_free_recording'], $data['date_next_free_lesson']);
-
-        // Следующее платное занятие
-        $User->setUserAddField(CONFIG['gk_field_next_paid_recording'], $data['date_next_paid_lesson']);
-
         try {
             $result = $User->apiCall($action = 'add');
         } catch (Exception $e) {
@@ -143,7 +137,6 @@ class GetcourseModel
     public function updateUserDateVisitByUserIdMK($userId){
         // Обновляем дату последнего пробного
         $lesson_last_test = MoyklassModel::getLessonVisitLastTest($userId);
-
         if (isset($lesson_last_test) and !empty($lesson_last_test)) {
             $date_last_lesson = @date("d.m.Y", strtotime($lesson_last_test['date']));
             $this->DataUser['date_last_test_lesson'] = $date_last_lesson;
@@ -160,11 +153,6 @@ class GetcourseModel
             $this->DataUser['date_last_lesson'] = '01.01.1970';
         }
 
-        $lessonNextPaid = MoyklassModel::getNextPaidAndFreeRecording($userId);
-        if (isset($lessonNextPaid) and !empty($lessonNextPaid)) {
-            $this->DataUser['date_next_paid_lesson'] = $lessonNextPaid['date_next_paid_lesson'];
-            $this->DataUser['date_next_free_lesson'] = $lessonNextPaid['date_next_free_lesson'];
-        }
         return $this;
     }
 

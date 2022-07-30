@@ -111,7 +111,7 @@ class WhatsappModel
 
         $programname = empty($program) ? $recordData['course_name'] : $program['name'];
         $classname = empty($class) ? $recordData['class_name'] : $class['name'];
-
+       
         //echo $recordData['record_id_mk'] . ' ' . $recordData['date'] . ' - '. $recordData['begin_time'] . ' ' .$programname . ' ' .$classname . ' - ' . $recordData['first_name'] . ' ' . $recordData['last_name'] . '      ' . $recordData['phone'] . PHP_EOL;
 
 

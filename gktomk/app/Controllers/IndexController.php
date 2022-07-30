@@ -494,5 +494,10 @@ class IndexController extends Controller
         var_dump($result);
     }
 
+    public function getManagers(){
+        $man = MoyklassModel::getManagers();
+        print_r($man);
+    }
+
 
 }

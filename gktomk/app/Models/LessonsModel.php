@@ -389,6 +389,17 @@ UNION
         return DB::exec('DELETE FROM `lessons` WHERE `date`>=:date_start && `date`<=:date_end', ['date_start' => $date_start, 'date_end' => $date_end]);
     }
 
+    /// SELECT `l`.`id`, MAX(`l`.`lesson_id_mk`), `l`.`class_id_mk`, `timestart`, MAX(`l`.`timestart`) FROM `lessons` `l` INNER JOIN (SELECT `lesson_id_mk` FROM `recordslesson` WHERE `user_id_mk`=905158 ORDER BY `id` DESC) `rl` WHERE `l`.`status`=1 && `l`.`lesson_id_mk`=`rl`.`lesson_id_mk` GROUP by `l`.`class_id_mk`
+    public function getLessonsByUserIdMKAndTime($user_id_mk, $timestart=0){
+        return DB::getAll('SELECT `l`.`id`,`rl`.`id` `rlid`, `l`.`class_id_mk`,`l`.`timestart` FROM `recordslesson` `rl` 
+                            LEFT JOIN `lessons` `l` ON `rl`.`lesson_id_mk`=`l`.`lesson_id_mk`
+                            WHERE `user_id_mk`=:user_id_mk && `l`.`status`=1
+                            GROUP BY `l`.`class_id_mk`
+                            ORDER BY  `l`.`timestart` DESC
+            ', ['user_id_mk' => $user_id_mk]);
+    }
+
+
     /*
     * Сортировка массива по дате, затем по времени
     * */
