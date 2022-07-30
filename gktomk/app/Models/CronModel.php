@@ -15,7 +15,7 @@ class CronModel
 
     public function getCronEventsActual(){
         $time = time();
-        return DB::getAll('SELECT * FROM `cronevent` WHERE `last_launch`+`period`<:time && `period`>0', ['time' => $time]);
+        return DB::getAll('SELECT * FROM `cronevent` WHERE `last_launch`+`period`<:time && `period`>0 ORDER BY `last_launch` ASC', ['time' => $time]);
     }
 
     public function setAddCronEvent($data = []){
@@ -32,6 +32,12 @@ class CronModel
         DB::store($cronevent);
     }
 
+    public function setCronByTask($task)
+    {
+        $CronEvents = new CronEvents([]);
+        $CronEvents->request['event'] = $task;
+        return $CronEvents->handle();
+    }
     /*
      * Запускает задания крона
      * */

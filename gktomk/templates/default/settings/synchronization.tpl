@@ -2,12 +2,13 @@
     <h6 class="pb-2 mb-2">
         Настройки синхронизации
         <div class="close float-right">
+            <a href="{*URL_SITE*}/subscriptions" class="btn">Список абонементов</a>
             <button type="button" class="btn btn-outline-success" onclick="sync.add.openModal();">Добавить</button>
         </div>
     </h6>
 
 
-    <table class="table table-sm" id="sync_table">
+    <table class="table table-sm table-responsive-sm" id="sync_table">
         <thead>
         <tr>
             <th scope="col">#</th>

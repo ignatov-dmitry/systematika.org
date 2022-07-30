@@ -7,12 +7,12 @@ use GKTOMK\Models\LeadsModel;
 use GKTOMK\Models\MissingTrialModel;
 use GKTOMK\Models\MoyklassModel;
 
-class GetcourseController
+class GetcourseController extends Controller
 {
 
     function __construct()
     {
-
+        parent::__construct();
     }
 
     public function main()
@@ -21,16 +21,23 @@ class GetcourseController
         // Принимаем данные и сохраняем пользователя
         $request = $_REQUEST;
         if (!empty($request['uid'])) {
+
             $LeadsModel = new LeadsModel();
 
-            // Сохраняем данные которые к нам пришли в виде пользователя
+            // Сохраняем данные которые к нам пришли в виде данных для отправки в мк
             $LeadsModel->createUser($request);
+
+            // Обновляем данные пользователя в нашей базе
+            $member_id = $this->Member->updateMemberByGkUhash($request);
+            //$this->Member->sendMemberToMoyKlassById($member_id);
 
             // Сразу запрашиваем их обработку
             $LeadsModel->cronHandlerUsers();
 
             // Запрашиваем обновление данных для пользователя
             $this->getUpdateUser($request['email']);
+
+
         }
     }
 
@@ -45,6 +52,25 @@ class GetcourseController
             ->updateUserDateVisit($email)
             ->sendUser();
         echo 'OK ' . $email;
+    }
+
+    public function getCreateMember(){
+        $member_id = $this->Member->updateMemberByGkUhash([
+            'gk_uid' => $_GET['uid'],
+            'gk_uhash' => $_GET['gk_uhash'],
+            'first_name' => $_GET['first_name'],
+            'last_name' => $_GET['last_name'],
+            'email' => $_GET['email'],
+            'phone' => $_GET['phone'],
+        ]);
+        $this->Member->sendMemberToMoyKlassById($member_id);
+    }
+
+    public function getGiveAccess(){
+        $this->Member->updateMemberByGkUhash([
+            'gk_uhash' => $_GET['gk_uhash'],
+            'access' => $_GET['access'],
+        ]);
     }
 
     /*

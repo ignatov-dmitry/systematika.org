@@ -11,19 +11,24 @@ namespace GKTOMK\Models;
 class SubscriptionsModel
 {
 
-    /*
-     * Отдает кол-во оставшихся индивидуальных абонементов у клиента
-     * */
     public function getCountSubscriptionsByEmail($email){
-
         $userMk = MoyklassModel::getUserByEmail($email);
 
         if(!isset($userMk) or !isset($userMk['email']))
             return 'mk user not found';
 
+        return $this->getCountSubscriptionsByMkUid($userMk['id']);
+    }
+    /*
+     * Отдает кол-во оставшихся индивидуальных абонементов у клиента
+     * */
+    public function getCountSubscriptionsByMkUid($mk_uid){
+
 
         // Получаем количество абонементов у клиента
-        $user_subscriptions = MoyklassModel::getUserSubscriptions(['userId' => $userMk['id'], 'statusId' => '2' , 'subscriptionId' => '24739']);
+        $user_subscriptions = MoyklassModel::getUserSubscriptions(['userId' => $mk_uid, 'statusId' => '2']);
+
+        //print_r($user_subscriptions);
 
         // Заправшиваем список индивидуальных абонементов
         $SyncModel = new SyncModel();

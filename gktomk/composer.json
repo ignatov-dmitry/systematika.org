@@ -17,7 +17,9 @@
     "ext-curl": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "getcourse-ru/getcourse-php-sdk": "dev-master"
+    "getcourse-ru/getcourse-php-sdk": "dev-master",
+    "firebase/php-jwt": "^5.4",
+    "longman/telegram-bot": "^0.74.0"
   },
   "repositories": [
     {

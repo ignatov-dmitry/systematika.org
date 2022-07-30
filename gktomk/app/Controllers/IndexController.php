@@ -5,9 +5,11 @@ namespace GKTOMK\Controllers;
 
 //use \GKTOMK\Views\IndexView;
 use GKTOMK\Models\AddclassModel;
+use GKTOMK\Models\CancelLessonModel;
 use GKTOMK\Models\EventsMoyklass;
 use GKTOMK\Models\LeadsModel;
 use GKTOMK\Models\LogsModel;
+use GKTOMK\Models\MemberModel;
 use GKTOMK\Models\MoyklassModel;
 use GKTOMK\Models\StatisticsModel;
 use GKTOMK\Models\SyncModel;
@@ -20,19 +22,16 @@ class IndexController extends Controller
 
     function __construct()
     {
-        session_start();
-        if (!empty($_GET['password']))
-            $_SESSION['password'] = $_GET['password'];
+        parent::__construct();
+        $this->Member->is_auth();
 
-        if (empty($_SESSION['password']) or !in_array($_SESSION['password'], CONFIG['admin_password'])) {
-            die('Access error! ' . $_REQUEST['password']);
-        }
+        // Устанавливаем уровень доступа
+        $this->Member->isAccess(1, true);
 
 
-        $this->View = new \GKTOMK\Views\IndexView();
 
         $this->View->setVar('PASSWORD', $_REQUEST['password']);
-        $this->View->setVar('URL_GK', CONFIG['url_gk']);
+
     }
 
     function main()
@@ -162,25 +161,6 @@ class IndexController extends Controller
                 $expName = explode("-", $class['name']);
 
                 $expName[0] = preg_replace("/[^0-9]/", '', $expName[0]);
-
-
-                /*
-                                if (isset($expName[1])) {
-                                    // echo (int)$expName[0];
-
-                                    $cnt = 0;
-                                    if(isset($data[$cours['name']][(int)$expName[0]][(int)$expName[1]])){
-                                        $cnt = count($data[$cours['name']][(int)$expName[0]][(int)$expName[1]]);
-                                    }
-                                    $cnt++;
-
-
-                                    $data[$cours['name']][(int)$expName[0]][(int)$expName[1]][$cnt] = $val;
-                                    ksort($data[$cours['name']][(int)$expName[0]]);
-                                    ksort($data[$cours['name']][(int)$expName[0]][(int)$expName[1]]);
-                                    ksort($data[$cours['name']][(int)$expName[0]][(int)$expName[1]][$cnt]);
-                                    $np2++;
-                                }*/
 
 
                 if (isset($expName[2])) {
@@ -403,6 +383,8 @@ class IndexController extends Controller
 
     }
 
+
+
     public function getTest()
     {
 
@@ -410,10 +392,36 @@ class IndexController extends Controller
         //$res = $Addclass->addClass(27, 118283);
 
 
-        $res = new EventsMoyklass(['object' => ['lessonId' => '7450211']]);
+        /*$res = new EventsMoyklass(['object' => ['lessonId' => '7450211']]);
 
 
-        $res->lesson_start_hours();
+        $res->lesson_start_hours();*/
+
+        // Получаем количество абонементов у клиента
+        /*$user_subscriptions = MoyklassModel::getUserSubscriptions(['userId' => '1029039', 'statusId' => '2' ]);
+        var_dump($user_subscriptions);*/
+
+        // Дата последнего посещения
+        //$lesson_last = MoyklassModel::getLessonVisitLast(1296039);
+
+        // Занятие пользователя
+        /*$lessons = MoyklassModel::getLessons(['userId'=>1296039, 'includeRecords' => 'true']);
+        var_dump($lessons);*/
+
+        /*$MemberModel = new MemberModel();
+        $MemberModel->updateMemberByGkUhash([
+            'gk_uid' => 105506001,
+            'gk_uhash' => '04d3ef88674a1a39d7659c5df4252d97',
+            'mk_uid' => 834428,
+            'first_name' => 'Александр',
+            'last_name' => 'Бутко',
+            'email' => 'anekrasov123@mail.ru',
+            'phone' => '79779382311',
+            'access' => 2,
+        ]);*/
+
+        /*$CancelLessonModel = new CancelLessonModel();
+        $CancelLessonModel->addCancel();*/
 
 
         /*$LeadsModel = new LeadsModel();
@@ -455,10 +463,40 @@ class IndexController extends Controller
         $userMk = MoyklassModel::getUserByEmail($user['email']);*/
 
 
-        $gk = new GetcourseController();
-        $res = $res = $gk->getUpdateUserByIdUserMk(765892); // 765892
+        /*$gk = new GetcourseController();
+        $res = $res = $gk->getUpdateUserByIdUserMk(765892); // 765892*/
+
+       // $res = MoyklassModel::getFindUserByEmail('alice85@list.ru');
+        $res = MoyklassModel::getFindUsers(['email' => 'alice85@list.ru', 'includeJoins' => 'false']);
 
         var_dump($res);
+    }
+
+    public function chatapi(){
+        $data = [
+            'phone' => '79014897145', // Телефон получателя
+            'body' => 'Привет, Андрей!', // Сообщение
+        ];
+        $json = json_encode($data); // Закодируем данные в JSON
+        // URL для запроса POST /message
+        $token = '7x8rnwicxdjlvgf8';
+        $instanceId = '316199';
+        $url = 'https://api.chat-api.com/instance'.$instanceId.'/message?token='.$token;
+        // Сформируем контекст обычного POST-запроса
+        $options = stream_context_create(['http' => [
+            'method'  => 'POST',
+            'header'  => 'Content-type: application/json',
+            'content' => $json
+        ]
+        ]);
+        // Отправим запрос
+        $result = file_get_contents($url, false, $options);
+        var_dump($result);
+    }
+
+    public function getManagers(){
+        $man = MoyklassModel::getManagers();
+        print_r($man);
     }
 
 

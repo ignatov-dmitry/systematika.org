@@ -125,10 +125,38 @@ class GetcourseModel
         return $result;
     }
 
+    public function setEmail($email){
+        $this->DataUser['email'] = $email;
+        return $this;
+    }
+
     /*
      * Обновляет дату посещений в полях ГК
      *
      * */
+    public function updateUserDateVisitByUserIdMK($userId){
+        // Обновляем дату последнего пробного
+        $lesson_last_test = MoyklassModel::getLessonVisitLastTest($userId);
+        if (isset($lesson_last_test) and !empty($lesson_last_test)) {
+            $date_last_lesson = @date("d.m.Y", strtotime($lesson_last_test['date']));
+            $this->DataUser['date_last_test_lesson'] = $date_last_lesson;
+        } else { // Если даты нет, ставим "пустое значение поля"
+            $this->DataUser['date_last_test_lesson'] = '01.01.1970';
+        }
+
+        // Дата последнего посещения урока
+        $lesson_last = MoyklassModel::getLessonVisitLast($userId);
+        if (isset($lesson_last) and !empty($lesson_last)) {
+            $date_last_lesson = @date("d.m.Y", strtotime($lesson_last['date']));
+            $this->DataUser['date_last_lesson'] = $date_last_lesson;
+        } else { // Если даты нет, ставим "пустое значение поля"
+            $this->DataUser['date_last_lesson'] = '01.01.1970';
+        }
+
+        return $this;
+    }
+
+
     public function updateUserDateVisit($email){
 
         $userMk = MoyklassModel::getUserByEmail($email);
@@ -181,6 +209,28 @@ class GetcourseModel
 
         return $this;
     }
+
+    public function updateUserSubscriptionsByUserIdMK($userId){
+        $SubscriptionModel = new SubscriptionsModel();
+        $getCountSubscriptionsByMkUid = $SubscriptionModel->getCountSubscriptionsByMkUid($userId);
+
+        if (!empty($getCountSubscriptionsByMkUid)) {
+            $this->DataUser['count_user_subscriptions'] = $getCountSubscriptionsByMkUid['all']['itemCount'];
+            $this->DataUser['user_subscriptions_left_visits'] = ($getCountSubscriptionsByMkUid['all']['visitCount'] - $getCountSubscriptionsByMkUid['all']['visitedCount']);
+            $this->DataUser['user_subscriptions_left_visits_individual'] = ($getCountSubscriptionsByMkUid['individual']['visitCount'] - $getCountSubscriptionsByMkUid['individual']['visitedCount']);
+            $this->DataUser['user_subscriptions_left_visits_group'] = ($getCountSubscriptionsByMkUid['group']['visitCount'] - $getCountSubscriptionsByMkUid['group']['visitedCount']);
+        }else{
+            $this->DataUser['count_user_subscriptions'] = 0;
+            $this->DataUser['user_subscriptions_left_visits'] = 0;
+            $this->DataUser['user_subscriptions_left_visits_individual'] = 0;
+            $this->DataUser['user_subscriptions_left_visits_group'] = 0;
+        }
+
+        return $this;
+
+    }
+
+
 
 
 

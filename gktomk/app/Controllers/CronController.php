@@ -13,10 +13,16 @@ use GKTOMK\Models\StatisticsModel;
 class CronController
 {
 
+    public function getManual($task = 'string')
+    {
+        $CronModel = new CronModel();
+        return $CronModel->setCronByTask($task);
+    }
+
     public function main()
     {
-        $LeadsModel = new LeadsModel();
-        $LeadsModel->cronHandlerUsers();
+        //$LeadsModel = new LeadsModel(); // Уже не надо, запускается сразу при необходимости
+        //$LeadsModel->cronHandlerUsers();
 
 
         // Запускам обработку пропусков
@@ -26,11 +32,6 @@ class CronController
 
         $CronModel = new CronModel();
         $CronModel->startCron();
-
-       //var_dump(  );
-
-        //var_dump(MoyklassModel::getSubscriptions());
-
 
     }
 

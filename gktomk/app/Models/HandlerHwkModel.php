@@ -210,7 +210,8 @@ class HandlerHwkModel extends HomeworkModel
         //var_dump($userMk);
 
 
-        $lesson = MoyklassModel::getLesson($this->hwkData['mk_lesson_id'], $this->hwkData['mk_user_id']);
+       // $lesson = MoyklassModel::getLesson($this->hwkData['mk_lesson_id'], $this->hwkData['mk_user_id']);
+        $lesson = MoyklassModel::getLessonById($this->hwkData['mk_lesson_id']);
 
         if (!$lesson and !$lesson['id']) {
             $this->resultHandle(['status' => 'error', 'code' => 'lesson not found', 'text' => 'Урок не найден', 'debug' => [$this->hwkData, $lesson]]);
@@ -262,6 +263,11 @@ class HandlerHwkModel extends HomeworkModel
             $this->resultHandle(['status' => 'error', 'code' => 'error update gk user', 'text' => 'Ошибка при создании пользователя в ГК', 'debug' => [$result]]);
         }
 
+
+        // Отправка сообщений вотсап
+
+
+
         return $result;
 
     }
@@ -275,6 +281,10 @@ class HandlerHwkModel extends HomeworkModel
         $this->addLogHwk($this->hwkId, @$result['code'], @$result['text'], @$result['debug']);
         $this->statusHandle = $result['status'];
         return 1;
+    }
+
+    private function sendWhatsapp(){
+
     }
 
 
