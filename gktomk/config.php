@@ -7,17 +7,10 @@ $dataConfig['mk_api_key'] = 'M6M8PdBCjAvgAry1McKmiHrmrb0n6Wu6VbvFFcGt409nSaUQOP'
 
 $dataConfig['mysql_credentials'] = [
     'host'     => 'localhost',
-    'user'     => 'root',
+    'user'     => 'systematika_gktomk',
     'database' => 'systematika_gktomk',
-    'password' => '',
+    'password' => 'vI4sQ7fR4gjG3i',
 ];
-
-//$dataConfig['mysql_credentials'] = [
-//    'host'     => 'localhost',
-//    'user'     => 'systematika_gktomk',
-//    'database' => 'systematika_gktomk',
-//    'password' => 'vI4sQ7fR4gjG3i',
-//];
 
 $dataConfig['url_site'] = 'https://systematika.org/gktomk';
 $dataConfig['tpl_name'] = 'default';
