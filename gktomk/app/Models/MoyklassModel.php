@@ -4,6 +4,7 @@
 namespace GKTOMK\Models;
 
 use GKTOMK\Config;
+use GKTOMK\Models\GetCourse\User;
 
 class MoyklassModel
 {
@@ -43,7 +44,7 @@ class MoyklassModel
     /*
      * Вызывает URL API MoyClass curl
      * */
-    private function callCurlAPI($url = '', $data = [], $method = 'POST')
+    private static function callCurlAPI($url = '', $data = [], $method = 'POST')
     {
 
 
@@ -344,6 +345,50 @@ class MoyklassModel
 
 
     /**
+     * Возвращает ближайшее платное и бесплатное занятие
+     */
+    public static function getNextPaidAndFreeRecording($userId)
+    {
+        $lessons = self::getLessons(['userId' => $userId, 'includeRecords' => 'true', 'date[0]' => date('Y-m-d'), 'date[1]' => date('Y-m-d', strtotime('+1 year'))]);
+        $lessons = $lessons['lessons'];
+
+        $nextDatePaid = '';
+        $nextDateFree = '';
+
+        for ($i = 0; $i < count($lessons); $i++) {
+
+            $lesson = $lessons[$i];
+            $records = $lesson['records'];
+
+            if (date('Y-m-d H:m') > $lesson['date'].' '.$lesson['beginTime']) {
+                continue;
+            }
+
+            foreach ($records as $record) {
+                if ($record['free'] == false) {
+                    $nextDatePaid = $lesson['date'];
+                    break;
+                }
+
+            }
+
+            foreach ($records as $record) {
+                if ($record['free'] == true) {
+                    $nextDateFree = $lesson['date'];
+                    break;
+                }
+
+            }
+        }
+
+        $nextDatePaid = (bool)$nextDatePaid ? (new \DateTime($nextDatePaid))->format('d.m.Y') : '';
+        $nextDateFree = (bool)$nextDateFree ? (new \DateTime($nextDateFree))->format('d.m.Y') : '';
+
+
+        return ['date_next_paid_lesson' => $nextDatePaid, 'date_next_free_lesson' => $nextDateFree];
+    }
+
+    /**
      * Возвращает дату последнего и пробного занятия
      *
      * */
@@ -467,6 +512,65 @@ class MoyklassModel
             }
         }
         return $dataLesson;
+    }
+
+    /** Возвращает следующее платное и бесплатное занятие для каждого ученика
+     * @return array
+     */
+    public static function getUsersNextFreeAndPaidLessons(): array
+    {
+        $count = 0;
+        $lessons = array();
+        $users = array();
+
+        do {
+            $lessonsRequest = self::getLessons([
+                'includeRecords' => 'true',
+                'date[0]'        => date('Y-m-d'),
+                'date[1]'        => date('Y-m-d', strtotime('+1 year')),
+                'limit'          => 500,
+                'offset'         => $count
+            ]);
+
+            $totalItems = $lessonsRequest['stats']['totalItems'];
+
+            $count += count($lessonsRequest['lessons']);
+
+            $lessons = array_merge($lessons, $lessonsRequest['lessons']);
+
+        } while($totalItems <> $count);
+
+
+        foreach ($lessons as $lesson) {
+            foreach ($lesson['records'] as $record) {
+
+                if ($record['free'] == false) {
+                    if (!isset($users[$record['userId']]['date_next_paid_lesson'])) {
+                        $users[$record['userId']]['date_next_paid_lesson'] = $lesson['date'];
+                    }
+
+                    else {
+                        $users[$record['userId']]['date_next_paid_lesson']
+                            = date('Y-m-d', strtotime($users[$record['userId']]['date_next_paid_lesson'])) < date('Y-m-d', strtotime($lesson['date']))
+                            ? $users[$record['userId']]['date_next_paid_lesson'] : $lesson['date'];
+                    }
+                }
+
+                if ($record['free'] == true) {
+                    if (!isset($users[$record['userId']]['date_next_free_lesson'])) {
+                        $users[$record['userId']]['date_next_free_lesson'] = $lesson['date'];
+                    }
+
+                    else {
+                        $users[$record['userId']]['date_next_free_lesson']
+                            = date('Y-m-d', strtotime($users[$record['userId']]['date_next_free_lesson'])) < date('Y-m-d', strtotime($lesson['date']))
+                            ? $users[$record['userId']]['date_next_free_lesson'] : $lesson['date'];
+                    }
+                }
+            }
+        }
+
+        return $users;
     }
 
     /**
