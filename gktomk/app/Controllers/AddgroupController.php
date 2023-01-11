@@ -152,7 +152,7 @@ class AddgroupController extends Controller
             $i++;
         }
 
-        
+
         $result = [
             'groupsync' => $getGroupSync,
             'group' => $group,
@@ -189,7 +189,7 @@ class AddgroupController extends Controller
         $AddgroupModel = new AddgroupModel();
         $ScheduleactivitylogModel = new ScheduleactivitylogModel(); // Для добавляния действия в лог
         //$result = $AddgroupModel->addJoinGroup($_POST);
-
+        $testLesson = $_POST['testLesson'];
 
         switch($_POST['periodLesson']){
 
@@ -200,9 +200,9 @@ class AddgroupController extends Controller
                 $result['addgroup'] = $AddgroupModel->editJoinGroupByClassId($userId, $classId, $statusId, $autoJoin);
 
                 if($_POST['dateLesson']=='nearest'){
-                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNearest']);
+                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNearest'], $testLesson);
                 }elseif($_POST['dateLesson']=='next'){
-                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNext']);
+                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNext'], $testLesson);
                 }
 
                 break;
@@ -218,7 +218,7 @@ class AddgroupController extends Controller
                 if($_POST['dateLesson']=='next'){ // Если записываем в группу со следующего занятия. То исключаем запись на ближайщее занятие
                     $excludeLessons[] = $_POST['idLessonNearest'];
                 }
-                $result['addlesson'] = $AddgroupModel->addRecordAllLessonByClassId($userId, $classId, $excludeLessons);
+                $result['addlesson'] = $AddgroupModel->addRecordAllLessonByClassId($userId, $classId, $excludeLessons, $testLesson);
 
 
 
@@ -235,7 +235,12 @@ class AddgroupController extends Controller
             $this->Member->getMemberId(),
             $member['id'],
             $classId,
-            ['periodlesson' => $_POST['periodLesson'], 'datelesson' => $_POST['dateLesson'], 'result' => $result]
+            [
+                'periodlesson' => $_POST['periodLesson'],
+                'datelesson' => $_POST['dateLesson'],
+                'testlesson' => $_POST['testLesson'],
+                'result' => $result
+            ]
         );
 
         return json_encode($result);

@@ -50,9 +50,9 @@ class AddgroupModel
 
     }
 
-    public function addRecordLesson($userId, $lessonId)
+    public function addRecordLesson($userId, $lessonId, $test = 0)
     {
-        return MoyklassModel::setLessonRecords(['userId' => intval($userId), 'lessonId' => intval($lessonId)]);
+        return MoyklassModel::setLessonRecords(['userId' => intval($userId), 'lessonId' => intval($lessonId), 'test' => intval($test)]);
     }
 
     public function deleteRecordLessonByLessonId($userId, $lessonId)
@@ -63,7 +63,7 @@ class AddgroupModel
     /*
      * Записывает на все будущие уроки в группе, с возможностью исключения
      * */
-    public function addRecordAllLessonByClassId($userId, $classId, $excludeLessons = [])
+    public function addRecordAllLessonByClassId($userId, $classId, $excludeLessons = [], $testLessons = 0)
     {
 
         $month_now_first_day = date('Y-m-d', time());
@@ -84,7 +84,7 @@ class AddgroupModel
             if(in_array($lesson['id'], $excludeLessons))
                 continue;
 
-            $result = $this->addRecordLesson($userId, $lesson['id']);
+            $result = $this->addRecordLesson($userId, $lesson['id'], $testLessons);
         }
         return $result;
 

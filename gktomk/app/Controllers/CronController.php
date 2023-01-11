@@ -16,7 +16,7 @@ class CronController
     public function getManual($task = 'string')
     {
         $CronModel = new CronModel();
-        return $CronModel->setCronByTask($task);
+        return $CronModel->startCronByTask($task);
     }
 
     public function main()
@@ -26,8 +26,8 @@ class CronController
 
 
         // Запускам обработку пропусков
-        $MissingTrial = new MissingTrialModel();
-        $MissingTrial->handleMissings();
+        //$MissingTrial = new MissingTrialModel();
+        //$MissingTrial->handleMissings();
 
 
         $CronModel = new CronModel();

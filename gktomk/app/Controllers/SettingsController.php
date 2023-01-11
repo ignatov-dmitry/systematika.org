@@ -318,6 +318,7 @@ class SettingsController extends Controller
             DB::setOption('systemsetting', 'whatsapp_time', $_POST['whatsapp']['time']);
             DB::setOption('systemsetting', 'whatsapp_phone', $_POST['whatsapp']['phone']);
             DB::setOption('systemsetting', 'whatsapp_debug', $_POST['whatsapp']['debug']);
+            DB::setOption('systemsetting', 'whatsapp_typeapi', $_POST['whatsapp']['typeapi']);
             $this->View->setVar('SAVE', 'true');
         }
 
@@ -326,7 +327,8 @@ class SettingsController extends Controller
             'whatsapp_message' => DB::getOption('systemsetting', 'whatsapp_message'),
             'whatsapp_time' => DB::getOption('systemsetting', 'whatsapp_time'),
             'whatsapp_phone' => DB::getOption('systemsetting', 'whatsapp_phone'),
-            'whatsapp_debug' => DB::getOption('systemsetting', 'whatsapp_debug')
+            'whatsapp_debug' => DB::getOption('systemsetting', 'whatsapp_debug'),
+            'whatsapp_typeapi' => DB::getOption('systemsetting', 'whatsapp_typeapi')
         ]);
         $this->View->parseTpl('settings/whatsapp', false)->parseTpl('main')->output();
     }

@@ -4,12 +4,14 @@
 namespace GKTOMK\Models\Events;
 
 
+use GKTOMK\Models\ChatModels\ChatAdminModel;
 use GKTOMK\Models\Events;
 use GKTOMK\Models\HandlerHwkModel;
 use GKTOMK\Models\LessonsModel;
 use GKTOMK\Models\MissingTrialModel;
 use GKTOMK\Models\StatisticsModel;
 use GKTOMK\Models\VideorecordsModel;
+use GKTOMK\Models\WebhookModel;
 use GKTOMK\Models\WhatsappModel;
 
 class CronEvents extends Events
@@ -71,7 +73,8 @@ class CronEvents extends Events
 
     private function videorecords_every1minute(){
         $VideorecordsModel = new VideorecordsModel();
-        $VideorecordsModel->cronStart();
+        $VideorecordsModel->cronAddtasks(); // Добавляем задачи в лог на сохранение видео (убрали из вебхуков)
+        $VideorecordsModel->cronStart(); // Обрабатываем задачи
 
     }
 
@@ -84,6 +87,16 @@ class CronEvents extends Events
     private function synchronizationlessons_manual(){
         $LessonsModel = new LessonsModel();
         $LessonsModel->setSynchronizationByDate(time(), time());
+    }
+
+    private function webhook_every1minute(){
+        $WebhookModel = new WebhookModel();
+        $WebhookModel->cronStart();
+    }
+
+    private function synchronizationchatmanagers_manual(){
+        $ChatAdminModel = new ChatAdminModel();
+        $ChatAdminModel->getSyncManagers();
     }
 
 

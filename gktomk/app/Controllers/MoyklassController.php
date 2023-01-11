@@ -1,11 +1,12 @@
 <?php
 
 namespace GKTOMK\Controllers;
-
+$timer = microtime(true);
 use GKTOMK\Models\EventsMoyklass;
 use GKTOMK\Models\HandlerHwkModel;
 use GKTOMK\Models\HomeworkModel;
 use GKTOMK\Models\MissingTrialModel;
+use GKTOMK\Models\WebhookModel;
 
 class MoyklassController extends Controller
 {
@@ -27,6 +28,9 @@ class MoyklassController extends Controller
             file_get_contents('php://input'), true
         );
 
+        $WebhookModel = new WebhookModel();
+        $WebhookID = $WebhookModel->editLogWebhook(['event' => $input['event'],'request' => json_encode($input), 'date_create' => time(), 'status' => 'new']);
+
         $this->writeToLog($input, 'Дебаг MK. Получение данных - php/input', 'mk');
 
         if (!empty($input['event']) and ($input['event'] == 'lesson_record_new' or $input['event'] == 'lesson_record_changed') and ($input['object']['visit'] and $input['object']['visit'] == 1)) {
@@ -42,6 +46,8 @@ class MoyklassController extends Controller
         $res = $EventMoyklass->handle();
 
         $this->writeToLog([$res], 'Event handle', 'mk');
+        $WebhookModel->editLogWebhook(['id' => $WebhookID, 'date_loaded' => time(), 'status' => 'loaded']);
+
 
     }
 
@@ -94,3 +100,6 @@ class MoyklassController extends Controller
 
 
 }
+
+$endtimer = round(microtime(true) - $timer, 4);
+@writeToLog($_SERVER, 'Webhook, время загрузки: '.$endtimer, 'webhook');

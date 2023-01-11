@@ -14,9 +14,9 @@ class VideorecordsModel
     public function getLoadOldLesson()
     {
         $lessons = MoyklassModel::getLessons([
-            'date[0]' => '2021.09.13',
-            'date[1]' => '2021.10.23',
-            'limit' => 1000,
+            'date[0]' => '2022.08.18',
+            'date[1]' => '2022.08.20',
+            'limit' => 300,
         ]);
 
         print_r($lessons);
@@ -49,6 +49,24 @@ class VideorecordsModel
     public function getAllRecords()
     {
         return DB::getAll('SELECT *, `vr`.`id` `id`, `vr`.`status` `status` FROM `videorecords` `vr`, `lessons` `l` WHERE (`vr`.`lesson_id_mk`=`l`.`lesson_id_mk`) && `timestart`<=:timenow  ORDER by `vr`.`timeend` DESC', ['timenow' => time()]);
+    }
+
+    public function getLessonsReadyLoad() // 1654030800 - это ограничение на 2022.06.01
+    {
+        return DB::getAll('SELECT `l`.`id`,`l`.`lesson_id_mk`,`l`.`date`,`l`.`end_time` FROM `lessons` `l` LEFT OUTER JOIN `videorecords` `v` ON `l`.`lesson_id_mk`=`v`.`lesson_id_mk` WHERE `l`.`timestart`<=:timestart && `l`.`timestart`>1654030800 && (`l`.`videorecord`<1 or `l`.`videorecord` is null) && `v`.`status` is null', ['timestart' => (time()-(60*60*2))]);
+    }
+
+    public function cronAddtasks()
+    {
+        $lessons = $this->getLessonsReadyLoad();
+        foreach ($lessons as $lesson) {
+            $this->editRecord([
+                'lesson_id_mk' => $lesson['lesson_id_mk'],
+                'timeend' => strtotime($lesson['date'] .' ' . $lesson['end_time']),
+                'status' => 'new',
+            ]);
+        }
+
     }
 
     public function cronStart()

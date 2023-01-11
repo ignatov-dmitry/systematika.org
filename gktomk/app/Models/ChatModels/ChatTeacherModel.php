@@ -30,13 +30,14 @@ class ChatTeacherModel extends ChatModel
     public function getLessonsByClassIdAndTime($class_id_mk, $timestart=0)
     {
         return DB::getAll('SELECT `l`.`lesson_id_mk`,`rl`.`user_id_mk`,`l`.`timestart`,`l`.`class_id_mk` FROM `lessons` `l`
-                            LEFT JOIN `recordslesson` `rl` ON `rl`.`lesson_id_mk` = `l`.`lesson_id_mk`
-                            WHERE `l`.`class_id_mk`=:class_id_mk && `rl`.`visit`=1 &&
-                            `l`.`timestart`>=:timestart
+                            INNER JOIN `recordslesson` `rl` ON `rl`.`lesson_id_mk` = `l`.`lesson_id_mk` 
+                            WHERE `l`.`class_id_mk`=:class_id_mk 
+                            && `l`.`timestart`>=:timestart && `l`.`timestart`<=:timeend
                             GROUP BY `user_id_mk`
                             ORDER BY `l`.`timestart` DESC', [
                                 'class_id_mk' => $class_id_mk,
-                                'timestart' => $timestart
+                                'timestart' => $timestart, // && `rl`.`visit`=1
+                                'timeend' => time(),
         ]);
     }
 
@@ -73,7 +74,8 @@ class ChatTeacherModel extends ChatModel
             }
             //$timestart = 0; // убрать
             $lessons = $this->getLessonsByClassIdAndTime($getClass['group_id_mk'], $timestart);
-
+            //var_dump($getClass['group_id_mk']);
+            //var_dump($timestart);
             foreach ($lessons as $lesson) {
 
 
@@ -110,15 +112,38 @@ class ChatTeacherModel extends ChatModel
                 $students[$student]['groups'][] = $datagroup;
 
             }
-            //uasort($students, '\GKTOMK\Models\ChatModels\ChatTeacherModel::cmp_desc_timestart');
+            uasort($students, '\GKTOMK\Models\ChatModels\ChatTeacherModel::cmp_desc_timestart');
             uasort($students, '\GKTOMK\Models\ChatModels\ChatTeacherModel::cmp_desc_lastmessage');
+            //uasort($students, '\GKTOMK\Models\ChatModels\ChatTeacherModel::cmp_desc_lastmessage');
 
         }
-
+        $this->setDialogsGroups($students);
         $students = array_values($students);
 
 
         return $students;
+    }
+
+    public function getTeacherDialogsOpenByManagerMemberId($manager_member_id, $date_update=0){
+        $dialogs = $this->getDialogsByManagerMemberId($manager_member_id);
+        $output = [];
+        foreach ($dialogs as $dialog) {
+            $output[$dialog['id']] = $this->getDialogInfo($dialog['id']);
+            if($output[$dialog['id']]['date_update_manager']<=$date_update){
+                unset($output[$dialog['id']]);
+            }
+        }
+        return $output;
+    }
+
+    public function setCallAdminByDialogId($dialog_id){
+        $this->setDialog($dialog_id, 'calladmin', 1);
+        return $this->setDialog($dialog_id, 'date_update_admin', time());
+    }
+
+    public function setUnCallAdminByDialogId($dialog_id){
+        $this->setDialog($dialog_id, 'calladmin', 0);
+        return $this->setDialog($dialog_id, 'date_update_manager', time());
     }
 
     function cmp_desc_timestart($a, $b){
@@ -126,10 +151,11 @@ class ChatTeacherModel extends ChatModel
             return ($a['timestart'] < $b['timestart']);
         else
             return false;
-
     }
 
     function cmp_desc_lastmessage($a, $b){
+        if($a['lastmessage_time']==$b['lastmessage_time'])
+            return false;
         return ($a['lastmessage_time'] < $b['lastmessage_time']);
     }
 

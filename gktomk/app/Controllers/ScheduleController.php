@@ -106,8 +106,8 @@ class ScheduleController extends Controller
 
         $lessonsmodel = new LessonsModel();
         $lessons = $lessonsmodel->getLessonsByUserIdMk($this->mk_uid, $this->userData['id']);
-        /*if($this->Member->isAccess(5))
-            print_r($lessons);*/
+        if($this->Member->isAccess(1) AND !empty($_GET['debug']))
+            print_r($lessons);
         //$lessonsmodel->loadLessonsUserByUserIdMK($this->mk_uid);
         //print_r($lessons);
 
@@ -188,14 +188,9 @@ class ScheduleController extends Controller
 
     public function getTest()
     {
-        /*$lessons = MoyklassModel::getLessons(['userId' => '2058990']);
-        print_r($lessons);*/
-
-        /* $lessonsmodel = new LessonsModel();
-         $lessonsmodel->getTest();*/
-        /*$lessons2 = $lessonsmodel->getLessonsByUserIdMk('2058990');
-        print_r($lessons2);*/
-        echo time();
+        $SubscriptionsModel = new SubscriptionsModel();
+        $countUserSubscriptions = $SubscriptionsModel->getCountSubscriptionsByMkUid(1720727);
+        var_dump($countUserSubscriptions);
     }
 
     public function getAjaxLoadHistory()

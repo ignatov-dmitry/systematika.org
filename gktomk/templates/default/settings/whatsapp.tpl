@@ -29,6 +29,14 @@
             <input name="whatsapp[phone]" type="text" class="form-control" placeholder="Номер (только цифры)" value="{*whatsapp_phone*}">
         </div>
         </div>
+        
+        <div class="form-group">
+            <label for="typeapi">Тип интеграции</label>
+            <select class="form-control" id="typeapi" name="whatsapp[typeapi]">
+                <option value="chatapi"{?*whatsapp_typeapi="chatapi"*} selected{?}>Chat-Api</option>
+                <option value="wazzup"{?*whatsapp_typeapi="wazzup"*} selected{?}>WAZZUP</option>
+            </select>
+        </div>
         <button type="submit" class="btn btn-primary">Сохранить</button>
     </form>
 </div>

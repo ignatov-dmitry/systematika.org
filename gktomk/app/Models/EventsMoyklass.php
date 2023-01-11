@@ -20,7 +20,7 @@ class EventsMoyklass extends Events
     }
 
     /*
-     * Общая функция для обновления данные юзера в гк
+     * Общая функция для обновления данных юзера в гк
      * */
     private function updateUserGetcourse()
     {
@@ -45,6 +45,13 @@ class EventsMoyklass extends Events
         // Сохраняем занятие в историю уроков
         $lessons = new LessonsModel();
         $lessons->editLesson($res);
+
+        // Добавляем пропуски
+        if ($this->request['object']['visit'] and $this->request['object']['visit'] == 1) {
+            // Добавляем занятие на проверку пропусков. Даелаем отметку в гк, если человек пропустил занятие
+            $MissingTrial = new MissingTrialModel();
+            $MissingTrial->addMissing($this->request['object']['lessonId']);
+        }
     }
 
     public function lesson_changed(){
@@ -77,6 +84,13 @@ class EventsMoyklass extends Events
         // Сохраняем занятие в историю уроков
         $lessons = new LessonsModel();
         $lessons->editLesson($res);
+
+        // Добавляем пропуски
+        if ($this->request['object']['visit'] and $this->request['object']['visit'] == 1) {
+            // Добавляем занятие на проверку пропусков. Даелаем отметку в гк, если человек пропустил занятие
+            $MissingTrial = new MissingTrialModel();
+            $MissingTrial->addMissing($this->request['object']['lessonId']);
+        }
     }
 
     /**
@@ -95,13 +109,13 @@ class EventsMoyklass extends Events
         $lessons = new LessonsModel();
         $lessons->editLesson($res); // Либо создает запись, либо сохраняет если записи не было
 
-        // Сохраняем задачу на сохранение видео-записи
+       /* // Сохраняем задачу на сохранение видео-записи
         $videorecords = new VideorecordsModel();
         $videorecords->editRecord([
             'lesson_id_mk' => $res['id'],
             'timeend' => strtotime($res['date'] .' ' . $res['endTime']),
             'status' => 'new',
-        ]);
+        ]);*/
 
     }
 

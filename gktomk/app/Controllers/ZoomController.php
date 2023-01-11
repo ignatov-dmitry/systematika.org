@@ -105,6 +105,7 @@ class ZoomController
     }
 
     public function getVideo(){
+		error_reporting(0);
         $video = $_GET['v'];
 
         $file = $video;

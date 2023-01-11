@@ -94,6 +94,18 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-check">
+                        <div class="row">
+                            <div class="col">
+                                <input class="form-check-input" type="checkbox" name="testLesson" id="testLesson"
+                                       value="1">
+                                <label class="form-check-label" for="testLesson">
+                                    Пробное занятие
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
 
                 </div>
                 <div class="modal-footer" style="display:none;">

@@ -47,7 +47,7 @@ const classes = {
                         el["show"] = 'Нет';
 
                     html += '<tr>\
-            <td>' + num + '</td>\
+            <td>' + el["sort"] + '</td>\
             <td>' + el["name"] + '</td>\
             <td>' + el["shortname"] + '</td>\
             <td>' + el["default"] + '</td>\

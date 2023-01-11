@@ -93,6 +93,8 @@ class MoyklassModel
         $result['body'] = $body;
         curl_close($curl);
         $data = json_decode($body, 1);
+
+
         return $data;
     }
 
@@ -109,6 +111,8 @@ class MoyklassModel
     private static function startApi($url = '', $data = array(), $method = 'POST')
     {
 
+        $time_run_start = microtime(true);
+
         self::init();
 
         if (empty(self::$accessKeyApi)) {
@@ -118,15 +122,41 @@ class MoyklassModel
         }
 
         $i = 0;
+        $results = [];
         do{
             $result = self::callCurlAPI($url, $data, $method);
+            $results[$i] = $result;
             if(!empty($result['code']) and $result['code']=='TooManyRequests'){
-                usleep(rand(250, 500));
+                 usleep(rand(250, 500));
                 $i = $i + 1;
             }else
-                return $result;
+                 break;
         }while($i<5);
 
+        self::setLogRequest([
+            'time' => time(),
+            'time_run' => round(microtime(true) - $time_run_start, 5),
+            'time_run_global' => round(microtime(true) - GLOBAL_TIMER, 5),
+            'rounds' => $i,
+            'url' => $url,
+            'method' => $method,
+            'data' => json_encode($data),
+            'results' => json_encode($results),
+            '_request' => json_encode($_REQUEST),
+            '_server' => json_encode($_SERVER),
+            '_server_request_uri' => $_SERVER['REQUEST_URI'],
+            '_server_http_referer' => $_SERVER['HTTP_REFERER'],
+        ]);
+
+        return $result;
+
+    }
+
+    public static function setLogRequest($dataLog = []){
+        //// Сохраняем в лог
+        DB::init();
+        // $url = '', $data = array(), $method = 'POST'
+        DB::edit('logmoyklass', $dataLog);
     }
 
     /*

@@ -212,7 +212,7 @@ class CancelLessonModel
         foreach ($individualGroups as $individualGroup) {
             $individualGroupIds[] = $individualGroup['group_id_mk'];
         }
-
+        
         $individualActive = false;
         if($classId>0 && in_array($classId, $individualGroupIds)){
             $individualActive = true;

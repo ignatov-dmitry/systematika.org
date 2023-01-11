@@ -24,12 +24,13 @@ class ChatModel
             'manager_member_id' => $manager_member_id,
             'banned' => 0,
             'calladmin' => 0,
+            'date_update' => time(),
         ]);
     }
 
     public function getFindDialog($manager_member_id, $client_member_id)
     {
-        $dialog = DB::getRow('SELECT `id`,`banned`,`calladmin` FROM `chatdialogs` WHERE `manager_member_id`=? && `client_member_id`=? LIMIT 1', [$manager_member_id, $client_member_id]);
+        $dialog = DB::getRow('SELECT `id`,`banned`,`calladmin`,`date_update` FROM `chatdialogs` WHERE `manager_member_id`=? && `client_member_id`=? LIMIT 1', [$manager_member_id, $client_member_id]);
         if (empty($dialog)) {
             $id = $this->createDialog($manager_member_id, $client_member_id);
             return ['id' => $id, 'banned' => 0, 'calladmin' => 0];
@@ -51,6 +52,9 @@ class ChatModel
 
     public function addMessageByMemberIdAndDialogId($from_member_id, $dialog_id, $messageData = [])
     {
+        $this->setDialog($dialog_id, 'date_update_client', time());
+        $this->setDialog($dialog_id, 'date_update_admin', time());
+        $this->setDialog($dialog_id, 'date_update_manager', time());
         return DB::edit('chatmessages', [
             'chatdialog_id' => $dialog_id,
             'from_member_id' => $from_member_id,
@@ -73,8 +77,47 @@ class ChatModel
         ]);
     }
 
-    public function getDownloadAttachmentByMessageId($message_id){
+    public function getDownloadAttachmentByMessageId($message_id)
+    {
+        $message = $this->getMessageById($message_id);
+        $attach = $this->getAttachmentById($message['attachment_id']);
+        if(!empty($attach['id'])){
+            echo $pathfile = __DIR__ . '/../../../uploads/chat/dialog_'.$attach['chatdialog_id'].'/'.$attach['realname'];
+            $res = pathinfo($pathfile);
+            $this->outputAttachFile(
+                $pathfile,
+                $attach['name']);
+        }
+    }
 
+    private function outputAttachFile($pathfile, $name)
+    {
+        if (file_exists($pathfile)) {
+            // сбрасываем буфер вывода PHP, чтобы избежать переполнения памяти выделенной под скрипт
+            // если этого не сделать файл будет читаться в память полностью!
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
+            // заставляем браузер показать окно сохранения файла
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename=' . $name);
+            header('Content-Transfer-Encoding: binary');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($pathfile));
+
+            exit(readfile($pathfile));
+        }
+    }
+
+    public function getMessageById($message_id){
+        return DB::getRowByKey('chatmessages', 'id', $message_id, ['attachment_id']);
+    }
+
+    public function getAttachmentById($attach_id){
+        return DB::getRowByKey('chatattachments', 'id', $attach_id, ['chatdialog_id', 'name', 'realname']);
     }
 
     public function getLastMessage($dialog_id)
@@ -125,18 +168,50 @@ class ChatModel
                 ];
             }
 
-            
+            $getDialog['dialog_name'] = $getDialog['manager_member']['last_name'] . ' ' .$getDialog['manager_member']['first_name']
+                . ' - ' .$getDialog['client_member']['last_name'] . ' ' . $getDialog['client_member']['first_name'];
+
+
+
+            $getDialog['dialog_id'] = $getDialog['id'];
+            $getDialog['count_unread_messages_client'] = DB::count('chatmessages', 'WHERE `read`<>1 && `chatdialog_id`=:chatdialog_id && `from_member_id`<>:client_member_id', ['chatdialog_id' => $getDialog['id'], 'client_member_id'=>$getDialog['client_member']['id']]);
+            $getDialog['count_unread_messages_manager'] = DB::count('chatmessages', 'WHERE `read`<>1 && `chatdialog_id`=:chatdialog_id && `from_member_id`=:client_member_id', ['chatdialog_id' => $getDialog['id'], 'client_member_id'=>$getDialog['client_member']['id']]);
+            $getDialog['lastmessage_time'] = DB::getRowByKey('chatmessages', 'chatdialog_id', $getDialog['id'], ['time'], 'ORDER BY `id` DESC LIMIT 1')['time'];
+
+
+
 
         }
         return $getDialog;
     }
 
-    public function setDialog($dialog_id, $param, $value)
+    public function getDialogsByClientMemberId($client_member_id){
+        return DB::getAllByKey('chatdialogs', 'client_member_id', $client_member_id, ['*']);
+    }
+
+    public function getDialogsByManagerMemberId($client_member_id){
+        return DB::getAllByKey('chatdialogs', 'manager_member_id', $client_member_id, ['*']);
+    }
+
+    public function setDialog($dialog_id, $param = null, $value = null)
     {
-        return DB::edit('chatdialogs', [
+        $data = [
             'id' => $dialog_id,
-            "{$param}" => $value
-        ]);
+            'date_update' => time(),
+        ];
+        if(!empty($param)){
+            $data[$param] = $value;
+        }
+        return DB::edit('chatdialogs', $data);
+    }
+
+    public function setReadMessagesByDialogIdAndFromId($dialog_id, $from_id){
+        //$this->setDialog($dialog_id);
+        return DB::exec('UPDATE `chatmessages` SET `read`=1 WHERE `from_member_id`<>:from_id && `chatdialog_id`=:dialog_id',
+            [
+                'dialog_id' => $dialog_id,
+                'from_id' => $from_id
+            ]);
     }
 
     public function uploadAttachment($dialog_id){

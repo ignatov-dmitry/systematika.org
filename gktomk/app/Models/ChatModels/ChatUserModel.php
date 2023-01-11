@@ -29,16 +29,17 @@ class ChatUserModel extends ChatModel
     {
         $LessonsModel = new LessonsModel();
         $lessons = $LessonsModel->getLessonsByUserIdMKAndTime($mk_uid);
-        print_r($lessons);
+        //print_r($lessons);
         $groupsUniq = [];
         $GroupsModel = new GroupsModel();
         foreach ($lessons as $lesson) {
 
             $groupsync = $GroupsModel->getGroupsyncByGroupIdMK($lesson['class_id_mk']);
-
+            //var_dump($groupsync);
             if(empty($groupsync))
                 continue;
-            print_r($groupsync);
+            //print_r($groupsync);
+            // Время, которое связь сохраняется
             if($groupsync['individual']==true){
                 $time = 60 * 60 * 24 * 365;  // Индивидуальное
             }else{
@@ -48,13 +49,13 @@ class ChatUserModel extends ChatModel
             $timestart = time() - $time;
 
             // Убираем из списка занятия, которые не подходят по фильтру
-            echo $lesson['timestart'].'--';
-            echo $timestart;
+            //echo $lesson['timestart'].'--';
+            //echo $timestart;
 
             if($lesson['timestart'] < $timestart)
                 continue;
 
-            echo 'hren';
+            //echo 'hren';
 
             $groupsUniq[] = [
                 'class_id_mk' => $lesson['class_id_mk'],
@@ -62,7 +63,7 @@ class ChatUserModel extends ChatModel
             ];
         }
 
-        print_r($groupsUniq);
+        //print_r($groupsUniq);
         return $groupsUniq;
     }
 
@@ -120,7 +121,7 @@ class ChatUserModel extends ChatModel
                     $teachersUniq[$teacher]['dialog_id'] = $getDialog['id'];
                     $teachersUniq[$teacher]['banned'] = $getDialog['banned'];
                     $teachersUniq[$teacher]['calladmin'] = $getDialog['calladmin'];
-                    $teachersUniq[$teacher]['count_unread_messages'] = DB::count('chatmessages', 'WHERE `read`<>1 && `chatdialog_id`=:chatdialog_id', ['chatdialog_id' => $getDialog['id']]);
+                    $teachersUniq[$teacher]['count_unread_messages_client'] = DB::count('chatmessages', 'WHERE `read`<>1 && `chatdialog_id`=:chatdialog_id && `from_member_id`<>:client_member_id', ['chatdialog_id' => $getDialog['id'], 'client_member_id'=>$client_member['id']]);
                     $teachersUniq[$teacher]['lastmessage_time'] = DB::getRowByKey('chatmessages', 'chatdialog_id', $getDialog['id'], ['time'], 'ORDER BY `id` DESC LIMIT 1')['time'];
 
 
@@ -140,6 +141,20 @@ class ChatUserModel extends ChatModel
 
         return $teachersUniq;
     }
+
+    public function getUserDialogsOpenByClientMemberId($client_member_id, $date_update=0){
+        $dialogs = $this->getDialogsByClientMemberId($client_member_id);
+        $output = [];
+        foreach ($dialogs as $dialog) {
+            $output[$dialog['id']] = $this->getDialogInfo($dialog['id']);
+            if($output[$dialog['id']]['date_update_manager']<=$date_update){
+                unset($output[$dialog['id']]);
+            }
+        }
+        return $output;
+    }
+
+
 
 
     private function getGroupsByUserIdMK($user_id_mk){

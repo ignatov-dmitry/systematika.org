@@ -5,6 +5,8 @@ namespace GKTOMK\Models;
 
 
 
+use GKTOMK\Models\WhatsappApi\WAZZUPAPI;
+
 class WhatsappModel
 {
 
@@ -170,6 +172,24 @@ class WhatsappModel
         $debug = DB::getOption('systemsetting', 'whatsapp_debug') ? 1 : 0;
         if($debug==true)
             $phone = DB::getOption('systemsetting', 'whatsapp_phone') ?: '79014897145';
+
+        $apitype = DB::getOption('systemsetting', 'whatsapp_typeapi');
+
+        switch ($apitype){
+            default:
+            case 'chatapi':
+                    return $this->sendApiChatapi($phone, $message);
+                break;
+
+            case 'wazzup':
+                 return $this->sendApiWazzup($phone, $message);
+                break;
+        }
+
+    }
+
+    private function sendApiChatapi($phone, $message)
+    {
         $data = [
             'phone' => $phone, // Телефон получателя
             'body' => $message, // Сообщение
@@ -191,6 +211,18 @@ class WhatsappModel
         ]);
         // Отправим запрос
         return file_get_contents($url, false, $options);
+    }
+
+    private function sendApiWazzup($phone, $message)
+    {
+        $data = [
+            'channelId' => 'a7d9355f-4d4b-452e-ad7d-d1348f64ea5f',
+            'chatType' => 'whatsapp',
+            'chatId' => $phone,
+            'text' => $message
+        ];
+        return WAZZUPAPI::sendMessage($data);
+
     }
 
 
