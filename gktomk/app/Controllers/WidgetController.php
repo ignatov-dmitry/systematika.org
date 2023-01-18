@@ -34,7 +34,6 @@ class WidgetController extends Controller
 
     public function getGo($email = 'string')
     {
-
         $users = MoyklassModel::getFindUsers(['email' => $email]);
         if (empty($users['users'][0]['id']) or $users['users'][0]['id'] < 1) {
             $this->View->parseTpl('redirect', false)->parseTpl('main')->output();
@@ -48,7 +47,6 @@ class WidgetController extends Controller
 
     public function getUserinfo($email = 'string')
     {
-
         $member = $this->Member->getMemberByEmail($email);
 
 
@@ -58,6 +56,10 @@ class WidgetController extends Controller
         }
 
         $mk_uid = $this->Member->getMemberParamMkUid($member['id']);
+
+        //заглушка для пользователя kurmaeva_marina@mail.ru нужно удалить после редактирования в базе систематики
+        if ('kurmaeva_marina@mail.ru' == mb_strtolower($email))
+            $mk_uid = 1242164;
 
         if($mk_uid == null){
             return json_encode(['status' => 'error', 'text' => 'Пользователь не найден в MoyKlass.']);

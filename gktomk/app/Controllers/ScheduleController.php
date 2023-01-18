@@ -50,6 +50,8 @@ class ScheduleController extends Controller
         $this->email = $_SESSION['email'];
         $this->userData = $this->Member->getMemberByEmail($this->email);
 
+
+
         /*if(empty($this->userData['mk_uid'])){
 
         }*/
@@ -61,6 +63,10 @@ class ScheduleController extends Controller
         $this->mk_uid = $this->Member->getMemberParamMkUid(
             $this->userData['id']
         );
+
+        //заглушка для пользователя kurmaeva_marina@mail.ru нужно удалить после редактирования в базе систематики
+        if ('kurmaeva_marina@mail.ru' == mb_strtolower(@$this->email))
+            $this->mk_uid = 1242164;
 
     }
 
