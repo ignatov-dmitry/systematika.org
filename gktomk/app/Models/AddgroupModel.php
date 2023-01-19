@@ -50,9 +50,9 @@ class AddgroupModel
 
     }
 
-    public function addRecordLesson($userId, $lessonId, $test = false)
+    public function addRecordLesson($userId, $lessonId, $test = true)
     {
-        return MoyklassModel::setLessonRecords(['userId' => intval($userId), 'lessonId' => intval($lessonId), 'test' => boolval($test)]);
+        return MoyklassModel::setLessonRecords(['userId' => intval($userId), 'lessonId' => intval($lessonId), 'test' => boolval($test), 'free' => boolval($test)]);
     }
 
     public function deleteRecordLessonByLessonId($userId, $lessonId)
@@ -63,9 +63,9 @@ class AddgroupModel
     /*
      * Записывает на все будущие уроки в группе, с возможностью исключения
      * */
-    public function addRecordAllLessonByClassId($userId, $classId, $excludeLessons = [], $testLessons = 0)
+    public function addRecordAllLessonByClassId($userId, $classId, $excludeLessons = [])
     {
-
+        $firstTestLesson = true;
         $month_now_first_day = date('Y-m-d', time());
         $month_now_last_day = date('Y-m-d', (time() + (60 * 60 * 24 * 180))); // записываем на полгода
 
@@ -80,11 +80,13 @@ class AddgroupModel
             return 'Lessons not found';
 
         $result = '';
+
         foreach ($lessons['lessons'] as $lesson) {
             if(in_array($lesson['id'], $excludeLessons))
                 continue;
 
-            $result = $this->addRecordLesson($userId, $lesson['id'], $testLessons);
+            $result = $this->addRecordLesson($userId, $lesson['id'], $firstTestLesson);
+            $firstTestLesson = false;
         }
         return $result;
 

@@ -189,7 +189,7 @@ class AddgroupController extends Controller
         $AddgroupModel = new AddgroupModel();
         $ScheduleactivitylogModel = new ScheduleactivitylogModel(); // Для добавляния действия в лог
         //$result = $AddgroupModel->addJoinGroup($_POST);
-        $testLesson = $_POST['testLesson'];
+        //$testLesson = $_POST['testLesson'];
 
         switch($_POST['periodLesson']){
 
@@ -200,9 +200,9 @@ class AddgroupController extends Controller
                 $result['addgroup'] = $AddgroupModel->editJoinGroupByClassId($userId, $classId, $statusId, $autoJoin);
 
                 if($_POST['dateLesson']=='nearest'){
-                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNearest'], $testLesson);
+                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNearest']);
                 }elseif($_POST['dateLesson']=='next'){
-                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNext'], $testLesson);
+                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNext']);
                 }
 
                 break;
@@ -210,7 +210,7 @@ class AddgroupController extends Controller
             case 'always':
 
                 $statusId = CONFIG['statusGroup']['learns']; // Статус "Учится" - id 2
-                $autoJoin = true; // Автоматически записывать на все занятие в группе
+                $autoJoin = false; // Автоматически записывать на все занятие в группе
                 $result['addgroup'] = $AddgroupModel->editJoinGroupByClassId($userId, $classId, $statusId, $autoJoin);
 
 
@@ -218,7 +218,7 @@ class AddgroupController extends Controller
                 if($_POST['dateLesson']=='next'){ // Если записываем в группу со следующего занятия. То исключаем запись на ближайщее занятие
                     $excludeLessons[] = $_POST['idLessonNearest'];
                 }
-                $result['addlesson'] = $AddgroupModel->addRecordAllLessonByClassId($userId, $classId, $excludeLessons, $testLesson);
+                $result['addlesson'] = $AddgroupModel->addRecordAllLessonByClassId($userId, $classId, $excludeLessons);
 
 
 
