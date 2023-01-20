@@ -52,7 +52,7 @@ class AddgroupModel
 
     public function addRecordLesson($userId, $lessonId, $test = true)
     {
-        return MoyklassModel::setLessonRecords(['userId' => intval($userId), 'lessonId' => intval($lessonId), 'test' => boolval($test), 'free' => boolval($test)]);
+        return MoyklassModel::setLessonRecords(['userId' => intval($userId), 'lessonId' => intval($lessonId), 'test' => boolval($test)]);
     }
 
     public function deleteRecordLessonByLessonId($userId, $lessonId)
