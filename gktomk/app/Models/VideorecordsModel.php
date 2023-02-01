@@ -46,9 +46,24 @@ class VideorecordsModel
         DB::trash('videorecords', [$recordId]);
     }
 
-    public function getAllRecords()
+    public function getAllRecords($data = [])
     {
-        return DB::getAll('SELECT *, `vr`.`id` `id`, `vr`.`status` `status` FROM `videorecords` `vr`, `lessons` `l` WHERE (`vr`.`lesson_id_mk`=`l`.`lesson_id_mk`) && `timestart`<=:timenow  ORDER by `vr`.`timeend` DESC', ['timenow' => time()]);
+        $whereCondition = '';
+        if ($data){
+            if (isset($data['meeting_topic']))
+                $whereCondition .= ' and `meeting_topic` LIKE \'%' . $data['meeting_topic'] . '%\' ';
+
+            if (isset($data['date_from']) && $data['date_from'] != '')
+                $whereCondition .= ' and `date` >= \'' . $data['date_from'] . '\' ';
+
+            if (isset($data['date_to']) && $data['date_to'] != '')
+                $whereCondition .= ' and `date` <= \'' . $data['date_to'] . '\' ';
+
+            if (isset($data['program']) && $data['program'] !== '')
+                $whereCondition .= ' and `course_id_mk` = \'' . $data['program'] . '\' ';
+        }
+
+        return DB::getAll('SELECT *, `vr`.`id` `id`, `vr`.`status` `status` FROM `videorecords` `vr`, `lessons` `l` WHERE (`vr`.`lesson_id_mk`=`l`.`lesson_id_mk`) && `timestart`<=:timenow ' . $whereCondition . ' ORDER by `vr`.`timeend` DESC', ['timenow' => time()]);
     }
 
     public function getLessonsReadyLoad() // 1654030800 - это ограничение на 2022.06.01

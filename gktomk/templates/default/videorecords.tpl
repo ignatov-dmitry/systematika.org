@@ -1,7 +1,46 @@
 <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Логи сохранения видео-записей занятий</h6>
     <div id="result_div"></div>
-
+    <form method="GET">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="date_from">Начальная дата</label>
+                        <input type="date" class="form-control" name="date_from" id="date_from" value="{*date_from*}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="date_to">Конечная дата</label>
+                        <input type="date" class="form-control" name="date_to" id="date_to" value="{*date_to*}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="program">Программа</label>
+                        <select class="form-control" name="program" id="program">
+                            <option value="">--Выберите программу--</option>
+                            {%*PROGRAMS*}
+                            <option value="{*PROGRAMS:id*}">{*PROGRAMS:name*}</option>
+                            {*PROGRAMS*%}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="meeting_topic">Название видео</label>
+                        <input class="form-control" type="text" name="meeting_topic" id="meeting_topic" value="{*meeting_topic*}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">Найти</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
     <table class="table table-sm table-responsive-sm">
         <thead>
         <tr>

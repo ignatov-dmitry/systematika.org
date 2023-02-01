@@ -4,6 +4,7 @@
 namespace GKTOMK\Controllers;
 
 
+use GKTOMK\Models\GroupsModel;
 use GKTOMK\Models\VideorecordsModel;
 use GKTOMK\Models\ZoomModel;
 
@@ -16,11 +17,13 @@ class VideorecordsController extends Controller
     }
 
     public function main(){
-
         $VideorecordsModel = new VideorecordsModel();
-        $logs = $VideorecordsModel->getAllRecords();
+        $logs = $VideorecordsModel->getAllRecords($_GET);
+        $programs = (new GroupsModel())->getGroups();
         //print_r($logs);
         $this->View->setVar('LOGS', $logs);
+        $this->View->setVar('PROGRAMS', $programs);
+        $this->View->setVars($_GET);
         $this->View->parseTpl('videorecords', false)->parseTpl('main')->output();
     }
 
@@ -45,7 +48,7 @@ class VideorecordsController extends Controller
     }
 
     public function getView(int $lesson_id){
-        
+
     }
 
     /*

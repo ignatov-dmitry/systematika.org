@@ -1,4 +1,7 @@
 <?php
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 define('GLOBAL_TIMER', microtime(true));
 ini_set('pcre.backtrack_limit', 1024*1024*5);
 
