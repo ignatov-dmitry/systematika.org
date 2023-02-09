@@ -382,37 +382,39 @@ class MoyklassModel
         $lessons = self::getLessons(['userId' => $userId, 'includeRecords' => 'true', 'date[0]' => date('Y-m-d'), 'date[1]' => date('Y-m-d', strtotime('+1 year'))]);
         $lessons = $lessons['lessons'];
 
-        $nextDatePaid = '';
-        $nextDateFree = '';
+        $nextDatePaid = '9999-12-31';
+        $nextDateFree = '9999-12-31';
 
         for ($i = 0; $i < count($lessons); $i++) {
 
             $lesson = $lessons[$i];
             $records = $lesson['records'];
 
+
             if (date('Y-m-d H:m') > $lesson['date'].' '.$lesson['beginTime']) {
                 continue;
             }
 
             foreach ($records as $record) {
-                if ($record['free'] == false) {
+                if ($record['free'] == false && $nextDatePaid > $lesson['date']) {
                     $nextDatePaid = $lesson['date'];
-                    break;
+                    //break;
                 }
 
             }
 
             foreach ($records as $record) {
-                if ($record['free'] == true) {
+                if ($record['free'] == true && $nextDatePaid > $lesson['date']) {
                     $nextDateFree = $lesson['date'];
-                    break;
+                    //break;
                 }
 
             }
         }
 
-        $nextDatePaid = (bool)$nextDatePaid ? (new \DateTime($nextDatePaid))->format('d.m.Y') : '';
-        $nextDateFree = (bool)$nextDateFree ? (new \DateTime($nextDateFree))->format('d.m.Y') : '';
+
+        $nextDatePaid = $nextDatePaid !== '9999-12-31' ? (new \DateTime($nextDatePaid))->format('d.m.Y') : '';
+        $nextDateFree = $nextDateFree !== '9999-12-31' ? (new \DateTime($nextDateFree))->format('d.m.Y') : '';
 
 
         return ['date_next_paid_lesson' => $nextDatePaid, 'date_next_free_lesson' => $nextDateFree];

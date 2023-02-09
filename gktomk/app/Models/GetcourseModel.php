@@ -212,6 +212,12 @@ class GetcourseModel
             $this->DataUser['date_last_skip_lesson'] = '01.01.1970';
         }
 
+        $lessonNextPaid = MoyklassModel::getNextPaidAndFreeRecording($userMk['id']);
+        if (isset($lessonNextPaid) and !empty($lessonNextPaid)) {
+            $this->DataUser['date_next_paid_lesson'] = $lessonNextPaid['date_next_paid_lesson'];
+            $this->DataUser['date_next_free_lesson'] = $lessonNextPaid['date_next_free_lesson'];
+        }
+
         return $this;
     }
 
