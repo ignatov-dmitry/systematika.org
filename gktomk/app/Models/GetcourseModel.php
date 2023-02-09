@@ -79,6 +79,11 @@ class GetcourseModel
         // Следующее платное занятие
         $User->setUserAddField(CONFIG['gk_field_next_paid_recording'], $data['date_next_paid_lesson']);
 
+        // Дата последнего пропуска занятия
+        if(isset($data['date_last_skip_lesson'])){
+            $User->setUserAddField(CONFIG['gk_field_date_skip_lesson'], $data['date_last_skip_lesson']);
+        }
+
         try {
             $result = $User->apiCall($action = 'add');
         } catch (Exception $e) {
@@ -196,6 +201,15 @@ class GetcourseModel
             $this->DataUser['date_last_lesson'] = $date_last_lesson;
         } else { // Если даты нет, ставим "пустое значение поля"
             $this->DataUser['date_last_lesson'] = '01.01.1970';
+        }
+
+        // Дата последнего пропуска урока
+        $lesson_last = MoyklassModel::getLessonSkipLast($userMk['id']);
+        if (isset($lesson_last) and !empty($lesson_last)) {
+            $date_last_skip_lesson = @date("d.m.Y", strtotime($lesson_last['date']));
+            $this->DataUser['date_last_skip_lesson'] = $date_last_skip_lesson;
+        } else { // Если даты нет, ставим "пустое значение поля"
+            $this->DataUser['date_last_skip_lesson'] = '01.01.1970';
         }
 
         return $this;

@@ -504,6 +504,44 @@ class MoyklassModel
     }
 
     /**
+     * Возвращает последнее занятие для пользователя
+     *
+     * @param $userId
+     * @return mixed
+     */
+    public static function getLessonSkipLast($userId)
+    {
+        $lessons = self::getLessons(['userId' => $userId, 'includeRecords' => 'true', 'date[0]' => '01.01.1970', 'date[1]' => date("Y-m-d")]);
+
+        // var_dump($lessons);
+
+        $lessons = $lessons['lessons'];
+        $dataLesson = [];
+        $maxTimeLesson = 0;
+        for ($i = 0; $i < count($lessons); $i++) {
+            $lesson = $lessons[$i];
+            //echo '123';
+            $records = $lesson['records'];
+
+            foreach ($records as $record) {
+                if ($record['userId'] == $userId and $record['visit'] == false) {
+
+                    $dateLesson = strtotime($lesson['date']);
+                    if ($maxTimeLesson < $dateLesson) {
+                        $maxTimeLesson = $dateLesson;
+                        $dataLesson = $lesson;
+                    }
+
+                }
+
+            }
+        }
+
+
+        return $dataLesson;
+    }
+
+    /**
      * Возвращает последнее пробное занятие для пользователя
      *
      * @param $userId

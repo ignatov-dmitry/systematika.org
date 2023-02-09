@@ -96,7 +96,7 @@ class MissingTrialModel
             $GetCourse->init([
                 'email' => $userMk['email'],
                 'fields' => [
-                    CONFIG['gk_field_date_missing_test'] => date("d.m.Y", strtotime($lesson['date']))
+                    CONFIG['gk_field_date_missing_free_test'] => date("d.m.Y", strtotime($lesson['date']))
                 ]
             ])->send();
 
