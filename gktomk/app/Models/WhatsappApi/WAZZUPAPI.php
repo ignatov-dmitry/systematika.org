@@ -8,7 +8,7 @@ class WAZZUPAPI
     }
 
     public static function sendMessage($data = []){
-        return self::call('send_message', $data, 'POST');
+        return self::call('message', $data, 'POST');
     }
 
     public static function call($url, $data = [], $method = 'GET')
@@ -23,7 +23,7 @@ class WAZZUPAPI
         }
 
 
-        $urlApi = 'https://api.wazzup24.com/v2/';
+        $urlApi = 'https://api.wazzup24.com/v3/';
         $url = $urlApi . $url;
 
 
@@ -41,9 +41,9 @@ class WAZZUPAPI
 
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 120);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 0);
 
-        $headers[] = 'Authorization: Basic f294fd023cc24a5e951f12804be8058f';
+        $headers[] = 'Authorization: Bearer 9622bc6972d044c791f98dba68c1b752';
         if (!empty($data) and ($method == 'POST' or $method == 'DELETE')) {
             $headers[] = 'Content-Type: application/json';
             $query = json_encode($data);
