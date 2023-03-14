@@ -45,8 +45,8 @@ class MoyKlass extends SystematikaClient
         if (!empty($data) and $method == 'GET') {
             $query = urldecode(http_build_query($data));
             $url .= '?' . $query;
-            $url = str_replace('date[0]', 'date[]', $url);
-            $url = str_replace('date[1]', 'date[]', $url);
+            $url = str_replace('[0]', '', $url);
+            $url = str_replace('[1]', '', $url);
         }
 
 
@@ -63,10 +63,10 @@ class MoyKlass extends SystematikaClient
         if (!empty($data)) {
             $query = urldecode(http_build_query($data));
             $url .= '?' . $query;
-            $url = str_replace('date[0]', 'date[]', $url);
-            $url = str_replace('date[1]', 'date[]', $url);
+            $url = str_replace('[0]', '', $url);
+            $url = str_replace('[1]', '', $url);
         }
-
+        //var_dump($url);echo '<br>';
         self::$URLs[$group][] = array(
             'url'    => self::$urlApi . self::$versionApi . '/' . $url,
             'method' => $method
@@ -151,19 +151,54 @@ class MoyKlass extends SystematikaClient
         return self::callAPI('company/courses', $data, 'GET');
     }
 
-    public function insertApiDataToDB($function, $tableName, $async = false, $jsonField = '', $url = '')
+    public function insertApiDataToDB($function, $tableName, $async = false, $jsonField = '', $url = '', $clean = false)
     {
         $start = microtime(true);
 
-        $TotalItems = ($this->$function(['limit' => 1]))['stats']['totalItems'];
         $items = array();
         $keys = array();
         $limit = 500;
 
+        if ($clean){
+            DB::exec('truncate table ' . $tableName . ';');
+        }
         if ($async)
         {
-            for ($i = 0; $i < $TotalItems; $i += $limit) {
-                $this->addAsyncRoute($url, ['limit' => $limit, 'offset' => $i], 'GET');
+            $filterData = array(
+                'limit' => $limit,
+                'offset' => 0,
+                'sort' => 'id',
+                'sortDirection' => 'asc'
+            );
+            $lastRecord = DB::getRow('SELECT * FROM ' . $tableName . ' ORDER BY id DESC LIMIT 1');
+            if ($lastRecord && !in_array($function, ['getLessonRecords', 'getLessons', 'getUserSubscriptions']) && !$clean){
+                $lastCreateDate = date('Y-m-d', strtotime($lastRecord['createdAt']));
+                $filterData['createdAt[0]'] = $lastCreateDate;
+                $filterData['createdAt[1]'] = date('Y-m-d');
+
+                $TotalItems = ($this->$function(['limit' => 1, 'createdAt[0]' => $lastCreateDate, 'createdAt[1]' => date('Y-m-d')]))['stats']['totalItems'];
+            }
+            elseif ($lastRecord && in_array($function, ['getLessonRecords', 'getLessons']) && !$clean) {
+                $filterData['date[0]'] = date('Y-m-d', strtotime(date('Y-m-d') . '-4 days'));
+                $filterData['date[1]'] = date('Y-m-d');
+                $TotalItems = ($this->$function(['limit' => 1, 'date[0]' => $filterData['date[0]'], 'date[1]' => $filterData['date[1]']]))['stats']['totalItems'];
+            }
+            elseif ($lastRecord && $function == 'getUserSubscriptions' && !$clean) {
+                $filterData['sellDate[0]'] = date('Y-m-d', strtotime(date('Y-m-d') . '-4 days'));
+                $filterData['sellDate[1]'] = date('Y-m-d');
+                $TotalItems = ($this->$function(['limit' => 1, 'sellDate[0]' => $filterData['sellDate[0]'], 'sellDate[1]' => $filterData['sellDate[1]']]))['stats']['totalItems'];
+            }
+            else {
+                $TotalItems = ($this->$function(['limit' => 1]))['stats']['totalItems'];
+            }
+
+
+            for ($offset = 0; $offset < $TotalItems; $offset += $limit) {
+                if ($TotalItems < $offset)
+                    $offset = $TotalItems;
+
+                $filterData['offset'] = $offset;
+                $this->addAsyncRoute($url, $filterData, 'GET');
             }
 
             $data = $this->runAsyncRoute($url);
