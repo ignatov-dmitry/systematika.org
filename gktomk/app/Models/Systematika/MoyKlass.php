@@ -116,41 +116,6 @@ class MoyKlass extends SystematikaClient
         return $data;
     }
 
-    public function getUsers($filter = [])
-    {
-        return self::callAPI('company/users/', $filter, 'GET');
-    }
-
-    public function getLessons($data = [])
-    {
-        return self::callAPI('company/lessons', $data, 'GET');
-    }
-
-    public function getLessonRecords($data = [])
-    {
-        return self::callAPI('company/lessonRecords', $data, 'GET');
-    }
-
-    public function getClasses($data = [])
-    {
-        return self::callAPI('company/classes', $data, 'GET');
-    }
-
-    public function getSubscriptions($data = [])
-    {
-        return self::callAPI('company/subscriptions', $data, 'GET');
-    }
-
-    public function getUserSubscriptions($data = [])
-    {
-        return self::callAPI('company/userSubscriptions', $data, 'GET');
-    }
-
-    public function getCourses($data = [])
-    {
-        return self::callAPI('company/courses', $data, 'GET');
-    }
-
     public function insertApiDataToDB($function, $tableName, $async = false, $jsonField = '', $url = '', $clean = false)
     {
         $start = microtime(true);
@@ -224,5 +189,40 @@ class MoyKlass extends SystematikaClient
         $sql = DB::getInstance()->prepareBulkInsert($tableName, $keys, $items, true);
         DB::exec($sql);
         echo 'Время выполнения скрипта для : "' . $url . '" ' . round(microtime(true) - $start, 4) . ' сек.<br>';
+    }
+
+    public function getUsers($filter = [])
+    {
+        return self::callAPI('company/users/', $filter, 'GET');
+    }
+
+    public function getLessons($data = [])
+    {
+        return self::callAPI('company/lessons', $data, 'GET');
+    }
+
+    public function getLessonRecords($data = [])
+    {
+        return self::callAPI('company/lessonRecords', $data, 'GET');
+    }
+
+    public function getClasses($data = [])
+    {
+        return self::callAPI('company/classes', $data, 'GET');
+    }
+
+    public function getSubscriptions($data = [])
+    {
+        return self::callAPI('company/subscriptions', $data, 'GET');
+    }
+
+    public function getUserSubscriptions($data = [])
+    {
+        return self::callAPI('company/userSubscriptions', $data, 'GET');
+    }
+
+    public function getCourses($data = [])
+    {
+        return self::callAPI('company/courses', $data, 'GET');
     }
 }
