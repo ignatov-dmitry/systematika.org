@@ -49,6 +49,32 @@ class VideorecordsModel
     public function getAllRecords($data = [])
     {
         $whereCondition = '';
+        $offset = 0;
+        if ($data){
+            if (isset($data['meeting_topic']))
+                $whereCondition .= ' and `meeting_topic` LIKE \'%' . $data['meeting_topic'] . '%\' ';
+
+            if (isset($data['date_from']) && $data['date_from'] != '')
+                $whereCondition .= ' and `date` >= \'' . $data['date_from'] . '\' ';
+
+            if (isset($data['date_to']) && $data['date_to'] != '')
+                $whereCondition .= ' and `date` <= \'' . $data['date_to'] . '\' ';
+
+            if (isset($data['program']) && $data['program'] !== '')
+                $whereCondition .= ' and `course_id_mk` = \'' . $data['program'] . '\' ';
+
+            if (isset($data['page']) && $data['page'] !== ''){
+
+                $offset = $data['offset'];
+            }
+        }
+
+        return DB::getAll('SELECT *, `vr`.`id` `id`, `vr`.`status` `status` FROM `videorecords` `vr` LEFT JOIN `lessons` `l` ON (`vr`.`lesson_id_mk`=`l`.`lesson_id_mk`) WHERE `timestart`<=:timenow ' . $whereCondition . ' ORDER by `vr`.`timeend` DESC LIMIT ' . $data['limit'] . ' OFFSET ' . $offset, ['timenow' => time()]);
+    }
+
+    public function getCountRecords($data = [])
+    {
+        $whereCondition = '';
         if ($data){
             if (isset($data['meeting_topic']))
                 $whereCondition .= ' and `meeting_topic` LIKE \'%' . $data['meeting_topic'] . '%\' ';
@@ -63,7 +89,9 @@ class VideorecordsModel
                 $whereCondition .= ' and `course_id_mk` = \'' . $data['program'] . '\' ';
         }
 
-        return DB::getAll('SELECT *, `vr`.`id` `id`, `vr`.`status` `status` FROM `videorecords` `vr`, `lessons` `l` WHERE (`vr`.`lesson_id_mk`=`l`.`lesson_id_mk`) && `timestart`<=:timenow ' . $whereCondition . ' ORDER by `vr`.`timeend` DESC', ['timenow' => time()]);
+        $result = DB::getRow('SELECT COUNT(`vr`.`id`) as count FROM `videorecords` `vr` LEFT JOIN `lessons` `l` ON (`vr`.`lesson_id_mk`=`l`.`lesson_id_mk`) WHERE `timestart`<=:timenow ' . $whereCondition . ' ORDER by `vr`.`timeend` DESC ', ['timenow' => time()]);
+
+        return $result['count'];
     }
 
     public function getLessonsReadyLoad() // 1654030800 - это ограничение на 2022.06.01

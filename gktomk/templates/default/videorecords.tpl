@@ -63,7 +63,7 @@
         {*LOGS*%}
         </tbody>
     </table>
-
+{*PAGINATION*}
 </div>
 
 

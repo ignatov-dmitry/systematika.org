@@ -4,6 +4,7 @@
 namespace GKTOMK\Controllers;
 
 
+use GKTOMK\Classes\Pagination;
 use GKTOMK\Models\GroupsModel;
 use GKTOMK\Models\VideorecordsModel;
 use GKTOMK\Models\ZoomModel;
@@ -17,12 +18,27 @@ class VideorecordsController extends Controller
     }
 
     public function main(){
+        $args = $_GET;
+        $args['page'] = '{page}';
         $VideorecordsModel = new VideorecordsModel();
-        $logs = $VideorecordsModel->getAllRecords($_GET);
+
+
+        $pagination = new Pagination();
+        $pagination->total = $VideorecordsModel->getCountRecords($args);
+        $pagination->page = $_GET['page'] ?: 1;
+        $pagination->limit = 10;
+        $pagination->url = 'videorecords?' . http_build_query($args);
+
+        $args['limit'] = $pagination->limit;
+        $args['offset'] = $pagination->limit * ($pagination->page - 1);
+
+        $logs = $VideorecordsModel->getAllRecords($args);
+
         $programs = (new GroupsModel())->getGroups();
         //print_r($logs);
         $this->View->setVar('LOGS', $logs);
         $this->View->setVar('PROGRAMS', $programs);
+        $this->View->setVar('PAGINATION', $pagination->render());
         $this->View->setVars($_GET);
         $this->View->parseTpl('videorecords', false)->parseTpl('main')->output();
     }
