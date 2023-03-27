@@ -1,18 +1,19 @@
 <?php
 
 
-namespace GKTOMK\Models\Systematika;
+namespace GKTOMK\Classes\Api;
 
 
 use GKTOMK\Config;
 use GKTOMK\Models\DB;
+use GKTOMK\Models\Systematika\Model;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 
-class MoyKlass extends SystematikaClient
+class MoyKlass
 {
     private static string $urlApi = 'https://api.moyklass.com/';
     private static string $versionApi = 'v1';
@@ -170,7 +171,7 @@ class MoyKlass extends SystematikaClient
 
             foreach ($data as $response)
             {
-                foreach (DB::getColumnValues($response[$jsonField], DB::getInstance()->getTableColumn($tableName)) as $item) {
+                foreach (Model::getColumnValues($response[$jsonField], Model::getInstance()->getTableColumn($tableName)) as $item) {
                     $keys = array_keys($item);
                     $items[] = $item;
                 }
@@ -179,14 +180,14 @@ class MoyKlass extends SystematikaClient
 
         else {
             $data = $this->$function();
-            foreach (DB::getColumnValues($data, DB::getInstance()->getTableColumn($tableName)) as $item) {
+            foreach (Model::getColumnValues($data, Model::getInstance()->getTableColumn($tableName)) as $item) {
                 $keys = array_keys($item);
                 $items[] = $item;
             }
         }
 
 
-        $sql = DB::getInstance()->prepareBulkInsert($tableName, $keys, $items, true);
+        $sql = Model::getInstance()->prepareBulkInsert($tableName, $keys, $items, true);
         DB::exec($sql);
         echo 'Время выполнения скрипта для : "' . $url . '" ' . round(microtime(true) - $start, 4) . ' сек.<br>';
     }

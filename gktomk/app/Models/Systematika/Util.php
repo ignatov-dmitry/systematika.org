@@ -2,7 +2,6 @@
 
 
 namespace GKTOMK\Models\Systematika;
-use Closure as Closure;
 
 final class Util
 {
