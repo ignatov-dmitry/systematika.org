@@ -154,9 +154,9 @@ class MoyklassModel
 
     public static function setLogRequest($dataLog = []){
         //// Сохраняем в лог
-        DB::init();
+        //DB::init();
         // $url = '', $data = array(), $method = 'POST'
-        DB::edit('logmoyklass', $dataLog);
+        //DB::edit('logmoyklass', $dataLog);
     }
 
     /*

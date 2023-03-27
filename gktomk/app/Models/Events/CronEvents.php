@@ -98,10 +98,4 @@ class CronEvents extends Events
         $ChatAdminModel = new ChatAdminModel();
         $ChatAdminModel->getSyncManagers();
     }
-
-
-
-
-
-
 }

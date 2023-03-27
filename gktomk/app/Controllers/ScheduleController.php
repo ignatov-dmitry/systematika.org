@@ -13,8 +13,6 @@ use GKTOMK\Models\SubscriptionsModel;
 
 class ScheduleController extends Controller
 {
-
-
     private $email;
     private $userData;
     private $mk_uid;
@@ -68,14 +66,12 @@ class ScheduleController extends Controller
         if ('kurmaeva_marina@mail.ru' == mb_strtolower(@$this->email))
             $this->mk_uid = 1242164;
 
+        if ('asanov@pintabeer.ru' == mb_strtolower(@$this->email))
+            $this->mk_uid = 2287371;
     }
 
     public function main()
     {
-
-        //$this->genTime('schedule');
-
-
         $Schedule = new ScheduleModel();
         $lessons = $Schedule->getSchedule($this->userData['id'], $this->mk_uid);
         //print_r($lessons);
@@ -101,8 +97,6 @@ class ScheduleController extends Controller
 
     public function getHistory()
     {
-
-
         $SubscriptionsModel = new SubscriptionsModel();
         $countUserSubscriptions = $SubscriptionsModel->getCountSubscriptionsByMkUid($this->mk_uid);
         $this->View->varTpl('COUNT_SUBSCRIPTIONS_REMIND', [
@@ -120,7 +114,6 @@ class ScheduleController extends Controller
 
         $this->View->varTpl('LESSONS', $lessons);
         $this->View->varTpl('TEACHERS', MoyklassModel::getManagersAssoc());
-        //print_r($this->View->varTpl('TEACHERS'));
 
         $this->View->parseTpl('schedule/history', false)->parseTpl('schedule/main')->output();
     }
@@ -131,7 +124,6 @@ class ScheduleController extends Controller
         $Schedule = new ScheduleModel();
         $lessons = $Schedule->getSchedule($this->email);
 
-        //print_r($lessons);
         $data = [];
         foreach ($lessons as $lesson) {
             $name = $lesson['COURSE']['name'] . ' ';
