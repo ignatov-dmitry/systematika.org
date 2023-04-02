@@ -9,6 +9,7 @@ use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\Systematika\MoyKlass\Lesson;
 use GKTOMK\Models\Systematika\MoyKlass\User;
 use GKTOMK\Models\Systematika\MoyKlass\UserSubscription;
+use GKTOMK\Models\VideorecordsModel;
 use GKTOMK\Models\Wazzup24Model;
 
 class TestController extends Controller
@@ -92,5 +93,18 @@ class TestController extends Controller
             fputcsv($fp, $fields, ';');
         }
         fclose($fp);
+    }
+
+    public function getVideo()
+    {
+        $videoRecords = new VideorecordsModel();
+
+        $records = $videoRecords->getReadyRecordsForDownloads();
+       // var_dump($records);die();
+
+        foreach ($records as $record) {
+            $res = $videoRecords->downloadRecordById(18065);
+            //var_dump($res);
+        }
     }
 }

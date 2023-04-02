@@ -79,9 +79,12 @@ class ZoomModel
         return $this->call("meetings/{$meetingId}/recordings", $data);
     }
 
+    public function deleteMeeting($meetingId, $data = [])
+    {
+        return $this->call("meetings/{$meetingId}/recordings", $data, 'DELETE');
+    }
 
-
-    private function call($url, $data = []){
+    private function call($url, $data = [], $method = 'GET'){
         $curl = curl_init();
 
        $url = "https://api.zoom.us/v2/". $url . "?" .http_build_query($data);
@@ -94,7 +97,7 @@ class ZoomModel
             CURLOPT_HEADER => 1,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_CUSTOMREQUEST => $method,
             CURLOPT_HTTPHEADER => array(
                 "authorization: Bearer ".$this->genJWT(),
                 "content-type: application/json"

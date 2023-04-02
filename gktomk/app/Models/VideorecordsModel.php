@@ -19,21 +19,6 @@ class VideorecordsModel
             'limit' => 300,
         ]);
 
-        print_r($lessons);
-
-        /* $int = 0;
-         $lessonModel = new LessonsModel();
-         foreach ($lessons['lessons'] as $lesson) {
-             echo $int++ . '<br/>';
-             $this->editRecord([
-                 'lesson_id_mk' => $lesson['id'],
-                 'timeend' => strtotime($lesson['date'] .' ' . $lesson['endTime']),
-                 'status' => 'new',
-             ]);
-             echo $lesson['id'].'<br/>';
-             print_r($lesson);
-             $lessonModel->editLesson($lesson);
-         }*/
 
     }
 
@@ -96,7 +81,7 @@ class VideorecordsModel
 
     public function getLessonsReadyLoad() // 1654030800 - это ограничение на 2022.06.01
     {
-        return DB::getAll('SELECT `l`.`id`,`l`.`lesson_id_mk`,`l`.`date`,`l`.`end_time` FROM `lessons` `l` LEFT OUTER JOIN `videorecords` `v` ON `l`.`lesson_id_mk`=`v`.`lesson_id_mk` WHERE `l`.`timestart`<=:timestart && `l`.`timestart`>1654030800 && (`l`.`videorecord`<1 or `l`.`videorecord` is null) && `v`.`status` is null', ['timestart' => (time()-(60*60*2))]);
+        return DB::getAll('SELECT `l`.`id`,`l`.`lesson_id_mk`,`l`.`date`,`l`.`end_time`, l.class_name FROM `lessons` `l` LEFT OUTER JOIN `videorecords` `v` ON `l`.`lesson_id_mk`=`v`.`lesson_id_mk` WHERE `l`.`timestart`<=:timestart && `l`.`timestart`>1654030800 && (`l`.`videorecord`<1 or `l`.`videorecord` is null) && `v`.`status` is null', ['timestart' => (time()-(60*60*2))]);
     }
 
     public function cronAddtasks()
@@ -104,9 +89,10 @@ class VideorecordsModel
         $lessons = $this->getLessonsReadyLoad();
         foreach ($lessons as $lesson) {
             $this->editRecord([
-                'lesson_id_mk' => $lesson['lesson_id_mk'],
-                'timeend' => strtotime($lesson['date'] .' ' . $lesson['end_time']),
-                'status' => 'new',
+                'lesson_id_mk'  => $lesson['lesson_id_mk'],
+                'timeend'       => strtotime($lesson['date'] .' ' . $lesson['end_time']),
+                'status'        => 'new',
+                'meeting_topic' => $lesson['class_name']
             ]);
         }
 
@@ -149,7 +135,7 @@ class VideorecordsModel
         return DB::getAll(
             "SELECT * FROM `videorecords` 
                 WHERE 
-                (`status`='new' && `timeend`<=(:timenow-(60*10))) 
+                ((`status`='new' && `timeend`<=(:timenow-(60*10))) 
                 or 
                 (
                     `status` <> 'new' && `status` <> 'OK' 
@@ -164,11 +150,11 @@ class VideorecordsModel
                             (`try_timelast`<=(:timenow-60*10) && 
                                 `timeend`<=(:timenow-60*10)
                                 &&
-                                `try_num` < 3
+                                `try_num` < 20
                             ) 
                     )
-                ) 
-                ORDER BY  `timeend` DESC, `try_timelast` ASC  LIMIT 1",
+                )) and `date_create` >= 1680134400 /* Сохраняем все записи уроков начиная с 30 марта 2023 года */
+                ORDER BY  `timeend` DESC, `try_timelast` ASC  LIMIT 100",
             ['timenow' => time()]
         );
     }
@@ -259,6 +245,7 @@ class VideorecordsModel
             //   print_r($meeting);
             if (strpos($meeting['topic'], $groupName)) {
                 $searchMeeting = $meeting;
+                $meetingId = $meeting['uuid'];
             }
         }
 
@@ -303,9 +290,8 @@ class VideorecordsModel
         ]);
 
         $this->setStatusRecordById($recordId, 'startdownload');
-        $getLink = $ZoomModel->getLinkDownloadByUrl($searchRecordings[$videoload]['download_url']);
-        //var_dump($getLink);
 
+        //Здесь начало скачивания
         $time = strtotime($date);
         $Y = date("Y", $time);
         $m = date("m", $time);
@@ -313,13 +299,34 @@ class VideorecordsModel
 
         $dir = $Y . '/' . $m . '/' . $d;
 
-        $result = $this->downloadByLink($getLink, 'videorecord/' . $dir, $groupName);
+        $getLink = $ZoomModel->getLinkDownloadByUrl($searchRecordings[$videoload]['download_url']);
+        $result = $this->downloadByLink($getLink, 'videorecord/' . $dir, $groupName, $searchRecordings[$videoload]['file_extension']);
 
         $this->setDataRecord($recordId, 'download_url', $searchRecordings[$videoload]['download_url']);
+
+
+
+        // Загрузка остальных видео
+        foreach ($searchRecordings as $key => $recording) {
+            if ($key != $videoload && $result != 'ERR'){
+                $getLink = $ZoomModel->getLinkDownloadByUrl($recording['download_url']);
+                $result = $this->downloadByLink($getLink, 'videorecord/' . $dir, $groupName . '_' . $key, $recording['file_extension']);
+            }
+        }
+
+        // Удаление в корзину митинга
+
+        if ($result != 'ERR' && isset($meetingId)){
+            if ($_GET['test'] == 1){
+                //var_dump($meetings, urlencode(urlencode($meetingId)), '%252FtX1NM%252FKRcKSk83gNQXedA%253D%253D');die();
+            }
+            //Двойное декодирование нужно если в uuid есть символ '/' или '//'
+            $ZoomModel->deleteMeeting(urlencode(urlencode($meetingId)));
+        }
+
+
         $this->setStatusRecordById($recordId, $result);
         return $result;
-
-
     }
 
     public function editRecord($data = [])
@@ -350,7 +357,7 @@ class VideorecordsModel
         return DB::getRow('SELECT * FROM `videorecords` WHERE `lesson_id_mk`=? LIMIT 1', [$lessonId]);
     }
 
-    private function downloadByLink($link, $dirName = '', $fileName = '', $suffix_script = '')
+    private function downloadByLink($link, $dirName = '', $fileName = '', $fileExtension= 'mp4')
     {
         $dir = __DIR__ . '/../../';
         $dirToFile = $dir . $dirName;
@@ -361,7 +368,7 @@ class VideorecordsModel
         } elseif (!file_exists($dirToFile) and !is_writable($dir)) {
             return 'Dir not found or not writable.';
         }
-        $fileName = $fileName . '.mp4';
+        $fileName = $fileName . '.' . $fileExtension;
         $cmd = "cd {$dirToFile}; curl -o '{$fileName}' -k '{$link}'; echo 'download'; > /dev/null";
         $res = shell_exec($cmd);
 
