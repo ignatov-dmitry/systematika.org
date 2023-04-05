@@ -103,7 +103,7 @@ class TestController extends Controller
        // var_dump($records);die();
 
         foreach ($records as $record) {
-            $res = $videoRecords->downloadRecordById(18065);
+            $res = $videoRecords->downloadRecordById($record['id']);
             //var_dump($res);
         }
     }

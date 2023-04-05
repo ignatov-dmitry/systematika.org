@@ -66,7 +66,7 @@ let videorecords = {
             var re = '-';
             var str = date;
             var newstr = str.replaceAll(re, '/');
-            let url = SETT.URL_SITE + '/zoom/video?v=videorecord/'+newstr+'/'+classname+'.mp4';
+            let url = SETT.URL_SITE + '/zoom/video?v=videorecord/'+newstr+'/'+classname;
             let url_prev = SETT.URL_SITE + "/templates/default/images/logo-new.png.webp";
 
             /*$('#player').html('<iframe src="'+url+'" width="100%" height="100%" border="0">\n' +

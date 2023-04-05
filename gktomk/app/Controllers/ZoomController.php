@@ -108,7 +108,7 @@ class ZoomController
 		error_reporting(0);
         $video = $_GET['v'];
 
-        $file = $video;
+        $file = (glob($video . '.{mp4,MP4}', GLOB_BRACE))[0];
         $fp = @fopen($file, 'rb');
         $size = filesize($file); // File size
         $length = $size; // Content length
