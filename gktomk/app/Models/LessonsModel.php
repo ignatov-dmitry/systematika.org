@@ -260,7 +260,7 @@ UNION
         $lessons = array_merge($lessons, $CancelLessonsHaveNotStarted);
 
         // Сортируем все уроки по дате и времени
-        usort($lessons, "\GKTOMK\Models\LessonsModel::cmp");
+        //usort($lessons, "\GKTOMK\Models\LessonsModel::cmp");
 
         $dataList = [];
         $ind = 0;
