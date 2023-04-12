@@ -22,7 +22,7 @@ class ZoomController
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "GET",
             CURLOPT_HTTPHEADER => array(
-                "authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJwZlRyMUlsRFM2cW5wSFdBcTVUUjdBIiwiZXhwIjoxNjM0NjQyNjExMDAwfQ.SLPjsujixCSoNWQ7YrAK8ZBTHgOL-xvYkmnexpTsPuU",
+                "authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im02NmJfODN5U1FPQUpTTDNUc0hDVmciLCJleHAiOjE2ODEwNjM5NzMsImlhdCI6MTY4MTA1ODU3M30.dDIvRI1NL7iT4BbrHjD-NoLbCDlKDuDIT_Jpcw5_n_o",
                 "content-type: application/json"
             ),
         ));
@@ -38,6 +38,15 @@ class ZoomController
             $json = json_decode($response, 1);
             print_r($json);
         }
+    }
+
+    public function anyNotification()
+    {
+        file_put_contents('/var/www/systematika/data/www/systematika.org/gktomk/logs/zoom.log', json_encode($_REQUEST), FILE_APPEND);
+//        $plainToken = $_POST['payload']['plainToken'];
+//        $encryptedToken = hash_hmac("sha256", $plainToken, "PyeNoal1yJUU5n4wU7XhfQuLtBM6PdfdhSKl");
+        header("Content-type:application/json");
+        return json_encode($_REQUEST);
     }
 
     public function getDownload(){
@@ -77,13 +86,13 @@ class ZoomController
             'status' => 'active',
             'page_size' => '30',
             'page_number' => 1
-        ]);
+        ])['users'];
 
         var_dump($res);
 
-        $res = $ZoomModel->getRecordings('-ue9gvnbSjGoGyu11cF9Jw', [
-            'from' => '2021-10-18',
-            'to' => '2021-10-19',
+        $res = $ZoomModel->getRecordings('4xD5qAOtRPS6ga5xV4wPcA', [
+            'from' => '2023-01-01',
+            'to' => '2023-04-30',
         ]);
 
         var_dump($res);

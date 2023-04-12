@@ -6,6 +6,9 @@ namespace GKTOMK\Models;
 
 class VideorecordsModel
 {
+
+    private $zoomAccounts = null;
+
     public function __construct()
     {
         DB::init();
@@ -150,10 +153,10 @@ class VideorecordsModel
                             (`try_timelast`<=(:timenow-60*10) && 
                                 `timeend`<=(:timenow-60*10)
                                 &&
-                                `try_num` < 20
+                                `try_num` < 100
                             ) 
                     )
-                )) and `date_create` >= 1680134400 /* Сохраняем все записи уроков начиная с 30 марта 2023 года */
+                )) and `date_create` >= 1680048000 /* Сохраняем все записи уроков начиная с 29 марта 2023 года */
                 ORDER BY  `timeend` DESC, `try_timelast` ASC  LIMIT 100",
             ['timenow' => time()]
         );
@@ -200,6 +203,11 @@ class VideorecordsModel
         $LessonsModel = new LessonsModel();
         $LessonData = $LessonsModel->getLessonByLessonIdMK($lessonId);
 
+        if (is_null($this->zoomAccounts)){
+            $ZoomModel = new ZoomModel();
+            $this->zoomAccounts = $ZoomModel->getUsers()['users'];
+        }
+//var_dump($this->zoomAccounts);
         if (empty($LessonData)) {
             if (!empty($recordId))
                 return $this->setStatusRecordById($recordId, 'lessonnotfound');
@@ -207,6 +215,15 @@ class VideorecordsModel
 
         $ZoomaccountsModel = new ZoomaccountsModel();
         $getAccountId = $ZoomaccountsModel->getAccountIdByLessonIdMK($lessonId);
+
+        // Поиск accountID по почте урока
+        if (filter_var($LessonData['description'], FILTER_VALIDATE_EMAIL)){
+            $key = array_search($LessonData['description'], array_column($this->zoomAccounts, 'email'));
+            $getAccountId = $this->zoomAccounts[$key]['id'] ?? $getAccountId;
+        }
+
+
+//var_dump($getAccountId, @$getAccountId2);die();
         if (empty($getAccountId)) {
             if (!empty($recordId))
                 return $this->setStatusRecordById($recordId, 'accountnotfound');
@@ -235,7 +252,7 @@ class VideorecordsModel
                 'from' => $date,
                 'to' => $date
             ]);
-
+//var_dump($meetings);die();
         //print_r($meetings);
 
 
@@ -339,6 +356,7 @@ class VideorecordsModel
             else {
                 $record = DB::dispense('videorecords');
                 $record->date_create = time();
+                $record->date = date('Y-m-d');
             }
 
         }

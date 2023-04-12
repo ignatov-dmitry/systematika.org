@@ -13,6 +13,7 @@ use GKTOMK\Models\StatisticsModel;
 use GKTOMK\Models\VideorecordsModel;
 use GKTOMK\Models\WebhookModel;
 use GKTOMK\Models\WhatsappModel;
+use GKTOMK\Models\ZoomModel;
 
 class CronEvents extends Events
 {
@@ -76,8 +77,36 @@ class CronEvents extends Events
         $VideorecordsModel->cronAddtasks(); // Добавляем задачи в лог на сохранение видео (убрали из вебхуков)
         $VideorecordsModel->cronStart(); // Обрабатываем задачи
 
+        $zoomModel = new ZoomModel('pfTr1IlDS6qnpHWAq5TR7A', 'W000GLZCo2LZPbPrQB5Soec1SxCleZXl39RN');
+
+        foreach ($zoomModel->getZoomMeetings() as $zoomVideo) {
+            $time = strtotime($zoomVideo['recording_start']);
+            $Y = date("Y", $time);
+            $m = date("m", $time);
+            $d = date("d", $time);
+            $dir = $Y . '/' . $m . '/' . $d;
+
+            $zoomModel->setStatusRecordById($zoomVideo['id'], 'start_download');
+            $zoomModel->setDataRecord($zoomVideo['id'], 'try_num', (int)$zoomVideo['try_num']++);
+            $zoomModel->setDataRecord($zoomVideo['id'], 'try_date', date('Y-m-d H:i:s'));
+
+            $downloadUrl = $zoomModel->getLinkDownloadByUrl($zoomVideo['download_url']);
+            $status = $zoomModel->downloadByLink($downloadUrl, 'videorecord/unassigned_videos/' . $dir, $zoomVideo['topic'] . '_' . $zoomVideo['recording_type'], $zoomVideo['file_extension']);
+
+            $zoomModel->setStatusRecordById($zoomVideo['id'], $status);
+
+            if ($status === 'downloaded')
+                $zoomModel->setDataRecord($zoomVideo['id'], 'file_name', 'videorecord/unassigned_videos/' . $dir . '/' . $zoomVideo['topic'] . '_' . $zoomVideo['recording_type']);
+
+            if ($zoomModel->getCountVideosFromMeeting($zoomVideo['meeting_id']) === 0)
+                $zoomModel->deleteMeeting(urlencode(urlencode($zoomVideo['meeting_id'])));
+
+        }
     }
 
+    private function videorecords_lost(){
+
+    }
 
     private function whatsapp_every1minute(){
         $WhatsappModel = new WhatsappModel();

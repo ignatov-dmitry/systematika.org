@@ -265,12 +265,21 @@ class Model
         return array_values($query);
     }
 
-    public static function getColumnValues($array = [], $columns = []): array
+    public static function getColumnValues($array = [], $columns = [], $columnRelationShips = [], $defaultValues = []): array
     {
-        return array_map(function ($item) use ($columns){
+        if ($columnRelationShips)
+            $columnRelationShips = array_flip($columnRelationShips);
+
+        return array_map(function ($item) use ($columns, $columnRelationShips, $defaultValues){
             $cleanItem = [];
-            foreach ($columns as $column)
-                $cleanItem[$column] = $item[$column];
+            foreach ($columns as $column) {
+                if (isset($columnRelationShips[$column])) {
+                    $cleanItem[$column] = $item[$columnRelationShips[$column]] ?: $defaultValues[$column];
+                }
+                else {
+                    $cleanItem[$column] = $item[$column] ?: $defaultValues[$column];
+                }
+            }
 
             return $cleanItem;
 
