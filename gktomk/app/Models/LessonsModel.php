@@ -203,7 +203,7 @@ class LessonsModel
 
 
         //echo 'SELECT * FROM `recordslesson` `rl`,`lessons` `l` WHERE `rl`.`user_id_mk`=? && `l`.`lesson_id_mk`=`rl`.`lesson_id_mk`';
-        $lessons = DB::getAll('SELECT *,`rl`.`id` `id`, `rl`.`lesson_id_mk` `lesson_id_mk`
+        $lessons = DB::getAll('SELECT rl.*, l.*, tl.*, `rl`.`id` `id`, `rl`.`lesson_id_mk` `lesson_id_mk`, `vr`.`status` status
                                 FROM 
                                 `recordslesson` `rl` 
                                 left join `lessons` `l` on `l`.`lesson_id_mk` = `rl`.`lesson_id_mk`
