@@ -49,16 +49,24 @@
             <th scope="col">Meeting Zoom</th>
             <th scope="col">Загрузка</th>
             <th scope="col"></th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <tbody>
         {%*LOGS*}
-        <tr data-id="{*LOGS:id*}" data-date="{*LOGS:date*}" data-class-name="{*LOGS:class_name*}">
+        <tr data-id="{*LOGS:id*}" data-date="{*LOGS:date*}" data-unassigned="{?*LOGS:unassigned*}true{?}{?!*LOGS:unassigned*}false{?}" data-meeting-topic="{*LOGS:meeting_topic*}" data-class-name="{*LOGS:class_name*}">
             <td><strong>{*LOGS:id*}</strong> <br/>(ID: {*LOGS:lesson_id_mk*})</td>
             <td>{*LOGS:date*}, {*LOGS:begin_time*} - {*LOGS:end_time*} <br/>{?*LOGS:course_name*}{*LOGS:course_name*},{?} {*LOGS:class_name*}</td>
             <td data-id-meeting_topic="{*LOGS:id*}">{*LOGS:meeting_topic*}</td>
-            <td data-id-status="{*LOGS:id*}"><i>{?*LOGS:status="new"*}<span style="color: yellow;">В ожидании</span>{?}{?*LOGS:status="OK"*}<span style="color: green;">Обработан</span>, попыток: {*LOGS:try_num*}{?}{?*LOGS:status!="new" && LOGS:status!="OK"*}{*LOGS:status*}, попыток: {*LOGS:try_num*}{?}</i></td>
-            <td><button class="btn" onclick="videorecords.redownload.openModal({*LOGS:id*});" title="Перезакачать"><i class="fas fa-redo"></i></button><button class="btn {?!*LOGS:status="OK"*}d-none{?}" data-id-btnview="{*LOGS:id*}" onclick="videorecords.view.openModal({*LOGS:id*});"><i class="far fa-eye"></i></button></td>
+            <td data-id-status="{*LOGS:id*}"><i>{?*LOGS:status="new"*}<span style="color: yellow;">В ожидании</span>{?}{?*LOGS:status="OK" | LOGS:path!=false *}<span style="color: green;">Обработан</span>, попыток: {*LOGS:try_num*}{?}{?*LOGS:status!="new" && LOGS:status!="OK" && LOGS:path=false *}{*LOGS:status*}, попыток: {*LOGS:try_num*}{?}</i></td>
+            <td>
+                <button class="btn" onclick="videorecords.redownload.openModal({*LOGS:id*});" title="Перезакачать"><i class="fas fa-redo"></i></button>
+                <button class="btn {?!*LOGS:status="OK" | LOGS:path!=false*}d-none{?}" data-id-btnview="{*LOGS:id*}" onclick="videorecords.view.openModal({*LOGS:id*});"><i class="far fa-eye"></i></button>
+            </td>
+            <td>
+                {?!*LOGS:path!=false*}{?}
+                <button class="btn" onclick="videorecords.openUnassignedFolder.openModal({*LOGS:id*});" title="Открыть папку с неопределенными видео"><i class="fas fa-folder"></i></button>
+            </td>
         </tr>
         {*LOGS*%}
         </tbody>
@@ -104,7 +112,21 @@
     </div>
 </div>
 
-
+<div class="modal fade" id="modalUnassignedFolder" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">  <!--style="width: 500px; height: 264px;"-->
+            <div class="modal-header">
+                <h5 class="modal-title" id="redownloadModalLabel">Выбрать видео</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="folders"></div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>SETT.URL_GK = '{*URL_GK*}';</script>
         <script defer src="{*URL_SITE*}/templates/{*TPL_NAME*}/js/playerjs.js" type="text/javascript"></script>
 

@@ -1,12 +1,54 @@
+
 let videorecords = {
-
     init: function () {
-
         $('#buttonRedownload').on('click', function () {
             videorecords.redownload.action();
         });
 
         videorecords.view.init();
+    },
+    openUnassignedFolder: {
+        videoRecordId: 0,
+        openModal: function (id = 0) {
+            this.videoRecordId = id;
+            this.getVideoFolder();
+            $('#modalUnassignedFolder').modal();
+        },
+        openDir: function (e, path = '') {
+            e.preventDefault();
+            this.getVideoFolder(path);
+        },
+        back: function (e, backUrl){
+            e.preventDefault();
+            this.getVideoFolder(backUrl);
+        },
+        selectVideo: function (e, name){
+            e.preventDefault();
+            $.ajax({
+                url: '/gktomk/videorecords/set-topic-name',
+                method: 'post',
+                dataType: 'json',
+                data: {
+                    record_id: this.videoRecordId,
+                    name: name
+                },
+                success: function(data){
+                    alert('Видео выбрано');
+                    $('#modalUnassignedFolder').modal('hide');
+                }
+            });
+        },
+        getVideoFolder: function (path = ''){
+            $.ajax({
+                url: '/gktomk/videorecords/video-folder',
+                method: 'get',
+                dataType: 'html',
+                data: {path: path},
+                success: function(data){
+                    $('#folders').html(data)
+                }
+            });
+        }
     },
 
     redownload: {
@@ -62,10 +104,18 @@ let videorecords = {
             let tr = $('tr[data-id="'+id+'"]');
             let date = tr.data('date');
             let classname = tr.data('class-name');
+            let meeting_topic = tr.data('meeting-topic');
+            let unassigned = tr.data('unassigned');
 
-            var re = '-';
-            var str = date;
-            var newstr = str.replaceAll(re, '/');
+            let re = '-';
+            let newstr = date.replaceAll(re, '/');
+
+            if (unassigned){
+                newstr = 'unassigned_videos/' + newstr;
+                classname = meeting_topic;
+            }
+
+
             let url = SETT.URL_SITE + '/zoom/video?v=videorecord/'+newstr+'/'+classname;
             let url_prev = SETT.URL_SITE + "/templates/default/images/logo-new.png.webp";
 
@@ -97,5 +147,4 @@ let videorecords = {
     }
 
 }
-
 videorecords.init();

@@ -155,31 +155,58 @@ class ZoomModel extends Model
         return true;
     }
 
-    public function getZoomMeetings()
+    public function getZoomMeetings($criteria = array(), $orderBy = null, $limit = null, $offset = null)
     {
         $sql = "
             SELECT DISTINCT zmr.*, zm.topic, zm.start_time FROM {records}  AS zmr
             LEFT JOIN {meetings} AS zm ON zm.uuid = zmr.meeting_id
-            WHERE {condition} 
-            ORDER BY recording_start ASC, meeting_id ASC 
-            LIMIT 2
-            ;
+            {condition} 
         ";
 
-        $condition = [
-            array('key' => 'zmr.download_status', 'val' => 'not_started', 'op' => Model::OP_EQUAL),
-            array('key' => 'zmr.zoom_status', 'val' => 'completed', 'op' => Model::OP_EQUAL),
-            'file_extension' => 'MP4'
-        ];
+        if ($orderBy) $sql .= ' ORDER BY {order}';
+        if ($limit) $sql .= ' LIMIT {limit}';
+        if ($offset) $sql .= ' OFFSET {offset}';
 
-        $whereCondition = $this->prepareWhere($condition);
+
+        $whereCondition = $this->prepareWhere($criteria);
 
         $sql = Util::replaceTokens($sql, [
             'records'   => 'zoom_meeting_records',
             'meetings'  => 'zoom_meetings',
-            'condition' => $whereCondition
+            'condition' => $whereCondition ? ' WHERE ' . $whereCondition : '',
+            'order'     => $orderBy,
+            'limit'     => $limit,
+            'offset'    => $offset
         ]);
         return DB::getAll($sql);
+    }
+
+    public function getCountZoomMeetings($criteria = array(), $orderBy = null, $limit = null)
+    {
+        $sql = "
+            SELECT COUNT(DISTINCT zmr.id) as count FROM {records}  AS zmr
+            LEFT JOIN {meetings} AS zm ON zm.uuid = zmr.meeting_id
+            {condition} 
+        ";
+
+        if ($orderBy) $sql .= ' ORDER BY {order}';
+        if ($limit) $sql .= ' LIMIT {limit}';
+
+
+
+        $whereCondition = $this->prepareWhere($criteria);
+
+        $sql = Util::replaceTokens($sql, [
+            'records'   => 'zoom_meeting_records',
+            'meetings'  => 'zoom_meetings',
+            'condition' => $whereCondition ? ' WHERE ' . $whereCondition : '',
+            'order'     => $orderBy,
+            'limit'     => $limit
+        ]);
+
+        $result = DB::getRow($sql);
+
+        return $result['count'];
     }
 
     public function getCountVideosFromMeeting($meetingId): int

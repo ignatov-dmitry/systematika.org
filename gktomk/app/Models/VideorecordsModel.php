@@ -39,14 +39,14 @@ class VideorecordsModel
         $whereCondition = '';
         $offset = 0;
         if ($data){
-            if (isset($data['meeting_topic']))
+            if (isset($data['meeting_topic']) && $data['meeting_topic'] != '')
                 $whereCondition .= ' and `meeting_topic` LIKE \'%' . $data['meeting_topic'] . '%\' ';
 
             if (isset($data['date_from']) && $data['date_from'] != '')
-                $whereCondition .= ' and `date` >= \'' . $data['date_from'] . '\' ';
+                $whereCondition .= ' and `l`.`date` >= \'' . $data['date_from'] . '\' ';
 
             if (isset($data['date_to']) && $data['date_to'] != '')
-                $whereCondition .= ' and `date` <= \'' . $data['date_to'] . '\' ';
+                $whereCondition .= ' and `l`.`date` <= \'' . $data['date_to'] . '\' ';
 
             if (isset($data['program']) && $data['program'] !== '')
                 $whereCondition .= ' and `course_id_mk` = \'' . $data['program'] . '\' ';
@@ -64,14 +64,14 @@ class VideorecordsModel
     {
         $whereCondition = '';
         if ($data){
-            if (isset($data['meeting_topic']))
+            if (isset($data['meeting_topic']) && $data['meeting_topic'] != '')
                 $whereCondition .= ' and `meeting_topic` LIKE \'%' . $data['meeting_topic'] . '%\' ';
 
             if (isset($data['date_from']) && $data['date_from'] != '')
-                $whereCondition .= ' and `date` >= \'' . $data['date_from'] . '\' ';
+                $whereCondition .= ' and `l`.`date` >= \'' . $data['date_from'] . '\' ';
 
             if (isset($data['date_to']) && $data['date_to'] != '')
-                $whereCondition .= ' and `date` <= \'' . $data['date_to'] . '\' ';
+                $whereCondition .= ' and `l`.`date` <= \'' . $data['date_to'] . '\' ';
 
             if (isset($data['program']) && $data['program'] !== '')
                 $whereCondition .= ' and `course_id_mk` = \'' . $data['program'] . '\' ';
@@ -189,6 +189,12 @@ class VideorecordsModel
     {
         $this->setDataRecord($recordId, 'status', $status);
         return $status;
+    }
+
+    public function setMeetingTopicName($recordId, $name)
+    {
+        $this->setDataRecord($recordId, 'meeting_topic', $name);
+        return $name;
     }
 
     private function setDataRecord($recordId, $key, $value)
@@ -326,6 +332,9 @@ class VideorecordsModel
         // Загрузка остальных видео
         foreach ($searchRecordings as $key => $recording) {
             if ($key != $videoload && $result != 'ERR'){
+                if (mb_strtolower($recording['file_extension']) !== 'mp4')
+                    continue;
+
                 $getLink = $ZoomModel->getLinkDownloadByUrl($recording['download_url']);
                 $result = $this->downloadByLink($getLink, 'videorecord/' . $dir, $groupName . '_' . $key, $recording['file_extension']);
             }
