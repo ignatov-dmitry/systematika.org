@@ -203,9 +203,9 @@ class Model
         return $prepared;
     }
 
-    public final function prepareBulkInsert($table, array $keys, array $data, $ignore = false) {
+    public final function prepareBulkInsert($table, array $keys, array $data, $ignore = false, $update = array()) {
         $valuesList =  array();
-
+        $updateStr = ' ';
         foreach ($data as $values) {
             foreach ($values as &$value) {
                 $value = $this->prepareVal($value);
@@ -214,12 +214,19 @@ class Model
             $valuesList[] = self::wrap(implode(', ', $values));
         }
 
-        $sql = 'INSERT {ignore} INTO {tn} ({keys}) VALUES {vals}';
+        if ($update) {
+            foreach ($update as $key => $val){
+                $updateStr .= $key . ' = \'' . $val . ' \'';
+            }
+        }
+
+        $sql = 'INSERT {ignore} INTO {tn} ({keys}) VALUES {vals} {updateStr}';
         $sql = Util::replaceTokens($sql, array(
-            'ignore' => $ignore ? 'IGNORE' : '',
-            'tn'     => $table,
-            'keys'   => implode(', ', $keys),
-            'vals'   => implode(', ', $valuesList)
+            'ignore'    => $ignore ? 'IGNORE' : '',
+            'tn'        => $table,
+            'keys'      => implode(', ', $keys),
+            'vals'      => implode(', ', $valuesList),
+            'updateStr' => ' ON DUPLICATE KEY UPDATE ' . $updateStr
         ));
 
         return $sql;

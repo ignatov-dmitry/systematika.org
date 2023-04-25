@@ -10,6 +10,7 @@ use GKTOMK\Models\HandlerHwkModel;
 use GKTOMK\Models\LessonsModel;
 use GKTOMK\Models\MissingTrialModel;
 use GKTOMK\Models\StatisticsModel;
+use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\VideorecordsModel;
 use GKTOMK\Models\WebhookModel;
 use GKTOMK\Models\WhatsappModel;
@@ -77,9 +78,15 @@ class CronEvents extends Events
         $VideorecordsModel->cronAddtasks(); // Добавляем задачи в лог на сохранение видео (убрали из вебхуков)
         $VideorecordsModel->cronStart(); // Обрабатываем задачи
 
-        $zoomModel = new ZoomModel('pfTr1IlDS6qnpHWAq5TR7A', 'W000GLZCo2LZPbPrQB5Soec1SxCleZXl39RN');
+        $zoomModel = new ZoomModel();
 
-        foreach ($zoomModel->getZoomMeetings() as $zoomVideo) {
+        $criteria = [
+            array('key' => 'zmr.download_status', 'val' => 'not_started', 'op' => Model::OP_EQUAL),
+            array('key' => 'zmr.zoom_status', 'val' => 'completed', 'op' => Model::OP_EQUAL),
+            'file_extension' => 'MP4'
+        ];
+
+        foreach ($zoomModel->getZoomMeetings($criteria, 'recording_start ASC, meeting_id ASC',2 ) as $zoomVideo) {
             $time = strtotime($zoomVideo['recording_start']);
             $Y = date("Y", $time);
             $m = date("m", $time);
@@ -87,10 +94,11 @@ class CronEvents extends Events
             $dir = $Y . '/' . $m . '/' . $d;
 
             $zoomModel->setStatusRecordById($zoomVideo['id'], 'start_download');
-            $zoomModel->setDataRecord($zoomVideo['id'], 'try_num', (int)$zoomVideo['try_num']++);
+            $zoomModel->setDataRecord($zoomVideo['id'], 'try_num', (int) ++$zoomVideo['try_num']);
             $zoomModel->setDataRecord($zoomVideo['id'], 'try_date', date('Y-m-d H:i:s'));
 
             $downloadUrl = $zoomModel->getLinkDownloadByUrl($zoomVideo['download_url']);
+
             $status = $zoomModel->downloadByLink($downloadUrl, 'videorecord/unassigned_videos/' . $dir, $zoomVideo['topic'] . '_' . $zoomVideo['recording_type'], $zoomVideo['file_extension']);
 
             $zoomModel->setStatusRecordById($zoomVideo['id'], $status);

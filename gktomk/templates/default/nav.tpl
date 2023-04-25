@@ -18,6 +18,7 @@
                     <a class="dropdown-item" href="{*URL_SITE*}/homework">Домашние задания</a>
                     <a class="dropdown-item" href="{*URL_SITE*}/cancellesson">Отмены занятий</a>
                     <a class="dropdown-item" href="{*URL_SITE*}/videorecords">Видео-записи занятий</a>
+                    <a class="dropdown-item" href="{*URL_SITE*}/videorecords/not-matched-videos">Нераспознанные видео</a>
                 </div>
             </li>
             <li class="nav-item dropdown">

@@ -5,6 +5,7 @@ namespace GKTOMK\Controllers;
 
 
 use GKTOMK\Classes\Api\MoyKlass;
+use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\Systematika\MoyKlass\Lesson;
 use GKTOMK\Models\Systematika\MoyKlass\User;
 use GKTOMK\Models\Systematika\MoyKlass\UserSubscription;
@@ -111,7 +112,7 @@ class TestController extends Controller
 
     public function getUsersVideo()
     {
-        $zoomModel = new ZoomModel('pfTr1IlDS6qnpHWAq5TR7A', 'W000GLZCo2LZPbPrQB5Soec1SxCleZXl39RN');
+        $zoomModel = new ZoomModel();
         $zoomUsers = $zoomModel->getUsers(['status' => 'active', 'page_size' => 300])['users'];
         $meetings = array();
 
@@ -120,7 +121,7 @@ class TestController extends Controller
             $meeting = $zoomModel->getRecordings($zoomUser['id'],
                 [
                     'from' => '2022-01-01',
-                    'to' => date('Y-m-d'),
+                    'to' => date('Y-m-d', strtotime(date('Y-m-d') . '-1 day')),
                     'page_size' => 300
                 ])['meetings'];
 
@@ -131,9 +132,15 @@ class TestController extends Controller
 
     public function getDownloadUsersVideo()
     {
-        $zoomModel = new ZoomModel('pfTr1IlDS6qnpHWAq5TR7A', 'W000GLZCo2LZPbPrQB5Soec1SxCleZXl39RN');
+        $zoomModel = new ZoomModel();
 
-        foreach ($zoomModel->getZoomMeetings() as $zoomVideo) {
+        $criteria = [
+            array('key' => 'zmr.download_status', 'val' => 'not_started', 'op' => Model::OP_EQUAL),
+            array('key' => 'zmr.zoom_status', 'val' => 'completed', 'op' => Model::OP_EQUAL),
+            'file_extension' => 'MP4'
+        ];
+
+        foreach ($zoomModel->getZoomMeetings($criteria, 'recording_start ASC, meeting_id ASC',2 ) as $zoomVideo) {
             $time = strtotime($zoomVideo['recording_start']);
             $Y = date("Y", $time);
             $m = date("m", $time);
@@ -141,11 +148,11 @@ class TestController extends Controller
             $dir = $Y . '/' . $m . '/' . $d;
 
             $zoomModel->setStatusRecordById($zoomVideo['id'], 'start_download');
-            $zoomModel->setDataRecord($zoomVideo['id'], 'try_num', (int)$zoomVideo['try_num']++);
+            $zoomModel->setDataRecord($zoomVideo['id'], 'try_num', (int) ++$zoomVideo['try_num']);
             $zoomModel->setDataRecord($zoomVideo['id'], 'try_date', date('Y-m-d H:i:s'));
 
             $downloadUrl = $zoomModel->getLinkDownloadByUrl($zoomVideo['download_url']);
-            var_dump($zoomVideo['download_url']);
+
             $status = $zoomModel->downloadByLink($downloadUrl, 'videorecord/unassigned_videos/' . $dir, $zoomVideo['topic'] . '_' . $zoomVideo['recording_type'], $zoomVideo['file_extension']);
 
             $zoomModel->setStatusRecordById($zoomVideo['id'], $status);
