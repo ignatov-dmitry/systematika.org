@@ -66,6 +66,10 @@
             <td>
                 {?!*LOGS:path!=false*}{?}
                 <button class="btn" onclick="videorecords.openUnassignedFolder.openModal({*LOGS:id*});" title="Открыть папку с неопределенными видео"><i class="fas fa-folder"></i></button>
+
+                {?*LOGS:status="OK" | LOGS:path!=false*}
+                <button class="btn" data-id-btnview="{*LOGS:id*}" title="Копировать ссылку" onclick="videorecords.view.copyLink({*LOGS:id*});"><i class="far fa-copy"></i></button>
+                {?}
             </td>
         </tr>
         {*LOGS*%}
@@ -84,15 +88,10 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-
                 <div class="modal-body">
-
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Сделать новую попытку загрузки видео-записи?</label>
                     </div>
-
-
-
                 </div>
                 <div class="modal-footer">
                     <button id="buttonRedownload" class="btn btn-primary">Да</button>

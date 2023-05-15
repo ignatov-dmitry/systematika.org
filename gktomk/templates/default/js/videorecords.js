@@ -143,8 +143,48 @@ let videorecords = {
 
             $('#modalView').modal();
 
+        },
+        copyLink: function (id) {
+            let tr = $('tr[data-id="'+id+'"]');
+            let date = tr.data('date');
+            let classname = tr.data('class-name');
+            let meeting_topic = tr.data('meeting-topic');
+            let unassigned = tr.data('unassigned');
+
+            let re = '-';
+            let newstr = date.replaceAll(re, '/');
+
+            if (unassigned){
+                newstr = 'unassigned_videos/' + newstr;
+                classname = meeting_topic;
+            }
+
+            let url = 'videorecord/'+newstr+'/'+classname;
+            console.log(url);
+            $.ajax({
+                url: '/gktomk/watch/encrypt-link',
+                method: 'get',
+                dataType: 'json',
+                data: {
+                    link: url
+                },
+                success: function(data){
+                    copyTextToClipboard('https://systematika.org/gktomk/watch?v=' + data);
+                    console.log(data);
+                }
+            });
         }
     }
 
 }
 videorecords.init();
+async function copyTextToClipboard(text) {
+    try {
+        await navigator.clipboard.writeText(text);
+        alert('Скопировано')
+        console.log('Text copied to clipboard');
+    } catch (err) {
+        alert('Ошибка копирования')
+        console.error('Error in copying text: ', err);
+    }
+}
