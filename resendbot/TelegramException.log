@@ -1,0 +1,21 @@
+2020-07-22 19:43:14 Longman\TelegramBot\Exception\TelegramException: Input is empty! in /var/www/test/data/www/z22627.adman.cloud/tgbot/vendor/longman/telegram-bot/src/Telegram.php:390
+Stack trace:
+#0 /var/www/test/data/www/z22627.adman.cloud/tgbot/hook.php(13): Longman\TelegramBot\Telegram->handle()
+#1 {main}
+2020-07-22 19:46:12 Longman\TelegramBot\Exception\TelegramException: Input is empty! in /var/www/test/data/www/z22627.adman.cloud/tgbot/vendor/longman/telegram-bot/src/Telegram.php:390
+Stack trace:
+#0 /var/www/test/data/www/z22627.adman.cloud/tgbot/hook.php(13): Longman\TelegramBot\Telegram->handle()
+#1 {main}
+2020-07-22 19:46:27 Longman\TelegramBot\Exception\TelegramException: Input is empty! in /var/www/test/data/www/z22627.adman.cloud/tgbot/vendor/longman/telegram-bot/src/Telegram.php:390
+Stack trace:
+#0 /var/www/test/data/www/z22627.adman.cloud/tgbot/hook.php(13): Longman\TelegramBot\Telegram->handle()
+#1 {main}
+2020-07-22 20:09:24 Longman\TelegramBot\Exception\TelegramException: Directory /var/www/test/data/www/z22627.adman.cloud/tgbot/vendor/longman/telegram-bot/src/../Download/photos cant be created in /var/www/test/data/www/z22627.adman.cloud/tgbot/vendor/longman/telegram-bot/src/Request.php:182
+Stack trace:
+#0 /var/www/test/data/www/z22627.adman.cloud/tgbot/vendor/longman/telegram-bot/src/Commands/WhoamiCommand.php(86): Longman\TelegramBot\Request::downloadFile(Object(Longman\TelegramBot\Entities\File))
+#1 /var/www/test/data/www/z22627.adman.cloud/tgbot/vendor/longman/telegram-bot/src/Command.php(53): Longman\TelegramBot\Commands\WhoamiCommand->execute()
+#2 /var/www/test/data/www/z22627.adman.cloud/tgbot/vendor/longman/telegram-bot/src/Telegram.php(486): Longman\TelegramBot\Command->preExecute()
+#3 /var/www/test/data/www/z22627.adman.cloud/tgbot/vendor/longman/telegram-bot/src/Telegram.php(440): Longman\TelegramBot\Telegram->executeCommand('whoami', Object(Longman\TelegramBot\Entities\Update))
+#4 /var/www/test/data/www/z22627.adman.cloud/tgbot/vendor/longman/telegram-bot/src/Telegram.php(369): Longman\TelegramBot\Telegram->processUpdate(Object(Longman\TelegramBot\Entities\Update))
+#5 /var/www/test/data/www/z22627.adman.cloud/tgbot/getUpdatesCLI.php(23): Longman\TelegramBot\Telegram->handleGetUpdates()
+#6 {main}

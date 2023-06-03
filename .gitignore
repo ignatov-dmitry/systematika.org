@@ -26,3 +26,4 @@
 /gktomk/db_config.php
 /resendbot/vendor
 /resendbot/logs/*
+/resendbot/composer.lock

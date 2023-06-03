@@ -1,0 +1,28 @@
+{
+	"name": "nekrasovonline/btaskbot",
+	"authors": [ 
+		{ 
+			"name": "Александр Некрасов",
+			"email": "nekrasov@nekrasovonline.ru",
+			"homepage": "https://nekrasovonline.ru",
+			"role": "Developer"
+		}
+	 ],
+	"version": "1.0.0",
+	"library": "project",
+	"license": "proprietary",
+	
+    "require": {
+        "longman/telegram-bot": "*",
+		"php-telegram-bot/telegram-bot-manager": "^1.3",
+		"izniburak/router": "^1.5",
+		"gabordemooij/redbean": "dev-master",
+		"mesilov/bitrix24-php-sdk": "dev-master"
+    },
+	
+	"autoload": {
+			"psr-4": {
+				"App\\": "app/"
+		 }
+	 }
+}
