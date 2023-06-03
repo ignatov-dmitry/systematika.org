@@ -160,7 +160,6 @@ let videorecords = {
             }
 
             let url = 'videorecord/'+newstr+'/'+classname;
-            console.log(url);
             $.ajax({
                 url: '/gktomk/watch/encrypt-link',
                 method: 'get',
@@ -169,8 +168,7 @@ let videorecords = {
                     link: url
                 },
                 success: function(data){
-                    copyTextToClipboard('https://systematika.org/gktomk/watch?v=' + data);
-                    console.log(data);
+                    copyToClipboard('https://systematika.org/gktomk/watch?v=' + data);
                 }
             });
         }
@@ -179,12 +177,41 @@ let videorecords = {
 }
 videorecords.init();
 async function copyTextToClipboard(text) {
+    navigator.clipboard.writeText(text)
+        .then(function() {
+            console.log("Текст скопирован!");
+        })
+        .catch(function(err) {
+            console.error("Ошибка при копировании: ", err);
+        });
+}
+
+function copyToClipboard(text) {
+    var textarea = document.createElement("textarea");
+    textarea.value = text;
+
+    textarea.style.position = "fixed";
+    textarea.style.top = 0;
+    textarea.style.left = 0;
+    textarea.style.width = "2em";
+    textarea.style.height = "2em";
+    textarea.style.padding = 0;
+    textarea.style.border = "none";
+    textarea.style.outline = "none";
+    textarea.style.boxShadow = "none";
+    textarea.style.background = "transparent";
+
+    document.body.appendChild(textarea);
+
+    textarea.select();
+
     try {
-        await navigator.clipboard.writeText(text);
-        alert('Скопировано')
-        console.log('Text copied to clipboard');
+        // Копируем текст в буфер обмена
+        var successful = document.execCommand("copy");
+        var msg = successful ? "Скопировано!" : "Не удалось скопировать текст!";
+        alert(msg);
     } catch (err) {
-        alert('Ошибка копирования')
-        console.error('Error in copying text: ', err);
+        console.error("Ошибка при копировании: ", err);
     }
+    document.body.removeChild(textarea);
 }

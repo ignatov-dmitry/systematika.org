@@ -73,6 +73,26 @@ class CronEvents extends Events
 
     }
 
+    private function unassigned_videos()
+    {
+        $zoomModel = new ZoomModel();
+        $zoomUsers = $zoomModel->getUsers(['status' => 'active', 'page_size' => 300])['users'];
+        $meetings = array();
+
+
+        foreach ($zoomUsers as $zoomUser) {
+            $meeting = $zoomModel->getRecordings($zoomUser['id'],
+                [
+                    'from' => '2022-01-01',
+                    'to' => date('Y-m-d', strtotime(date('Y-m-d') . '-1 day')),
+                    'page_size' => 300
+                ])['meetings'];
+
+            $meetings = array_merge($meetings, $meeting);
+        }
+        return $zoomModel->createZoomMeetings($meetings);
+    }
+
     private function videorecords_every1minute(){
         $VideorecordsModel = new VideorecordsModel();
         $VideorecordsModel->cronAddtasks(); // Добавляем задачи в лог на сохранение видео (убрали из вебхуков)

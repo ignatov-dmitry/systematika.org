@@ -185,7 +185,6 @@ class WhatsappModel
                  return $this->sendApiWazzup($phone, $message);
                 break;
         }
-
     }
 
     private function sendApiChatapi($phone, $message)
@@ -219,12 +218,8 @@ class WhatsappModel
             'channelId' => 'a7d9355f-4d4b-452e-ad7d-d1348f64ea5f',
             'chatType' => 'whatsapp',
             'chatId' => $phone,
-            'text' => $message
+            'text' => 'PHONE: ' . $phone . ' ' . $message
         ];
         return WAZZUPAPI::sendMessage($data);
-
     }
-
-
-
 }
