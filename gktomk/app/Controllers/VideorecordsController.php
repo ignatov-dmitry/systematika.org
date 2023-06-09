@@ -50,7 +50,7 @@ class VideorecordsController extends Controller
             else
                 $logs[$key]['path'] = false;
 
-            //var_dump($logs[$key]['path']);
+            $logs[$key]['meeting_topic'] = htmlspecialchars($log['meeting_topic']);
         }
 
         $programs = (new GroupsModel())->getGroups();
@@ -104,7 +104,7 @@ class VideorecordsController extends Controller
                     $files[] = array(
                         'path'      => $file,
                         'is_file'   => is_file($unassignedPath . '/' . $file),
-                        'file_name' => str_replace(['.mp4', '.MP4'], '', $file)
+                        'file_name' => htmlspecialchars(str_replace(['.mp4', '.MP4'], '', $file))
                     );
                 }
             }
