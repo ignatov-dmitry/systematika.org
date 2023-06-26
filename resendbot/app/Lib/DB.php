@@ -52,7 +52,7 @@
 			$this->Host       = empty($Host) ? DB_HOST : $Host;
 			$this->DBName     = empty($DBName) ? DB_NAME : $DBName;
 			$this->DBUser     = empty($DBUser) ? DB_USER : $DBUser;
-			$this->DBPassword = empty($DBPassword) ? DB_PASS : $DBPassword;
+			$this->DBPassword = empty($DBPassword) ? '' : $DBPassword;
 			$this->DBPort	  = empty($DBPort) ? DB_PORT : $DBPort;
 			$this->Connect();
 			$this->parameters = array();
