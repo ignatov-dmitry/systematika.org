@@ -7,10 +7,12 @@ namespace GKTOMK\Controllers;
 use GKTOMK\Classes\Api\MoyKlass;
 use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\Systematika\MoyKlass\Lesson;
+use GKTOMK\Models\Systematika\MoyKlass\LessonRecord;
 use GKTOMK\Models\Systematika\MoyKlass\User;
 use GKTOMK\Models\Systematika\MoyKlass\UserSubscription;
 use GKTOMK\Models\VideorecordsModel;
 use GKTOMK\Models\Wazzup24Model;
+use GKTOMK\Models\WhatsappModel;
 use GKTOMK\Models\ZoomModel;
 
 class TestController extends Controller
@@ -164,5 +166,17 @@ class TestController extends Controller
                 $zoomModel->deleteMeeting(urlencode(urlencode($zoomVideo['meeting_id'])));
 
         }
+    }
+
+    public function getCronTest(){
+        $WhatsappModel = new WhatsappModel();
+        $WhatsappModel->cronStart();
+    }
+
+    public function getLessonRecords()
+    {
+        $lessonRecords = new LessonRecord();
+
+        (new WhatsappModel())->sendMessages($lessonRecords->getRecordsWithUsers(25776466));
     }
 }

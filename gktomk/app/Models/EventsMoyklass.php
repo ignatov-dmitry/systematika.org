@@ -3,6 +3,7 @@
 
 namespace GKTOMK\Models;
 
+use GKTOMK\Models\Systematika\MoyKlass\LessonRecord;
 class EventsMoyklass extends Events
 {
 
@@ -93,6 +94,12 @@ class EventsMoyklass extends Events
         }
     }
 
+    public function lesson_start()
+    {
+        $lessonRecords = new LessonRecord();
+        (new WhatsappModel())->sendMessages($lessonRecords->getRecordsWithUsers($this->request['object']['lessonId'], $this->request['object']['date']));
+    }
+
     /**
      * Принимаем событие "до начала занятие остается менее 6 часов"
      * */
@@ -124,6 +131,7 @@ class EventsMoyklass extends Events
         $lesson_id = $this->request['object']['lessonId'];
         $user_id = $this->request['object']['userId'];
         $lessons->deleteRecordLessonByLessonIdAndUserId($lesson_id, $user_id);
+        DB::exec('DELETE FROM `mk_lesson_records` WHERE `lessonId`=:lesson_id && `userId`=:user_id', ['lesson_id' => $lesson_id, 'user_id' => $user_id]);
     }
 
 

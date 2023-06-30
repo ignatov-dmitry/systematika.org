@@ -4,6 +4,7 @@
 namespace GKTOMK\Models\Events;
 
 
+use GKTOMK\Classes\Api\MoyKlass;
 use GKTOMK\Models\ChatModels\ChatAdminModel;
 use GKTOMK\Models\Events;
 use GKTOMK\Models\HandlerHwkModel;
@@ -12,8 +13,6 @@ use GKTOMK\Models\MissingTrialModel;
 use GKTOMK\Models\StatisticsModel;
 use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\VideorecordsModel;
-use GKTOMK\Models\WebhookModel;
-use GKTOMK\Models\WhatsappModel;
 use GKTOMK\Models\ZoomModel;
 
 class CronEvents extends Events
@@ -137,8 +136,7 @@ class CronEvents extends Events
     }
 
     private function whatsapp_every1minute(){
-        $WhatsappModel = new WhatsappModel();
-        $WhatsappModel->cronStart();
+
     }
 
     private function synchronizationlessons_manual(){
@@ -146,9 +144,21 @@ class CronEvents extends Events
         $LessonsModel->setSynchronizationByDate(time(), time());
     }
 
+    private function update_lessons(){
+        $MK = new MoyKlass();
+
+        //Get all lesson records
+        $MK->insertApiDataToDB('getLessonRecords', 'mk_lesson_records', true,  'lessonRecords', 'company/lessonRecords');
+
+        //Get all lessons
+        $MK->insertApiDataToDB('getLessons', 'mk_lessons', true, 'lessons','company/lessons',);
+
+        //Get all users
+        $MK->insertApiDataToDB('getUsers', 'mk_users', true, 'users', 'company/users',);
+    }
+
     private function webhook_every1minute(){
-        $WebhookModel = new WebhookModel();
-        $WebhookModel->cronStart();
+
     }
 
     private function synchronizationchatmanagers_manual(){

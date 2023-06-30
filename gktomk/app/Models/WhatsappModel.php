@@ -31,61 +31,27 @@ class WhatsappModel
         return DB::edit('whatsappmessages', $data);
     }
 
-    private function getCron()
+    public function sendMessages($records)
     {
-        //  AND IF(`w`.`id`, `w`.`status`<>"sent", 1)
-        $timeend = DB::getOption('systemsetting', 'whatsapp_time')
-            ? (DB::getOption('systemsetting', 'whatsapp_time') * 60)
-            : (60 * 60 * 2);
-
-        return DB::getAll(
-            'SELECT *, `rl`.`lesson_id_mk` `lesson_id_mk`, 
-                `rl`.`record_id_mk` `record_id_mk`, 
-                `rl`.`user_id_mk` `user_id_mk`, 
-                `m`.`id` `member_id`,
-                (SELECT `w`.`status` FROM `whatsappmessages` `w` WHERE `w`.`record_id_mk`=`rl`.`record_id_mk` ORDER by `w`.`date` DESC LIMIT 1) `whatsapp_status`
-                FROM `lessons` `l` 
-                 LEFT JOIN `recordslesson` `rl` ON `l`.`lesson_id_mk`=`rl`.`lesson_id_mk` 
-                 LEFT JOIN `member` `m` ON `m`.`mk_uid`=`rl`.`user_id_mk` 
-                 WHERE 
-                 
-                 (`l`.`timestart`>:timestart 
-                 AND `l`.`timestart`<:timeend) 
-                 GROUP BY `rl`.`record_id_mk`
-                 HAVING `whatsapp_status` IS NULL or `whatsapp_status` <> "sent"
-                 ORDER BY `timestart` ASC
-                 ',
-            [
-                'timestart' => time(),
-                'timeend' => time() + $timeend
-            ]);
-    }
-
-    public function cronStart(){
-        $records = $this->getCron();
-
-        var_dump($records);
-
-
         foreach ($records as $record) {
-            $this->cronWhatsappHandle($record);
+            $this->whatsappHandle($record);
         }
     }
 
-    private function cronWhatsappHandle($recordData)
+    private function whatsappHandle($recordData)
     {
 
-        if(empty($recordData['lesson_id_mk']))
+        if(empty($recordData['lesson_id']))
             return;
 
         if(empty($recordData['phone'])){
 
             if($recordData['whatsapp_status']!=='nophone'){
                 $this->editWhatsapp([
-                    'member_id' => $recordData['member_id'],
-                    'lesson_id_mk' => $recordData['lesson_id_mk'],
-                    'record_id_mk' => $recordData['record_id_mk'],
-                    'user_id_mk' => $recordData['user_id_mk'],
+                    'member_id' => $recordData['user_id'],
+                    'lesson_id_mk' => $recordData['lesson_id'],
+                    'record_id_mk' => $recordData['record_id'],
+                    'user_id_mk' => $recordData['user_id'],
                     'status' => 'nophone',
                     'date' => time(),
                 ]);
@@ -106,16 +72,13 @@ class WhatsappModel
 
 
         $GroupsModel = new GroupsModel();
-        $groupsync = $GroupsModel->getGroupsyncByGroupIdMK($recordData['class_id_mk']);
+        $groupsync = $GroupsModel->getGroupsyncByGroupIdMK($recordData['class_id']);
         $program = $GroupsModel->getProgramById($groupsync['program_id'])[0];
         $class = $GroupsModel->getClassById($groupsync['class_id'])[0];
 
 
         $programname = empty($program) ? $recordData['course_name'] : $program['name'];
         $classname = empty($class) ? $recordData['class_name'] : $class['name'];
-       
-        //echo $recordData['record_id_mk'] . ' ' . $recordData['date'] . ' - '. $recordData['begin_time'] . ' ' .$programname . ' ' .$classname . ' - ' . $recordData['first_name'] . ' ' . $recordData['last_name'] . '      ' . $recordData['phone'] . PHP_EOL;
-
 
         $datestart = date('d', $recordData['timestart']);
         $mnthtxt = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
@@ -132,7 +95,7 @@ class WhatsappModel
         $ViewsModel = new ViewsModel();
         $ViewsModel->setVars([
             'first_name' => $recordData['first_name'],
-            'last_name' => $recordData['last_name'],
+            'last_name' => '',
             'class_name' => $classname,
             'course_name' => $programname,
             'topic' => $recordData['topic'],
@@ -145,13 +108,11 @@ class WhatsappModel
 
         $result = $this->sendWhatsapp($phone, $message);
 
-        //var_dump($result);
-
         $this->editWhatsapp([
-            'member_id' => $recordData['member_id'],
-            'lesson_id_mk' => $recordData['lesson_id_mk'],
-            'record_id_mk' => $recordData['record_id_mk'],
-            'user_id_mk' => $recordData['user_id_mk'],
+            'member_id' => $recordData['user_id'],
+            'lesson_id_mk' => $recordData['lesson_id'],
+            'record_id_mk' => $recordData['record_id'],
+            'user_id_mk' => $recordData['user_id'],
             'phone' => $phone,
             'message' => $message,
             'status' => 'sent',
@@ -163,6 +124,7 @@ class WhatsappModel
 
     private function sendWhatsapp($phone, $message)
     {
+        $userPhone = $phone;
         /*$data = [
             'phone' => $phone, // Телефон получателя
             'body' => $message, // Сообщение
@@ -182,7 +144,7 @@ class WhatsappModel
                 break;
 
             case 'wazzup':
-                 return $this->sendApiWazzup($phone, $message);
+                 return $this->sendApiWazzup($phone, $message, $userPhone);
                 break;
         }
     }
@@ -212,13 +174,13 @@ class WhatsappModel
         return file_get_contents($url, false, $options);
     }
 
-    private function sendApiWazzup($phone, $message)
+    private function sendApiWazzup($phone, $message, $userPhone)
     {
         $data = [
             'channelId' => 'a7d9355f-4d4b-452e-ad7d-d1348f64ea5f',
             'chatType' => 'whatsapp',
             'chatId' => $phone,
-            'text' => 'PHONE: ' . $phone . ' ' . $message
+            'text' => 'PHONE: ' . $userPhone . ' ' . $message
         ];
         return WAZZUPAPI::sendMessage($data);
     }

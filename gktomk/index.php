@@ -1,7 +1,11 @@
 <?php
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
+
+if($_GET['debug'] == 1) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
+
 define('GLOBAL_TIMER', microtime(true));
 ini_set('pcre.backtrack_limit', 1024*1024*5);
 
@@ -24,14 +28,14 @@ require_once __DIR__ . '/vendor/autoload.php';
 GKTOMK\Config::init();
 GKTOMK\Models\Route::init();
 
-//if(isset($_GET['webhook'])){
-//    $endtimer = round(microtime(true) - GLOBAL_TIMER, 5);
-//    echo $title = 'Webhook, время загрузки: '.$endtimer;
-//    $data = [
-//        'server' => $_SERVER,
-//        'request' => $_REQUEST,
-//        'phpinput' => file_get_contents('php://input')
-//    ];
-//    writeToLog($data, $title, 'webhook');
-//}
+if(isset($_GET['webhook'])){
+    $endtimer = round(microtime(true) - GLOBAL_TIMER, 5);
+    echo $title = 'Webhook, время загрузки: '.$endtimer;
+    $data = [
+        'server' => $_SERVER,
+        'request' => $_REQUEST,
+        'phpinput' => file_get_contents('php://input')
+    ];
+    writeToLog($data, $title, 'webhook');
+}
 

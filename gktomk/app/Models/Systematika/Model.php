@@ -226,7 +226,7 @@ class Model
             'tn'        => $table,
             'keys'      => implode(', ', $keys),
             'vals'      => implode(', ', $valuesList),
-            'updateStr' => ' ON DUPLICATE KEY UPDATE ' . $updateStr
+            'updateStr' => $update ? ' ON DUPLICATE KEY UPDATE ' . $updateStr : ''
         ));
 
         return $sql;
@@ -337,4 +337,8 @@ class Model
         return new static();
     }
 
+    public function getAll($sql)
+    {
+        return DB::getAll($sql);
+    }
 }
