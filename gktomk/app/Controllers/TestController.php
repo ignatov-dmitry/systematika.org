@@ -22,6 +22,10 @@ class TestController extends Controller
         parent::__construct();
     }
 
+    public function getDate()
+    {
+        var_dump(date_diff(new \DateTime(), new \DateTime('2023-07-06 00:00'))->h);
+    }
 
     public function getMessage(){
         $wazzup = new Wazzup24Model();

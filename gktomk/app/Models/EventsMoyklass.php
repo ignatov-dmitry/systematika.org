@@ -96,8 +96,15 @@ class EventsMoyklass extends Events
 
     public function lesson_start()
     {
-        $lessonRecords = new LessonRecord();
-        (new WhatsappModel())->sendMessages($lessonRecords->getRecordsWithUsers($this->request['object']['lessonId'], $this->request['object']['date']));
+        $currentDateTime = new \DateTime();
+        $lessonDateTime = new \DateTime($this->request['object']['date'] . ' ' . $this->request['object']['beginTime']);
+
+        if (date_diff($currentDateTime, $lessonDateTime)->h <=2)
+        {
+            $lessonRecords = new LessonRecord();
+            (new WhatsappModel())->sendMessages($lessonRecords->getRecordsWithUsers($this->request['object']['lessonId'], $this->request['object']['date']));
+        }
+
     }
 
     /**
