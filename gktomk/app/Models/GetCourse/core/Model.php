@@ -3,6 +3,8 @@
 namespace GKTOMK\Models\GetCourse\core;
 
 
+use Exception;
+
 /**
  * Основной класс для API объектов
  */
@@ -33,9 +35,10 @@ class Model
 		self::$accountName = $accountName;
 	}
 
-	public static function getUrl() {
+	public static function getUrl(): string
+    {
 		if(!self::$accountName) {
-			throw new \Exception("Account name not supplied");
+			throw new Exception("Account name not supplied");
 		}
 		return 'https://' . self::$accountName . '.getcourse.ru/pl/api/';
 	}
@@ -135,8 +138,8 @@ class Model
 	 * @param int $options http://php.net/manual/en/json.constants.php
 	 * @return string
 	 */
-	public function toJSON($options = 0)
-	{
+	public function toJSON(int $options = 0): string
+    {
 		return json_encode($this->toArray(), $options | 64);
 	}
 
@@ -155,12 +158,12 @@ class Model
 	 * @param $url
 	 * @param $action
 	 * @return mixed
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	protected function executeCall($url, $action)
 	{
 		if(!self::$accessToken) {
-			throw new \Exception("Access token not supplied");
+			throw new Exception("Access token not supplied");
 		}
 
 		return Core::sendRequest($url, $action, $this->toArray(), self::$accessToken);

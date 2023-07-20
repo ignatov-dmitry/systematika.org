@@ -3,6 +3,8 @@
 
 namespace GKTOMK\Models;
 
+use DateTime;
+use Exception;
 use GKTOMK\Models\Systematika\MoyKlass\LessonRecord;
 class EventsMoyklass extends Events
 {
@@ -94,17 +96,20 @@ class EventsMoyklass extends Events
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function lesson_start()
     {
-        $currentDateTime = new \DateTime();
-        $lessonDateTime = new \DateTime($this->request['object']['date'] . ' ' . $this->request['object']['beginTime']);
+        $request = $this->request;
+        $currentDateTime = new DateTime();
+        $lessonDateTime = new DateTime($request['object']['date'] . ' ' . $request['object']['beginTime']);
 
         if (date_diff($currentDateTime, $lessonDateTime)->h <=2)
         {
             $lessonRecords = new LessonRecord();
-            (new WhatsappModel())->sendMessages($lessonRecords->getRecordsWithUsers($this->request['object']['lessonId'], $this->request['object']['date']));
+            (new WhatsappModel())->sendMessages($lessonRecords->getRecordsWithUsers($request['object']['lessonId'], $request['object']['date']), $request);
         }
-
     }
 
     /**

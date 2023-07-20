@@ -2,6 +2,7 @@
 
 namespace GKTOMK\Models\GetCourse;
 
+use Exception;
 use GKTOMK\Models\GetCourse\core\Model;
 
 /**
@@ -181,7 +182,8 @@ class User extends Model
 	 * @param $utm_content
 	 * @return $this
 	 */
-	public function setSessionUtmContent($utm_content) {
+	public function setSessionUtmContent($utm_content): User
+    {
 		$this->session['utm_content'] = $utm_content;
 		return $this;
 	}
@@ -231,16 +233,18 @@ class User extends Model
 	 * @param $referer
 	 * @return $this
 	 */
-	public function setSessionReferer($referer) {
+	public function setSessionReferer($referer): User
+    {
 		$this->session['referer'] = $referer;
 		return $this;
 	}
 
-	/**
-	 * Вызов api
-	 * @param $action
-	 * @return mixed
-	 */
+    /**
+     * Вызов api
+     * @param $action
+     * @return mixed
+     * @throws Exception
+     */
 	public function apiCall( $action ) {
 		return $this->executeCall(self::getUrl().'users', $action);
 	}

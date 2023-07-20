@@ -216,7 +216,7 @@ class MoyklassModel
      * */
     public static function editUserById($userId, $data = ['name', 'email'])
     {
-
+        return self::startApi('company/users/' . $userId, $data);
     }
 
     public static function getFindUserByEmail($email)

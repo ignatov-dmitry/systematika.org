@@ -31,14 +31,14 @@ class WhatsappModel
         return DB::edit('whatsappmessages', $data);
     }
 
-    public function sendMessages($records)
+    public function sendMessages($records, $requestData)
     {
         foreach ($records as $record) {
-            $this->whatsappHandle($record);
+            $this->whatsappHandle($record, $requestData);
         }
     }
 
-    private function whatsappHandle($recordData)
+    private function whatsappHandle($recordData, $requestData)
     {
 
         if(empty($recordData['lesson_id']))
@@ -83,7 +83,7 @@ class WhatsappModel
         $datestart = date('d', $recordData['timestart']);
         $mnthtxt = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
         $datestart .= ' ' . $mnthtxt[(date("n", $recordData['timestart'])-1)];
-        $datestart .= ' в ' . $recordData['begin_time'];
+        $datestart .= ' в ' . $requestData['object']['beginTime'];
 
         $timeleft = HelperModel::timeleft($recordData['timestart'],
             ['days' => ['день', 'дня', 'дней'],
@@ -98,7 +98,7 @@ class WhatsappModel
             'last_name' => '',
             'class_name' => $classname,
             'course_name' => $programname,
-            'topic' => $recordData['topic'],
+            'topic' => $requestData['object']['topic'],
             'datestart' => $datestart,
             'timeleft' => $timeleft,
             'datesend' => date("d.m.Y в H:i"),
@@ -180,7 +180,7 @@ class WhatsappModel
             'channelId' => 'a7d9355f-4d4b-452e-ad7d-d1348f64ea5f',
             'chatType' => 'whatsapp',
             'chatId' => $phone,
-            'text' => 'PHONE: ' . $userPhone . ' ' . $message
+            'text' => $message
         ];
         return WAZZUPAPI::sendMessage($data);
     }

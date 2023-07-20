@@ -2,6 +2,7 @@
 
 namespace GKTOMK\Models\GetCourse;
 
+use Exception;
 use GKTOMK\Models\GetCourse\core\Model;
 
 /**
@@ -179,11 +180,12 @@ class Deal extends User
 		return $this;
 	}
 
-	/**
-	 * Вызов api
-	 * @param $action
-	 * @return mixed
-	 */
+    /**
+     * Вызов api
+     * @param $action
+     * @return mixed
+     * @throws Exception
+     */
 	public function apiCall( $action ) {
 		return $this->executeCall(self::getUrl().'deals', $action);
 	}
