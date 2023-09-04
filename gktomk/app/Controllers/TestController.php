@@ -5,6 +5,7 @@ namespace GKTOMK\Controllers;
 
 
 use GKTOMK\Classes\Api\MoyKlass;
+use GKTOMK\Models\GetCourse\Account;
 use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\Systematika\MoyKlass\Lesson;
 use GKTOMK\Models\Systematika\MoyKlass\LessonRecord;
@@ -82,7 +83,7 @@ class TestController extends Controller
         {
             $subscriptions = array();
             $userId = (new User())->getItem(['email' => $item['email']], ['id'])['id'];
-            $userSubscriptions = (new UserSubscription())->getUserSubscriptions($userId);
+            $userSubscriptions = (new UserSubscription())->getUserSubscriptionsFromId($userId);
 
             $subscriptions['count_user_subscriptions'] = $userSubscriptions['all']['itemCount'] ?: '999';
             $subscriptions['user_subscriptions_left_visits'] = ($userSubscriptions['all']['visitCount'] - $userSubscriptions['all']['visitedCount']) ?: '999';
@@ -182,5 +183,26 @@ class TestController extends Controller
         $lessonRecords = new LessonRecord();
 
         (new WhatsappModel())->sendMessages($lessonRecords->getRecordsWithUsers(25776466));
+    }
+
+    public function getGkExport()
+    {
+//        $gkUser = new \GKTOMK\Models\GetCourse\User();
+//        $gkUser::setAccountName(CONFIG['gk_account_name']);
+//        // Замените токен на сгенерированный вашим аккаунтом (http://{your_account}.getcourse.ru/saas/account/api)
+//        $gkUser::setAccessToken(CONFIG['gk_secret_key']);
+//        var_dump($gkUser->apiCall(''));
+
+        $account = new Account();
+        $account::setAccountName(CONFIG['gk_account_name']);
+        $account::setAccessToken(CONFIG['gk_secret_key']);
+        var_dump($account->apiCall('users', ['status'=> 'active']));
+    }
+
+    public function getCounts()
+    {
+        $userSubscription = new UserSubscription();
+        $userSubscription->prepareForGK('89104170140@mail.ru');
+
     }
 }

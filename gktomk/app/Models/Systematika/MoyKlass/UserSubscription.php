@@ -16,7 +16,7 @@ class UserSubscription extends Model
 
     protected string $tableName = 'mk_user_subscriptions';
 
-    public function getUserSubscriptions($id): array
+    public function getUserSubscriptionsFromId($id): array
     {
         $countUserSubscriptions = array();
         $individualSyncIds = array();
@@ -53,5 +53,25 @@ class UserSubscription extends Model
 
 
         return $countUserSubscriptions;
+    }
+
+    public function getUserSubscriptionsFromEmail($email): array
+    {
+        $userId = (new User())->getItem(['email' => $email], ['id'])['id'];
+        return $this->getUserSubscriptionsFromId($userId);
+    }
+
+    public function prepareForGK($email): array
+    {
+        $subscriptions = array();
+        $userId = (new User())->getItem(['email' => $email], ['id'])['id'];
+        $userSubscriptions = $this->getUserSubscriptionsFromId($userId);
+
+        $subscriptions['count_user_subscriptions'] = $userSubscriptions['all']['itemCount'] ?: 0;
+        $subscriptions['user_subscriptions_left_visits'] = ($userSubscriptions['all']['visitCount'] - $userSubscriptions['all']['visitedCount']) ?: 0;
+        $subscriptions['user_subscriptions_left_visits_individual'] = ($userSubscriptions['individual']['visitCount'] - $userSubscriptions['individual']['visitedCount']) ?: 0;
+        $subscriptions['user_subscriptions_left_visits_group'] = ($userSubscriptions['group']['visitCount'] - $userSubscriptions['group']['visitedCount']) ?: 0;
+
+        return $subscriptions;
     }
 }

@@ -12,7 +12,7 @@ class Lesson extends Model
 {
     protected string $tableName = 'mk_lessons';
 
-    public function getLessonsWithRecordsByUserId($criteria = array(), $orderBy = null, $limit = null)
+    public function getLessonsWithRecordsByUserId($criteria = array(), $orderBy = null, $limit = null): ?array
     {
         $whereCondition = '';
         $sql = '

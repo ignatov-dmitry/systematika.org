@@ -3,6 +3,7 @@
 namespace GKTOMK\Models;
 
 use GKTOMK\Models\GetCourse\User;
+use GKTOMK\Models\Systematika\MoyKlass\UserSubscription;
 
 class GetcourseModel
 {
@@ -193,7 +194,7 @@ class GetcourseModel
         } else { // Если даты нет, ставим "пустое значение поля"
             $this->DataUser['date_last_test_lesson'] = '01.01.1970';
         }
-
+var_dump($this->DataUser['date_last_test_lesson']);
         // Дата последнего посещения урока
         $lesson_last = MoyklassModel::getLessonVisitLast($userMk['id']);
         if (isset($lesson_last) and !empty($lesson_last)) {
@@ -224,8 +225,11 @@ class GetcourseModel
     // Обновляет количество абонементов
     public function updateUserSubscriptions($email){
 
-        $SubscriptionModel = new SubscriptionsModel();
-        $getCountSubscriptionsByEmail = $SubscriptionModel->getCountSubscriptionsByEmail($email);
+//        $SubscriptionModel = new SubscriptionsModel();
+//        $getCountSubscriptionsByEmail = $SubscriptionModel->getCountSubscriptionsByEmail($email);
+        // Данные стали брать из базы
+        $userSubscription = new UserSubscription();
+        $getCountSubscriptionsByEmail = $userSubscription->getUserSubscriptionsFromEmail($email);
 
         if (!empty($getCountSubscriptionsByEmail)) {
             $this->DataUser['count_user_subscriptions'] = $getCountSubscriptionsByEmail['all']['itemCount'];
