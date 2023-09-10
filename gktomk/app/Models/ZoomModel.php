@@ -23,6 +23,30 @@ class ZoomModel extends Model
 
     }
 
+    public function getAccessToken()
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://zoom.us/oauth/token?grant_type=account_credentials&account_id=E1RvNLEPQ_eVsEdWVJMg8w',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Basic ' . base64_encode('buweHgtPS56Kg12lHmvJ_A:KzpqptjmJuVEaERFr4TkJE32ZkR1vAYb'),
+                ),
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        return json_decode($response)->access_token;
+    }
+
     private function genJWT()
     {
 
@@ -56,8 +80,9 @@ class ZoomModel extends Model
 
     public function getLinkDownloadByUrl($url){
         $curl = curl_init();
+        //TODO Преврить работает ли новая реализация вместо $this->genJWT()
         curl_setopt_array($curl, array(
-            CURLOPT_URL => $url .'?access_token='.$this->genJWT(),
+            CURLOPT_URL => $url .'?access_token='.$this->getAccessToken(),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -101,7 +126,7 @@ class ZoomModel extends Model
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => $method,
             CURLOPT_HTTPHEADER => array(
-                "authorization: Bearer ".$this->genJWT(),
+                "authorization: Bearer " . $this->getAccessToken(),
                 "content-type: application/json"
             ),
         ));
