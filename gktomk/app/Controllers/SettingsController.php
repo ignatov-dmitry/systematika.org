@@ -217,7 +217,7 @@ class SettingsController extends Controller
         $zoomaccounts = $ZoomaccountsModel->getAllAccounts();*/
 
         $ZoomModel = new ZoomModel();
-        $zoomaccounts = $ZoomModel->getUsers()['users'];
+        $zoomaccounts = $ZoomModel->getUsers()['users'] ?? [];
 
         $colors = [
             [
