@@ -189,10 +189,10 @@ class GetcourseModel
         $this->DataUser['email'] = $userMk['email'];
 
         // Обновляем дату последнего пробного
-        //$lesson_last_test = MoyklassModel::getLessonVisitLastTest($userMk['id']);
+        $lesson_last_test = MoyklassModel::getLessonVisitLastTest($userMk['id']);
 
-        $lesson = new Lesson();
-        $lesson_last_test = $lesson->getLessonsWithRecordsByUserId(['userId' => $userMk['id'], 'test' => 1], 'date DESC', 1);
+        //$lesson = new Lesson();
+        //$lesson_last_test = $lesson->getLessonsWithRecordsByUserId(['userId' => $userMk['id'], 'test' => 1], 'date DESC', 1);
 
         if (isset($lesson_last_test) and !empty($lesson_last_test)) {
             $date_last_lesson = @date("d.m.Y", strtotime($lesson_last_test['date']));
@@ -202,8 +202,8 @@ class GetcourseModel
         }
 
         // Дата последнего посещения урока
-        //$lesson_last = MoyklassModel::getLessonVisitLast($userMk['id']);
-        $lesson_last = $lesson->getLessonsWithRecordsByUserId(['userId' => $userMk['id'], 'visit' => 1], 'date DESC', 1);
+        $lesson_last = MoyklassModel::getLessonVisitLast($userMk['id']);
+        //$lesson_last = $lesson->getLessonsWithRecordsByUserId(['userId' => $userMk['id'], 'visit' => 1], 'date DESC', 1);
         if (isset($lesson_last) and !empty($lesson_last)) {
             $date_last_lesson = @date("d.m.Y", strtotime($lesson_last['date']));
             $this->DataUser['date_last_lesson'] = $date_last_lesson;
@@ -212,8 +212,8 @@ class GetcourseModel
         }
 
         // Дата последнего пропуска урока
-        //$lesson_last = MoyklassModel::getLessonSkipLast($userMk['id']);
-        $lesson_last = $lesson->getLessonsWithRecordsByUserId(['userId' => $userMk['id'], 'visit' => null], 'date DESC', 1);
+        $lesson_last = MoyklassModel::getLessonSkipLast($userMk['id']);
+        //$lesson_last = $lesson->getLessonsWithRecordsByUserId(['userId' => $userMk['id'], 'visit' => null], 'date DESC', 1);
         if (isset($lesson_last) and !empty($lesson_last)) {
             $date_last_skip_lesson = @date("d.m.Y", strtotime($lesson_last['date']));
             $this->DataUser['date_last_skip_lesson'] = $date_last_skip_lesson;
@@ -221,29 +221,29 @@ class GetcourseModel
             $this->DataUser['date_last_skip_lesson'] = '01.01.1970';
         }
 
-        //$lessonNextPaid = MoyklassModel::getNextPaidAndFreeRecording($userMk['id']);
-//        if (isset($lessonNextPaid) and !empty($lessonNextPaid)) {
-//            $this->DataUser['date_next_paid_lesson'] = $lessonNextPaid['date_next_paid_lesson'];
-//            $this->DataUser['date_next_free_lesson'] = $lessonNextPaid['date_next_free_lesson'];
+        $lessonNextPaid = MoyklassModel::getNextPaidAndFreeRecording($userMk['id']);
+        if (isset($lessonNextPaid) and !empty($lessonNextPaid)) {
+            $this->DataUser['date_next_paid_lesson'] = $lessonNextPaid['date_next_paid_lesson'];
+            $this->DataUser['date_next_free_lesson'] = $lessonNextPaid['date_next_free_lesson'];
+        }
+
+
+
+//        $lesson_last_paid = $lesson->getLessonsWithRecordsByUserId(['userId' => $userMk['id'], array('key' => 'date', 'val' => date('Y-m-d'), 'op' => Model::OP_GT)], 'date ASC', 1);
+//        if (isset($lesson_last_paid) and !empty($lesson_last_paid)) {
+//            $date_next_paid_lesson = @date("d.m.Y", strtotime($lesson_last_paid['date']));
+//            $this->DataUser['date_next_paid_lesson'] = $date_next_paid_lesson;
+//        } else { // Если даты нет, ставим "пустое значение поля"
+//            $this->DataUser['date_next_paid_lesson'] = '01.01.1970';
 //        }
-
-
-
-        $lesson_last_paid = $lesson->getLessonsWithRecordsByUserId(['userId' => $userMk['id'], array('key' => 'date', 'val' => date('Y-m-d'), 'op' => Model::OP_GT)], 'date ASC', 1);
-        if (isset($lesson_last_paid) and !empty($lesson_last_paid)) {
-            $date_next_paid_lesson = @date("d.m.Y", strtotime($lesson_last_paid['date']));
-            $this->DataUser['date_next_paid_lesson'] = $date_next_paid_lesson;
-        } else { // Если даты нет, ставим "пустое значение поля"
-            $this->DataUser['date_next_paid_lesson'] = '01.01.1970';
-        }
-
-        $lesson_last_free = $lesson->getLessonsWithRecordsByUserId(['userId' => $userMk['id'], 'free' => 1, array('key' => 'date', 'val' => date('Y-m-d'), 'op' => Model::OP_GT)], 'date ASC', 1);
-        if (isset($lesson_last_free) and !empty($lesson_last_free)) {
-            $date_next_free_lesson = @date("d.m.Y", strtotime($lesson_last_free['date']));
-            $this->DataUser['date_next_free_lesson'] = $date_next_free_lesson;
-        } else { // Если даты нет, ставим "пустое значение поля"
-            $this->DataUser['date_next_free_lesson'] = '01.01.1970';
-        }
+//
+//        $lesson_last_free = $lesson->getLessonsWithRecordsByUserId(['userId' => $userMk['id'], 'free' => 1, array('key' => 'date', 'val' => date('Y-m-d'), 'op' => Model::OP_GT)], 'date ASC', 1);
+//        if (isset($lesson_last_free) and !empty($lesson_last_free)) {
+//            $date_next_free_lesson = @date("d.m.Y", strtotime($lesson_last_free['date']));
+//            $this->DataUser['date_next_free_lesson'] = $date_next_free_lesson;
+//        } else { // Если даты нет, ставим "пустое значение поля"
+//            $this->DataUser['date_next_free_lesson'] = '01.01.1970';
+//        }
 
         return $this;
     }

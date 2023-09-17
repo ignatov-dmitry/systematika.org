@@ -31,6 +31,10 @@ class Model
 		self::$accessToken = $accessToken;
 	}
 
+    public static function getAccessToken()	{
+       return self::$accessToken;
+    }
+
 	public static function setAccountName($accountName)	{
 		self::$accountName = $accountName;
 	}

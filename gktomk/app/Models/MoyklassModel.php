@@ -551,15 +551,6 @@ class MoyklassModel
      */
     public static function getLessonVisitLastTest($userId)
     {
-        /*$res = self::getLessons(['userId'=>$userId]);
-        if(function_exists('array_key_last')){
-            $last = array_key_last($res['lessons']);
-            $last_lesson = $res['lessons'][$last];
-        }else{
-            $last = end(array_keys($res['lessons']));
-            $last_lesson = $res['lessons'][$last];
-        }
-        return $last_lesson;*/
         $lessons = self::getLessons(['userId' => $userId, 'includeRecords' => 'true']);
         $lessons = $lessons['lessons'];
 

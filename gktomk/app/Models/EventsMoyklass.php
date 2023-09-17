@@ -5,6 +5,7 @@ namespace GKTOMK\Models;
 
 use DateTime;
 use Exception;
+use GKTOMK\Classes\Api\MoyKlass;
 use GKTOMK\Models\Systematika\MoyKlass\LessonRecord;
 class EventsMoyklass extends Events
 {
@@ -42,8 +43,10 @@ class EventsMoyklass extends Events
     public function lesson_record_new()
     {
         $this->updateUserGetcourse(); // Обновляем данные в гк
+
         $lesson_id = $this->request['object']['lessonId'];
         $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
+
 
         // Сохраняем занятие в историю уроков
         $lessons = new LessonsModel();
@@ -82,11 +85,10 @@ class EventsMoyklass extends Events
         $this->updateUserGetcourse(); // Чисто обновляем данные в гк
 
         $lesson_id = $this->request['object']['lessonId'];
-        $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
 
-        // Сохраняем занятие в историю уроков
-        $lessons = new LessonsModel();
-        $lessons->editLesson($res);
+        $res2 = MoyklassModel::getLessonRecord($lesson_id);
+        $lessonRecords = new LessonRecord();
+        $lessonRecords->updateRecord($res2);
 
         // Добавляем пропуски
         if ($this->request['object']['visit'] and $this->request['object']['visit'] == 1) {

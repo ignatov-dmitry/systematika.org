@@ -5,7 +5,9 @@ namespace GKTOMK\Controllers;
 
 
 use GKTOMK\Classes\Api\MoyKlass;
+use GKTOMK\Models\DB;
 use GKTOMK\Models\GetCourse\Account;
+use GKTOMK\Models\MoyklassModel;
 use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\Systematika\MoyKlass\Lesson;
 use GKTOMK\Models\Systematika\MoyKlass\LessonRecord;
@@ -204,5 +206,21 @@ class TestController extends Controller
         $userSubscription = new UserSubscription();
         $userSubscription->prepareForGK('89104170140@mail.ru');
 
+    }
+
+    public function getInsert()
+    {
+//        $res = MoyklassModel::getLessonRecord(118562449);
+//        $lessonRecords = new LessonRecord();
+//
+//        $lessonRecords->updateRecord($res);
+
+        $date = new \DateTime('2023-04-12T15:50:37.605Z');
+        $date->format('Y-m-d H:i:s');
+
+        $sql = Model::getInstance()->prepareBulkInsert('mk_lesson_records',
+            ['id', 'free', 'test', 'skip', 'visit', 'userId', 'lessonId', 'createdAt', 'goodReason'],
+        [[99719551, null, null, null, null, 2952920, 24988196, $date->format('Y-m-d H:i:s'), null]]);
+        DB::exec($sql);
     }
 }

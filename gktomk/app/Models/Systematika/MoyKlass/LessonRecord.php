@@ -4,6 +4,7 @@
 namespace GKTOMK\Models\Systematika\MoyKlass;
 
 
+use GKTOMK\Models\DB;
 use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\Systematika\Util;
 
@@ -49,5 +50,48 @@ class LessonRecord extends Model
         ));
 
         return $this->getAll($sql);
+    }
+
+    public function updateRecord($data)
+    {
+        $sql = "
+            UPDATE {table} SET free = {free}, skip = {skip}, visit = {visit}, goodReason = {goodReason}, test = {test}, paid = {paid}
+            WHERE id = {id} AND userId = {userId}
+        ";
+
+        $sql = Util::replaceTokens($sql, array(
+            'table'         => $this->getTableName(),
+            'id'            => $data['id'],
+            'free'          => $data['free'] ?: 'NULL',
+            'test'          => $data['test'] ?: 'NULL',
+            'skip'          => $data['skip'] ?: 'NULL',
+            'visit'         => $data['visit'] ?: 'NULL',
+            'goodReason'    => $data['goodReason'] ?: 'NULL',
+            'paid'          => $data['paid'] ?: 'NULL',
+            'userId'        => $data['userId'] ?: 'NULL'
+        ));
+
+        DB::exec($sql);
+    }
+
+    public function addLessonRecord($data)
+    {
+        $date = new \DateTime($data['createdAt']);
+
+        $sql = Model::getInstance()->prepareBulkInsert($this->getTableName(),
+            ['id', 'free', 'test', 'skip', 'visit', 'userId', 'lessonId', 'createdAt', 'goodReason'],
+            [[
+                $data['lessonRecordId'],
+                $data['free'],
+                $data['test'],
+                $data['skip'],
+                $data['visit'],
+                $data['userId'],
+                $data['lessonId'],
+                $date->format('Y-m-d H:i:s'),
+                $data['goodReason'],
+            ]]);
+
+        DB::exec($sql);
     }
 }

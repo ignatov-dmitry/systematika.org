@@ -18,6 +18,8 @@ class GetcourseController extends Controller
     public function main()
     {
          self::writeToLog($_REQUEST, 'Дебаг GK. Получение данных');
+        //TODO: Не забыть удалить эту строку
+         //$this->getUpdateUser($_REQUEST['email']);
         // Принимаем данные и сохраняем пользователя
         $request = $_REQUEST;
         if (!empty($request['uid'])) {
