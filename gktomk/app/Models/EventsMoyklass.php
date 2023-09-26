@@ -75,6 +75,7 @@ class EventsMoyklass extends Events
         $lesson_id = $this->request['object']['lessonId'];
         $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
 
+        //Новая реализация
         $lesson = new Lesson();
         $lesson->updateLesson($res);
 
