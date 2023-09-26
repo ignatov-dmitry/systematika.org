@@ -63,4 +63,81 @@ class Lesson extends Model
 
         return DB::getAll($sql);
     }
+
+    public function addLesson($data)
+    {
+        $date = new \DateTime($data['createdAt']);
+
+        $sql = Model::getInstance()->prepareBulkInsert($this->getTableName(),
+            [
+                'id',
+                'date',
+                'beginTime',
+                'endTime',
+                'createdAt',
+                'filialId',
+                'roomId',
+                'classId',
+                'status',
+                'comment',
+                'maxStudents',
+                'topic',
+                'description'
+            ],
+            [[
+                $data['id'],
+                $data['date'],
+                $data['beginTime'],
+                $data['endTime'],
+                $date->format('Y-m-d H:i:s'),
+                $data['filialId'],
+                $data['roomId'],
+                $data['classId'],
+                $data['status'],
+                $data['comment'],
+                $data['maxStudents'],
+                $data['topic'],
+                $data['description'],
+            ]]);
+
+        DB::exec($sql);
+    }
+
+    public function updateLesson($data)
+    {
+        $sql = "
+            UPDATE {table} SET date = {date}, 
+                               beginTime = {beginTime}, 
+                               endTime = {endTime}, 
+                               createdAt = {createdAt}, 
+                               filialId = {filialId},
+                               roomId = {roomId},
+                               classId = {classId},
+                               status = {status},
+                               comment = {comment},
+                               maxStudents = {maxStudents},
+                               topic = {topic},
+                               description = {description}
+            WHERE id = {id};
+        ";
+
+        $sql = Util::replaceTokens($sql, array(
+            'table'         => $this->getTableName(),
+            'id'            => $data['id'],
+            'date'          => $data['date'],
+            'beginTime'     => $data['beginTime']   ?: 'NULL',
+            'endTime'       => $data['endTime']     ?: 'NULL',
+            'createdAt'     => $data['createdAt']   ?: 'NULL',
+            'filialId'      => $data['filialId']    ?: 'NULL',
+            'roomId'        => $data['roomId']      ?: 'NULL',
+            'classId'       => $data['classId']     ?: 'NULL',
+            'status'        => $data['status']      ?: 'NULL',
+            'comment'       => $data['comment']     ?: 'NULL',
+            'maxStudents'   => $data['maxStudents'] ?: 'NULL',
+            'topic'         => $data['topic']       ?: 'NULL',
+            'description'   => $data['description'] ?: 'NULL',
+        ));
+
+        DB::exec($sql);
+    }
 }

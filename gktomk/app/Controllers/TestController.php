@@ -215,12 +215,46 @@ class TestController extends Controller
 //
 //        $lessonRecords->updateRecord($res);
 
-        $date = new \DateTime('2023-04-12T15:50:37.605Z');
+        $date = new \DateTime('2023-05-10T15:05:06+00:00');
         $date->format('Y-m-d H:i:s');
 
         $sql = Model::getInstance()->prepareBulkInsert('mk_lesson_records',
             ['id', 'free', 'test', 'skip', 'visit', 'userId', 'lessonId', 'createdAt', 'goodReason'],
         [[99719551, null, null, null, null, 2952920, 24988196, $date->format('Y-m-d H:i:s'), null]]);
+
+        $sql = Model::getInstance()->prepareBulkInsert('mk_lessons',
+            [
+                'id',
+                'date',
+                'beginTime',
+                'endTime',
+                'createdAt',
+                'filialId',
+                'roomId',
+                'classId',
+                'status',
+                'comment',
+                'maxStudents',
+                'topic',
+                'description'
+            ],
+            [[
+                9999999999999,
+                '2023-09-17',
+                '16:10',
+                '17:10',
+                $date->format('Y-m-d H:i:s'),
+                16344,
+                22696,
+                118238,
+                1,
+                'NULL',
+                0,
+                'https://us06web.zoom.us/j/81206822410',
+                'sys.s1@mail.ru',
+            ]]);
+
+        var_dump($sql);die();
         DB::exec($sql);
     }
 }

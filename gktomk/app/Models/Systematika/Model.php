@@ -220,7 +220,7 @@ class Model
             }
         }
 
-        $sql = 'INSERT {ignore} INTO {tn} ({keys}) VALUES {vals} {updateStr}';
+        $sql = 'INSERT {ignore} INTO {tn} ({keys}) VALUES {vals} {updateStr};';
         $sql = Util::replaceTokens($sql, array(
             'ignore'    => $ignore ? 'IGNORE' : '',
             'tn'        => $table,

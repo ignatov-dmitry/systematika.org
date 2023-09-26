@@ -6,6 +6,7 @@ namespace GKTOMK\Models;
 use DateTime;
 use Exception;
 use GKTOMK\Classes\Api\MoyKlass;
+use GKTOMK\Models\Systematika\MoyKlass\Lesson;
 use GKTOMK\Models\Systematika\MoyKlass\LessonRecord;
 class EventsMoyklass extends Events
 {
@@ -47,6 +48,8 @@ class EventsMoyklass extends Events
         $lesson_id = $this->request['object']['lessonId'];
         $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
 
+        $res2 = MoyklassModel::getLessonRecord($lesson_id);
+        LessonRecord::getInstance()->addLessonRecord($res2);
 
         // Сохраняем занятие в историю уроков
         $lessons = new LessonsModel();
@@ -60,9 +63,20 @@ class EventsMoyklass extends Events
         }
     }
 
+    public function lesson_new(){
+        $lesson_id = $this->request['object']['lessonId'];
+        $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
+
+        $lesson = new Lesson();
+        $lesson->addLesson($res);
+    }
+
     public function lesson_changed(){
         $lesson_id = $this->request['object']['lessonId'];
         $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
+
+        $lesson = new Lesson();
+        $lesson->updateLesson($res);
 
         // Сохраняем занятие в историю уроков
         $lessons = new LessonsModel();
@@ -75,6 +89,9 @@ class EventsMoyklass extends Events
         // Удаляем урок и записи на него
         $lessons = new LessonsModel();
         $lessons->deleteLessonByLessonId($lesson_id);
+
+        DB::exec('DELETE FROM `mk_lesson_records` WHERE `lessonId`=:lesson_id', ['lesson_id' => $lesson_id]);
+        DB::exec('DELETE FROM `mk_lessons` WHERE `id`=:lesson_id', ['lesson_id' => $lesson_id]);
     }
 
     /*
@@ -86,9 +103,9 @@ class EventsMoyklass extends Events
 
         $lesson_id = $this->request['object']['lessonId'];
 
-        $res2 = MoyklassModel::getLessonRecord($lesson_id);
-        $lessonRecords = new LessonRecord();
-        $lessonRecords->updateRecord($res2);
+        $res = MoyklassModel::getLessonRecord($lesson_id);
+
+        LessonRecord::getInstance()->updateRecord($res);
 
         // Добавляем пропуски
         if ($this->request['object']['visit'] and $this->request['object']['visit'] == 1) {

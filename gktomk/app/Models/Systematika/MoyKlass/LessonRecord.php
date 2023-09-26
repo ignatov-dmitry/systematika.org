@@ -81,7 +81,7 @@ class LessonRecord extends Model
         $sql = Model::getInstance()->prepareBulkInsert($this->getTableName(),
             ['id', 'free', 'test', 'skip', 'visit', 'userId', 'lessonId', 'createdAt', 'goodReason'],
             [[
-                $data['lessonRecordId'],
+                $data['id'],
                 $data['free'],
                 $data['test'],
                 $data['skip'],

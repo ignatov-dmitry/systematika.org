@@ -148,19 +148,19 @@ class CronEvents extends Events
         $MK = new MoyKlass();
 
         //Get all lesson records
-        $MK->insertApiDataToDB('getLessonRecords', 'mk_lesson_records', true,  'lessonRecords', 'company/lessonRecords');
-
-        //Get all lessons
-        $MK->insertApiDataToDB('getLessons', 'mk_lessons', true, 'lessons','company/lessons',);
-
-        //Get subscriptions
-        $MK->insertApiDataToDB('getSubscriptions', 'mk_subscriptions', true, 'subscriptions', 'company/subscriptions',);
-
-        //Get user subscriptions
-        $MK->insertApiDataToDB('getUserSubscriptions', 'mk_user_subscriptions', true, 'subscriptions','company/userSubscriptions',);
-
-        //Get all users
-        $MK->insertApiDataToDB('getUsers', 'mk_users', true, 'users', 'company/users',);
+//        $MK->insertApiDataToDB('getLessonRecords', 'mk_lesson_records', true,  'lessonRecords', 'company/lessonRecords');
+//
+//        //Get all lessons
+//        $MK->insertApiDataToDB('getLessons', 'mk_lessons', true, 'lessons','company/lessons',);
+//
+//        //Get subscriptions
+//        $MK->insertApiDataToDB('getSubscriptions', 'mk_subscriptions', true, 'subscriptions', 'company/subscriptions',);
+//
+//        //Get user subscriptions
+//        $MK->insertApiDataToDB('getUserSubscriptions', 'mk_user_subscriptions', true, 'subscriptions','company/userSubscriptions',);
+//
+//        //Get all users
+//        $MK->insertApiDataToDB('getUsers', 'mk_users', true, 'users', 'company/users',);
 
     }
 
