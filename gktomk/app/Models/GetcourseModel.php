@@ -99,7 +99,6 @@ class GetcourseModel
 
     public static function updateUser($object = null)
     {
-        $stats = $object['stats'];
         $User = new User();
         $User::setAccountName(CONFIG['gk_account_name']);
         $User::setAccessToken(CONFIG['gk_secret_key']);
@@ -116,6 +115,12 @@ class GetcourseModel
             left join recordslesson as rl on rl.user_id_mk = m.mk_uid
             left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
             WHERE rl.visit = 1 and m.email = \'' . $memberEmail . '\' and l.date < NOW() order by l.date desc limit 1')['date'];
+
+        $lessonNext = DB::getRow('SELECT l.date
+            FROM member as m
+            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
+            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
+            WHERE m.email = \'' . $memberEmail . '\' AND l.date > NOW() order by l.date limit 1')['date'];
 
         $lessonNextFree = DB::getRow('SELECT l.date
             FROM member as m
@@ -159,8 +164,8 @@ class GetcourseModel
             $User->setUserAddField(CONFIG['gk_field_date_missing_free_test'],(new \DateTime($lessonSkipLastTest))->format('d.m.Y') ?? '');
 
         // Следующее платное занятие
-        if(isset($stats['nextRecord']) and !empty($stats['nextRecord']) and !empty(CONFIG['gk_field_next_paid_recording']))
-            $User->setUserAddField(CONFIG['gk_field_next_paid_recording'],(new \DateTime($stats['nextRecord']))->format('d.m.Y') ?? '');
+        if($lessonNext)
+            $User->setUserAddField(CONFIG['gk_field_next_paid_recording'],(new \DateTime($lessonNext))->format('d.m.Y') ?? '');
 
         // Следующее бесплатное занятие
         if ($lessonNextFree)
