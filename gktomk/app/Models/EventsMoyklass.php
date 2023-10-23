@@ -44,12 +44,8 @@ class EventsMoyklass extends Events
     public function lesson_record_new()
     {
         $this->updateUserGetcourse(); // Обновляем данные в гк
-
         $lesson_id = $this->request['object']['lessonId'];
         $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
-
-        $res2 = MoyklassModel::getLessonRecord($lesson_id);
-        LessonRecord::getInstance()->addLessonRecord($res2);
 
         // Сохраняем занятие в историю уроков
         $lessons = new LessonsModel();
@@ -67,17 +63,14 @@ class EventsMoyklass extends Events
         $lesson_id = $this->request['object']['lessonId'];
         $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
 
-        $lesson = new Lesson();
-        $lesson->addLesson($res);
+        // Сохраняем занятие в историю уроков
+        $lessons = new LessonsModel();
+        $lessons->editLesson($res);
     }
 
     public function lesson_changed(){
         $lesson_id = $this->request['object']['lessonId'];
         $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
-
-        //Новая реализация
-        $lesson = new Lesson();
-        $lesson->updateLesson($res);
 
         // Сохраняем занятие в историю уроков
         $lessons = new LessonsModel();
@@ -104,9 +97,12 @@ class EventsMoyklass extends Events
 
         $lesson_id = $this->request['object']['lessonId'];
 
-        $res = MoyklassModel::getLessonRecord($lesson_id);
+        $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
 
-        LessonRecord::getInstance()->updateRecord($res);
+        // Сохраняем занятие в историю уроков
+        $lessons = new LessonsModel();
+        $lessons->editLesson($res);
+
 
         // Добавляем пропуски
         if ($this->request['object']['visit'] and $this->request['object']['visit'] == 1) {
@@ -124,6 +120,11 @@ class EventsMoyklass extends Events
         $request = $this->request;
         $currentDateTime = new DateTime();
         $lessonDateTime = new DateTime($request['object']['date'] . ' ' . $request['object']['beginTime']);
+
+        $lesson_id = $this->request['object']['lessonId'];
+        $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
+        $lessons = new LessonsModel();
+        $lessons->editLesson($res);
 
         if (date_diff($currentDateTime, $lessonDateTime)->h <=2)
         {
@@ -182,4 +183,13 @@ class EventsMoyklass extends Events
         //$Groups->deleteInactiveGroups();
     }
 
+    public function join_changed()
+    {
+        $lessonRecords = MoyklassModel::getUserLessonRecords($this->request['object']['userId']);
+
+        foreach ($lessonRecords['lessonRecords'] as $record)
+            (new LessonsModel())->editRecordLesson($record);
+
+        GetcourseModel::updateUser($this->request['object']);
+    }
 }

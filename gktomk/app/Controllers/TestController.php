@@ -6,7 +6,10 @@ namespace GKTOMK\Controllers;
 
 use GKTOMK\Classes\Api\MoyKlass;
 use GKTOMK\Models\DB;
+use GKTOMK\Models\EventsMoyklass;
 use GKTOMK\Models\GetCourse\Account;
+use GKTOMK\Models\LessonsModel;
+use GKTOMK\Models\MemberModel;
 use GKTOMK\Models\MoyklassModel;
 use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\Systematika\MoyKlass\Lesson;
@@ -30,7 +33,8 @@ class TestController extends Controller
         var_dump(date_diff(new \DateTime(), new \DateTime('2023-07-06 00:00'))->h);
     }
 
-    public function getMessage(){
+    public function getMessage()
+    {
         $wazzup = new Wazzup24Model();
         $wazzup->sendMessage();
     }
@@ -46,16 +50,16 @@ class TestController extends Controller
         $MK->insertApiDataToDB('getCourses', 'mk_courses', false);
 
         //Get all lesson records
-        $MK->insertApiDataToDB('getLessonRecords', 'mk_lesson_records', true,  'lessonRecords', 'company/lessonRecords');
+        $MK->insertApiDataToDB('getLessonRecords', 'mk_lesson_records', true, 'lessonRecords', 'company/lessonRecords');
 
         //Get all lessons
-        $MK->insertApiDataToDB('getLessons', 'mk_lessons', true, 'lessons','company/lessons',);
+        $MK->insertApiDataToDB('getLessons', 'mk_lessons', true, 'lessons', 'company/lessons',);
 
         //Get subscriptions
         $MK->insertApiDataToDB('getSubscriptions', 'mk_subscriptions', true, 'subscriptions', 'company/subscriptions',);
 
         //Get user subscriptions
-        $MK->insertApiDataToDB('getUserSubscriptions', 'mk_user_subscriptions', true, 'subscriptions','company/userSubscriptions',);
+        $MK->insertApiDataToDB('getUserSubscriptions', 'mk_user_subscriptions', true, 'subscriptions', 'company/userSubscriptions',);
 
         //Get all users
         $MK->insertApiDataToDB('getUsers', 'mk_users', true, 'users', 'company/users',);
@@ -81,8 +85,7 @@ class TestController extends Controller
 
 
         $items = array();
-        foreach ($lesson->getLessonsWithRecordsByAllUsers() as $item)
-        {
+        foreach ($lesson->getLessonsWithRecordsByAllUsers() as $item) {
             $subscriptions = array();
             $userId = (new User())->getItem(['email' => $item['email']], ['id'])['id'];
             $userSubscriptions = (new UserSubscription())->getUserSubscriptionsFromId($userId);
@@ -149,7 +152,7 @@ class TestController extends Controller
             'file_extension' => 'MP4'
         ];
 
-        foreach ($zoomModel->getZoomMeetings($criteria, 'recording_start ASC, meeting_id ASC',2 ) as $zoomVideo) {
+        foreach ($zoomModel->getZoomMeetings($criteria, 'recording_start ASC, meeting_id ASC', 2) as $zoomVideo) {
             $time = strtotime($zoomVideo['recording_start']);
             $Y = date("Y", $time);
             $m = date("m", $time);
@@ -157,7 +160,7 @@ class TestController extends Controller
             $dir = $Y . '/' . $m . '/' . $d;
 
             $zoomModel->setStatusRecordById($zoomVideo['id'], 'start_download');
-            $zoomModel->setDataRecord($zoomVideo['id'], 'try_num', (int) ++$zoomVideo['try_num']);
+            $zoomModel->setDataRecord($zoomVideo['id'], 'try_num', (int)++$zoomVideo['try_num']);
             $zoomModel->setDataRecord($zoomVideo['id'], 'try_date', date('Y-m-d H:i:s'));
 
             $downloadUrl = $zoomModel->getLinkDownloadByUrl($zoomVideo['download_url']);
@@ -175,7 +178,8 @@ class TestController extends Controller
         }
     }
 
-    public function getCronTest(){
+    public function getCronTest()
+    {
         $WhatsappModel = new WhatsappModel();
         $WhatsappModel->cronStart();
     }
@@ -198,7 +202,7 @@ class TestController extends Controller
         $account = new Account();
         $account::setAccountName(CONFIG['gk_account_name']);
         $account::setAccessToken(CONFIG['gk_secret_key']);
-        var_dump($account->apiCall('users', ['status'=> 'active']));
+        var_dump($account->apiCall('users', ['status' => 'active']));
     }
 
     public function getCounts()
@@ -220,7 +224,7 @@ class TestController extends Controller
 
         $sql = Model::getInstance()->prepareBulkInsert('mk_lesson_records',
             ['id', 'free', 'test', 'skip', 'visit', 'userId', 'lessonId', 'createdAt', 'goodReason'],
-        [[99719551, null, null, null, null, 2952920, 24988196, $date->format('Y-m-d H:i:s'), null]]);
+            [[99719551, null, null, null, null, 2952920, 24988196, $date->format('Y-m-d H:i:s'), null]]);
 
         $sql = Model::getInstance()->prepareBulkInsert('mk_lessons',
             [
@@ -254,7 +258,54 @@ class TestController extends Controller
                 'sys.s1@mail.ru',
             ]]);
 
-        var_dump($sql);die();
+        var_dump($sql);
+        die();
         DB::exec($sql);
+    }
+
+    public function getTest()
+    {
+        $data = [];
+
+        $lessonNextPaid = DB::getRow('SELECT l.date
+            FROM member as m
+            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
+            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
+            WHERE m.email = \'lenchikdem@mail.ru\' AND l.date > NOW() order by l.date limit 1')['date'];
+
+        $lessonNextFree = DB::getRow('SELECT l.date
+            FROM member as m
+            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
+            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
+            WHERE rl.free = 1 and m.email = \'lenchikdem@mail.ru\' AND l.date > NOW() order by l.date limit 1')['date'];
+
+        $lessonSkipLast = DB::getRow('SELECT l.date
+            FROM member as m
+            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
+            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
+            WHERE rl.visit = 0 and m.email = \'lenchikdem@mail.ru\' and l.date < NOW() order by l.date desc limit 1')['date'];
+
+        $lessonVisitLast = DB::getRow('SELECT l.date
+            FROM member as m
+            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
+            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
+            WHERE rl.visit = 1 and m.email = \'lenchikdem@mail.ru\' order by l.date desc limit 1')['date'];
+
+//        $member = new MemberModel();
+//        $memberData = $member->getMemberByMkUid(1790260)['email'];
+
+//        $res = MoyklassModel::getLessonById(31332770, ['includeRecords' => 'true']);
+//        $lessons = new LessonsModel();
+//        $lessons->editLesson($res);
+
+
+
+        //$event = new EventsMoyklass(['event' => 'join_changed', 'object' => ['userId' => 3042193, 'stats' => ['lastVisit' => '2023-10-13']]]);
+        //$event->handle();
+        //$event->join_changed();
+        //$lessonRecords = MoyklassModel::getUserLessonRecords(3042193);
+//        foreach ($lessonRecords['lessonRecords'] as $record)
+//            (new LessonsModel())->editRecordLesson($record);
+        var_dump($lessonNextPaid, $lessonNextFree, $lessonSkipLast, $lessonVisitLast);
     }
 }

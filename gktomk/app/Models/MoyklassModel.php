@@ -363,6 +363,11 @@ class MoyklassModel
         return self::startApi('company/lessonRecords/' . $record_id, [], 'GET');
     }
 
+    public static function getUserLessonRecords($user_id)
+    {
+        return self::startApi('company/lessonRecords/', ['userId' => $user_id, 'limit' => 500], 'GET');
+    }
+
     public static function setLessonRecord($record_id, $data = [])
     {
         return self::startApi('company/lessonRecords/' . $record_id, $data, 'POST');

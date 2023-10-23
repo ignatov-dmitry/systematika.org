@@ -2,6 +2,7 @@
 // Модель для работы
 namespace GKTOMK\Models;
 
+use Exception;
 use GKTOMK\Models\GetCourse\User;
 use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\Systematika\MoyKlass\Lesson;
@@ -96,6 +97,82 @@ class GetcourseModel
         return $result;
     }
 
+    public static function updateUser($object = null)
+    {
+        $stats = $object['stats'];
+        $User = new User();
+        $User::setAccountName(CONFIG['gk_account_name']);
+        $User::setAccessToken(CONFIG['gk_secret_key']);
+
+        $member = new MemberModel();
+        $memberEmail = $member->getMemberByMkUid($object['userId'])['email'];
+
+        $User = $User
+            ->setEmail($memberEmail)
+            ->setOverwrite();
+
+        $lessonLast = DB::getRow('SELECT l.date
+            FROM member as m
+            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
+            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
+            WHERE rl.visit = 1 and m.email = \'' . $memberEmail . '\' and l.date < NOW() order by l.date desc limit 1')['date'];
+
+        $lessonNextFree = DB::getRow('SELECT l.date
+            FROM member as m
+            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
+            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
+            WHERE rl.free = 1 and m.email = \'' . $memberEmail . '\' AND l.date > NOW() order by l.date limit 1')['date'];
+
+        $lessonSkipLast = DB::getRow('SELECT l.date
+            FROM member as m
+            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
+            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
+            WHERE rl.visit = 0 and m.email = \'' . $memberEmail . '\' and l.date < NOW() order by l.date desc limit 1')['date'];
+
+        $lessonSkipLastTest = DB::getRow('SELECT l.date
+            FROM member as m
+            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
+            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
+            WHERE rl.visit = 0 and rl.test = 1 and m.email = \'' . $memberEmail . '\' and l.date < NOW() order by l.date desc limit 1')['date'];
+
+        $lessonLastTest = DB::getRow('SELECT l.date
+            FROM member as m
+            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
+            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
+            WHERE rl.visit = 1 and rl.test = 1 and m.email = \'' . $memberEmail . '\' and l.date < NOW() order by l.date desc limit 1')['date'];
+
+
+        // Последнее посещение занятие
+        if($lessonLast)
+            $User->setUserAddField(CONFIG['gk_field_date_last_lesson'], (new \DateTime($lessonLast))->format('d.m.Y') ?? '');
+
+        // Последнее пробное занятие
+        if($lessonLastTest)
+            $User->setUserAddField(CONFIG['gk_field_date_last_test_lesson'], (new \DateTime($lessonLastTest))->format('d.m.Y') ?? '');
+
+        // Последнее пропущенное занятие
+        if ($lessonSkipLast)
+            $User->setUserAddField(CONFIG['gk_field_date_skip_lesson'],(new \DateTime($lessonSkipLast))->format('d.m.Y') ?? '');
+
+        // Последнее пропущенное пробное занятие
+        if ($lessonSkipLastTest)
+            $User->setUserAddField(CONFIG['gk_field_date_missing_free_test'],(new \DateTime($lessonSkipLastTest))->format('d.m.Y') ?? '');
+
+        // Следующее платное занятие
+        if(isset($stats['nextRecord']) and !empty($stats['nextRecord']) and !empty(CONFIG['gk_field_next_paid_recording']))
+            $User->setUserAddField(CONFIG['gk_field_next_paid_recording'],(new \DateTime($stats['nextRecord']))->format('d.m.Y') ?? '');
+
+        // Следующее бесплатное занятие
+        if ($lessonNextFree)
+            $User->setUserAddField(CONFIG['gk_field_next_free_recording'],(new \DateTime($lessonNextFree))->format('d.m.Y') ?? '');
+
+
+        try {
+            $result = $User->apiCall($action = 'add');
+        } catch (Exception $e) {
+            $result = $e->getMessage();
+        }
+    }
     /*
      * Нужен для ручной отправки в гк с заполненными данными
      * */
@@ -179,8 +256,8 @@ class GetcourseModel
 
     public function updateUserDateVisit($email){
 
-        //$userMk = MoyklassModel::getUserByEmail($email);
-        $userMk = (new \GKTOMK\Models\Systematika\MoyKlass\User())->getItem(['email' => $email]);
+        $userMk = MoyklassModel::getUserByEmail($email);
+       // $userMk = (new \GKTOMK\Models\Systematika\MoyKlass\User())->getItem(['email' => $email]);
 
 
         if(!isset($userMk) or !isset($userMk['email']))
@@ -251,11 +328,11 @@ class GetcourseModel
     // Обновляет количество абонементов
     public function updateUserSubscriptions($email){
 
-//        $SubscriptionModel = new SubscriptionsModel();
-//        $getCountSubscriptionsByEmail = $SubscriptionModel->getCountSubscriptionsByEmail($email);
+        $SubscriptionModel = new SubscriptionsModel();
+        $getCountSubscriptionsByEmail = $SubscriptionModel->getCountSubscriptionsByEmail($email);
         // Данные стали брать из базы
-        $userSubscription = new UserSubscription();
-        $getCountSubscriptionsByEmail = $userSubscription->getUserSubscriptionsFromEmail($email);
+        //$userSubscription = new UserSubscription();
+       // $getCountSubscriptionsByEmail = $userSubscription->getUserSubscriptionsFromEmail($email);
 
         if (!empty($getCountSubscriptionsByEmail)) {
             $this->DataUser['count_user_subscriptions'] = $getCountSubscriptionsByEmail['all']['itemCount'];
