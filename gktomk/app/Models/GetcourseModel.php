@@ -97,6 +97,12 @@ class GetcourseModel
         return $result;
     }
 
+    /**
+     * Обновление пользователя в GK
+     * @param $object
+     * @return void
+     * @throws Exception
+     */
     public static function updateUser($object = null)
     {
         $User = new User();
