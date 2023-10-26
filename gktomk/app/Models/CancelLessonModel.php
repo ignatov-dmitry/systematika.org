@@ -285,7 +285,7 @@ class CancelLessonModel
      * */
     public function getCancelLessonsHaveNotStarted($memberId)
     {
-        return DB::exportAll(DB::find('cancellesson', 'member_id = ? ORDER by `lesson_date` ASC', [$memberId]));
+        return DB::exportAll(DB::find('cancellesson', 'member_id = ? and status != \'error\' ORDER by `lesson_date` ASC', [$memberId]));
 
     }
 
