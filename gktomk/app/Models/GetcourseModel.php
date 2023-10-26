@@ -147,6 +147,21 @@ class GetcourseModel
             WHERE rl.visit = 1 and rl.test = 1 and m.email = \'' . $memberEmail . '\' and l.date < NOW() order by l.date desc limit 1')['date'];
 
 
+        $SubscriptionModel = new SubscriptionsModel();
+        $getCountSubscriptionsByEmail = $SubscriptionModel->getCountSubscriptionsByMkUid($object['userId']);
+
+        if (!empty($getCountSubscriptionsByEmail)) {
+            $data['count_user_subscriptions'] = $getCountSubscriptionsByEmail['all']['itemCount'];
+            $data['user_subscriptions_left_visits'] = ($getCountSubscriptionsByEmail['all']['visitCount'] - $getCountSubscriptionsByEmail['all']['visitedCount']);
+            $data['user_subscriptions_left_visits_individual'] = ($getCountSubscriptionsByEmail['individual']['visitCount'] - $getCountSubscriptionsByEmail['individual']['visitedCount']);
+            $data['user_subscriptions_left_visits_group'] = ($getCountSubscriptionsByEmail['group']['visitCount'] - $getCountSubscriptionsByEmail['group']['visitedCount']);
+        }else{
+            $data['count_user_subscriptions'] = 0;
+            $data['user_subscriptions_left_visits'] = 0;
+            $data['user_subscriptions_left_visits_individual'] = 0;
+            $data['user_subscriptions_left_visits_group'] = 0;
+        }
+
         // Последнее посещение занятие
         if($lessonLast)
             $User->setUserAddField(CONFIG['gk_field_date_last_lesson'], (new \DateTime($lessonLast))->format('d.m.Y') ?? '');
@@ -171,6 +186,25 @@ class GetcourseModel
         if ($lessonNextFree)
             $User->setUserAddField(CONFIG['gk_field_next_free_recording'],(new \DateTime($lessonNextFree))->format('d.m.Y') ?? '');
 
+        // Заполняем поле количество абонементов
+        if(isset($data['count_user_subscriptions'])){
+            $User->setUserAddField(CONFIG['gk_field_count_user_subscriptions'], $data['count_user_subscriptions']);
+        }
+
+        // Заполняем поле количество оставшихся посещений
+        if(isset($data['user_subscriptions_left_visits'])){
+            $User->setUserAddField(CONFIG['gk_field_user_subscriptions_left_visits'], $data['user_subscriptions_left_visits']);
+        }
+
+        // Заполняем поле количество оставшихся посещений индивидуальных
+        if(isset($data['user_subscriptions_left_visits_individual'])){
+            $User->setUserAddField(CONFIG['gk_field_user_subscriptions_left_visits_individual'], $data['user_subscriptions_left_visits_individual']);
+        }
+
+        // Заполняем поле количество оставшихся посещений групповых
+        if(isset($data['user_subscriptions_left_visits_group'])){
+            $User->setUserAddField(CONFIG['gk_field_user_subscriptions_left_visits_group'], $data['user_subscriptions_left_visits_group']);
+        }
 
         try {
             $result = $User->apiCall($action = 'add');
