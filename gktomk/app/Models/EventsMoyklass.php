@@ -126,10 +126,17 @@ class EventsMoyklass extends Events
         $lessons = new LessonsModel();
         $lessons->editLesson($res);
 
-        if (date_diff($currentDateTime, $lessonDateTime)->h <=2)
+        if (date_diff($currentDateTime, $lessonDateTime)->h <= 2)
         {
             $lessonRecords = new LessonRecord();
             (new WhatsappModel())->sendMessages($lessonRecords->getRecordsWithUsers($request['object']['lessonId'], $request['object']['date']), $request);
+        }
+
+        if (date_diff($currentDateTime, $lessonDateTime)->h <= 6)
+        {
+            // Записываем в задачи на выдачу домашних заданий
+            $homework = new HomeworkModel();
+            $homework->sendRecords($res['records']);
         }
     }
 
