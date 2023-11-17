@@ -336,7 +336,9 @@ class Websun
         'strftime',
         'urldecode',
         'var_dump',
+        'json_decode'
     );
+
 
     /**
      * Конструктор класса шаблонизатора

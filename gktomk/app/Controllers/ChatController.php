@@ -6,6 +6,7 @@ namespace GKTOMK\Controllers;
 
 use GKTOMK\Models\ChatModels\ChatUserModel;
 use GKTOMK\Models\ChatModels\ChatTeacherModel;
+use GKTOMK\Models\DB;
 use GKTOMK\Models\MoyklassModel;
 
 class ChatController extends Controller
@@ -136,4 +137,30 @@ class ChatController extends Controller
         $this->chatTeacherModel->setDialog($_POST['dialog_id'], 'calladmin', $_POST['call']);
     }
 
+    public function getChatSync()
+    {
+        $groupsync = [];
+        if (isset($_GET['group_id_mk']))
+        {
+            $group_id_mk = $_GET['group_id_mk'];
+            $groupsync = DB::getAll("SELECT * FROM groupsync where group_id_mk = '{$group_id_mk}'");
+            $this->View->setVar('SYNCS', $groupsync);
+        }
+//var_dump(json_decode($groupsync[0]['manager_ids']));die();
+        $managers = MoyklassModel::getManagers();
+        $mangerIds = array_column($managers, 'id');
+        $this->View->setVar('MANAGERS', $managers);
+        $this->View->setVar('MANAGER_IDS', $mangerIds);
+        $this->View->parseTpl('chat/chatsync', false)->parseTpl('main')->output();
+    }
+
+    public function postChatSync()
+    {
+        $managers_ids = json_encode($_POST['managers']);
+        $groupsync = DB::load('groupsync', $_POST['id']);
+        $groupsync['manager_ids'] = $managers_ids;
+        DB::store($groupsync);
+
+        $this->getChatSync();
+    }
 }
