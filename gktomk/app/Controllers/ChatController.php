@@ -143,12 +143,25 @@ class ChatController extends Controller
         if (isset($_GET['group_id_mk']))
         {
             $group_id_mk = $_GET['group_id_mk'];
-            $groupsync = DB::getAll("SELECT * FROM groupsync where group_id_mk = '{$group_id_mk}'");
-            $this->View->setVar('SYNCS', $groupsync);
+            $groupsyncs = DB::getAll("SELECT * FROM groupsync where group_id_mk = '{$group_id_mk}'");
+
+           for ($i = 0; $i < count($groupsyncs); $i++ )
+           {
+               $groupsyncs[$i]['manager_ids'] = @$groupsyncs[$i]['manager_ids'] ?: '[]';
+           }
+
+            $this->View->setVar('SYNCS', $groupsyncs);
         }
-//var_dump(json_decode($groupsync[0]['manager_ids']));die();
+
         $managers = MoyklassModel::getManagers();
+
+        usort($managers, function ($a, $b){
+            return strcmp($a['name'], $b['name']);
+        });
+
         $mangerIds = array_column($managers, 'id');
+
+
         $this->View->setVar('MANAGERS', $managers);
         $this->View->setVar('MANAGER_IDS', $mangerIds);
         $this->View->parseTpl('chat/chatsync', false)->parseTpl('main')->output();
