@@ -1,0 +1,681 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  list-style-type: none;
+  text-decoration: none;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+.container .main-block .main-head {
+  height: 150px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.container .main-block .main-head div h1 {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 42px;
+  color: #000000;
+}
+
+.container .main-block .main-head div p {
+  font-style: normal;
+  font-size: 16px;
+  line-height: 19px;
+  color: #000000;
+}
+
+.container .main-block .main-head div p span {
+  font-weight: bold;
+}
+
+.container .main-block .main-head div p a {
+  border-bottom: 1px solid transparent;
+  color: #007AFF;
+  font-size: 15px;
+  margin-bottom: 27px;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+.container .main-block .main-head div p a:hover {
+  border-bottom: 1px solid #007AFF;
+}
+
+.container .main-block .main-head div a {
+  margin-right: 20px;
+  border-bottom: 1px solid transparent;
+  font-size: 15px;
+  margin-bottom: 27px;
+  color: #000;
+}
+
+.container .main-block .main-head div a .chat-pre {
+  color: #000000;
+}
+
+.container .main-block .main-head div a .chat-pre:hover {
+/*  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  border-bottom: 1px solid #000000;*/
+}
+
+.container .main-block .main-head div a .rel-span {
+  position: relative;
+}
+
+.container .main-block .main-head div a .rel-span .ab-span {
+  position: absolute;
+  top: -8px;
+  right: -5px;
+  padding: 4px;
+  background: #4677BF;
+  border-radius: 50%;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 10px;
+  line-height: 10px;
+  color: #FFFFFF;
+  height: 14px;
+  width: 14px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.container .main-block .main-body {
+  background: #F3F3F3;
+  border-radius: 15px;
+  padding: 40px 22px 200px 22px;
+  margin-bottom: 60px;
+}
+
+.container .main-block .main-body .body-head {
+  margin-bottom: 30px;
+}
+
+.container .main-block .main-body .body-head a {
+  border-radius: 20px;
+  padding: 10px 25px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 21px;
+  border: 2px solid transparent;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  -webkit-box-shadow: 0 10px 30px transparent;
+          box-shadow: 0 10px 30px transparent;
+}
+
+.link-navigation-active {
+  background: #8FD0FF;
+  color: #fff;
+}
+
+.link-navigation-active:hover {
+  border: 2px solid #8FD0FF;
+  background: #fff;
+  color: #8FD0FF;
+  -webkit-box-shadow: 0 10px 30px #0d89e04d;
+          box-shadow: 0 10px 30px #0d89e04d;
+}
+
+.link-navigation {
+  background: #E5E5E5;
+  color: #828282;
+}
+
+.link-navigation:hover {
+  border: 2px solid #E5E5E5;
+  background: #fff;
+  color: #272727;
+  -webkit-box-shadow: 0 10px 30px #58585846;
+          box-shadow: 0 10px 30px #58585846;
+}
+
+.container .main-block .main-body .body-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.container .main-block .main-body .body-content .card {
+  width: 100%;
+  background: #FFFFFF;
+  -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+          box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  padding: 27px 31px 27px  34px;
+  margin-bottom: 30px;
+}
+
+.container .main-block .main-body .body-content .card .card-top {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  width: 100%;
+}
+
+.container .main-block .main-body .body-content .card .card-top .card-top-left {
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  width: 30%;
+}
+
+.container .main-block .main-body .body-content .card .card-top div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  width: 50%;
+}
+
+.container .main-block .main-body .body-content .card .card-top div h1 {
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 19px;
+  color: #999;
+  white-space: nowrap;
+}
+
+.container .main-block .main-body .body-content .card .card-top div h1 span {
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 21px;
+}
+
+.container .main-block .main-body .body-content .card .card-top div .date-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  width: 30%;
+}
+
+.container .main-block .main-body .body-content .card .card-top div .date-item i {
+  margin-right: 5px;
+  margin-top: 1px;
+}
+
+.container .main-block .main-body .body-content .card .card-top div .date-item p {
+  font-style: normal;
+  font-size: 16px;
+  line-height: 19px;
+  color: #000000;
+}
+
+.container .main-block .main-body .body-content .card .card-top div .date-item p span {
+  font-weight: bold;
+}
+
+.container .main-block .main-body .body-content .card .card-top div div.zanyatiya {
+  width: 80%;
+}
+
+.container .main-block .main-body .body-content .card .card-top div div.zanyatiya p {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 19px;
+  color: #A6A8A9;
+}
+
+.container .main-block .main-body .body-content .card .card-top div div.zanyatiya p span {
+  color: #ff0000;
+}
+
+.container .main-block .main-body .body-content .card .card-top div main {
+  width: 60%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  height: auto;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+}
+
+.container .main-block .main-body .body-content .card .card-top div main a {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 19px;
+  color: #000;
+  border-radius: 7px;
+  padding: 5px 15px 5px 5px;
+  border: 1px solid transparent;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  margin-right: 10px;
+}
+
+.container .main-block .main-body .body-content .card .card-top div main a i {
+  margin-right: 4px;
+}
+
+.container .main-block .main-body .body-content .card .card-top div main a:first-child, .cancel-button {
+  background: #FF5C69;
+  cursor: pointer;
+}
+
+.container .main-block .main-body .body-content .card .card-top div main a:first-child span {
+  color: #fff;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.container .main-block .main-body .body-content .card .card-top div main a:first-child:hover, .cancel-button:hover {
+  border: 1px solid #FF5C69;
+  background: #fff;
+  -webkit-box-shadow: 2px 2px 4px #ff5c6a49;
+          box-shadow: 2px 2px 4px #ff5c6a49;
+}
+
+.container .main-block .main-body .body-content .card .card-top div main a:first-child:hover span {
+  color: #FF5C69;
+}
+
+/*.container .main-block .main-body .body-content .card .card-top div main a:last-child,*/ .transfer-button {
+  background: #E5E5E5;
+}
+
+/*.container .main-block .main-body .body-content .card .card-top div main a:last-child:hover, */.transfer-button:hover {
+  border: 1px solid #6b6b6b;
+  background: #fff;
+  color: #2e2e2e;
+  -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+          box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.container .main-block .main-body .body-content .card .card-bottom {
+  margin-top: 25px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom div h1 {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 35px;
+  color: #000000;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom div p {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 19px;
+  color: #000000;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom .card-bottom-left {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  width: 50%;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom .card-bottom-left .blue-btn {
+  padding: 7px 44px 8px 10px;
+  background: #43B0FF !important;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom .card-bottom-left .blue-btn:hover {
+  border: 1px solid #43B0FF !important;
+  -webkit-box-shadow: 2px 2px 4px #43b1ff4f !important;
+          box-shadow: 2px 2px 4px #43b1ff4f !important;
+  background: #fff !important;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom .card-bottom-left a, .btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background: #E5E5E5;
+  border-radius: 7px;
+  padding: 10px 20px 10px 10px;
+  color: #000;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  border: 1px solid transparent;
+  -webkit-box-shadow: 2px 2px 4px transparent;
+          box-shadow: 2px 2px 4px transparent;
+  margin-right: 20px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 19px;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom .card-bottom-left a i {
+  margin-right: 7px;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom .card-bottom-left a:first-child {
+  background: #FEE002;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom .card-bottom-left a:first-child:hover {
+  border: 1px solid #FEE002;
+  -webkit-box-shadow: 2px 2px 4px #fee10236;
+          box-shadow: 2px 2px 4px #fee10236;
+  background: #fff;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom .card-bottom-left a:first-child i {
+  margin-right: 10px;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom .card-bottom-left a:last-child i {
+  margin-right: 11px;
+}
+
+.container .main-block .main-body .body-content .card .card-bottom .card-bottom-left a:hover {
+  border: 1px solid #000;
+  -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+          box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+.container .main-block .main-body .body-content .last-card {
+  margin-bottom: 80px;
+}
+
+/*.container .main-block .main-body .body-content a {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 28px;
+  color: #000000;
+  background: #43B0FF;
+  border-radius: 7px;
+  padding: 12px 18px;
+  border: 1px solid transparent;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.container .main-block .main-body .body-content a:hover {
+  border: 1px solid #43B0FF;
+  background: #fff;
+  color: #43B0FF;
+  -webkit-box-shadow: 2px 2px 4px #43b1ff36;
+          box-shadow: 2px 2px 4px #43b1ff36;
+}*/
+
+.container {
+  width: 100%;
+  padding-right: var(--bs-gutter-x, 0.75rem);
+  padding-left: var(--bs-gutter-x, 0.75rem);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 576px) {
+  .container, .container-sm {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container, .container-md, .container-sm {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 992px) {
+  .container, .container-lg, .container-md, .container-sm {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container, .container-lg, .container-md, .container-sm, .container-xl {
+    max-width: 1140px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+    max-width: 1320px;
+  }
+}
+
+@media only screen and (max-width: 991px) {
+  .card-top {
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    width: 100%;
+  }
+  .container .main-block .main-body .body-content .card .card-top div h1 {
+    margin-top: 19px;
+    width: 100%;
+  }
+  .container .main-block .main-body .body-content .card .card-top div.first {
+    width: 100%;
+  }
+  .container .main-block .main-body .body-content .card .card-bottom .card-bottom-left {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 19px;
+  }
+  .container .main-block .main-body .body-content .card .card-bottom div {
+    width: 100%;
+  }
+  .container .main-block .main-body .body-content .card .card-bottom .card-bottom-left a {
+    padding: 5px 20px 5px 10px;
+  }
+  .container .main-block .main-body .body-content .card .card-bottom .card-bottom-left .blue-btn {
+    padding: 5px 40px 5px 10px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .container .main-block .main-body .body-content .card .card-top div.first {
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+  }
+  .container .main-block .main-body .body-content .card .card-top div .date-item {
+    width: 40%;
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .container .main-block .main-body .body-head a {
+    font-size: 16px;
+    padding: 6px 16px;
+  }
+  .container .main-block .main-body .body-content .card .card-top div main a {
+    font-size: 12px;
+  }
+  .container .main-block .main-body .body-content .card .card-bottom .card-bottom-left a {
+    font-size: 12px;
+  }
+  .container .main-block .main-body .body-content .card .card-bottom div h1 {
+    font-size: 22px;
+  }
+  .container .main-block .main-body .body-content .card .card-top div h1 span {
+    font-size: 18px;
+  }
+  .container .main-block .main-body .body-content .card .card-top div h1 {
+    font-size: 16px;
+  }
+  .container .main-block .main-body .body-content .card .card-top div .date-item {
+    width: 50%;
+  }
+  .container .main-block .main-body .body-content .card {
+    padding: 10px;
+  }
+  .container .main-block .main-body {
+    padding: 20px 10px 100px;
+  }
+  .container .main-block .main-head .mh-item {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .container .main-block .main-head div a {
+    height: auto;
+    margin-bottom: 0;
+    margin-top: 15px;
+  }
+  .container .main-block .main-head div a:last-child {
+    margin-bottom: 15px;
+  }
+  .container .main-block .main-head {
+    padding-top: 20px;
+  }
+  .container .main-block .main-head {
+    height: auto;
+  }
+}
+
+@media only screen and (max-width: 410px) {
+  .container .main-block .main-body .body-content .card .card-bottom .card-bottom-left .blue-btn {
+    padding: 4px 12px 4px 8px;
+  }
+  .container .main-block .main-body .body-head {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: flex-start;
+  }
+  .container .main-block .main-body .body-head a:first-child {
+    margin-bottom: 10px;
+  }
+  .container .main-block .main-body .body-content .card .card-bottom .card-bottom-left {
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: flex-start;
+  }
+  .container .main-block .main-body .body-content .card .card-bottom .card-bottom-left a {
+    padding: 4px 8px;
+  }
+  .container .main-block .main-body .body-content .card .card-top div.first {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .container .main-block .main-body .body-content .card .card-top div .date-item {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .container .main-block .main-body .body-content .card .card-top div h1 {
+    white-space: inherit;
+  }
+  .container .main-block .main-body .body-content .card .card-top div h1 span {
+    white-space: nowrap;
+  }
+  .container .main-block .main-body .body-content .card .card-bottom div h1 {
+    font-size: 20px;
+    line-height: 22px;
+    margin-bottom: 10px;
+  }
+  .container .main-block .main-body .body-content .card .card-top div div.zanyatiya p {
+    font-size: 14px;
+  }
+}
