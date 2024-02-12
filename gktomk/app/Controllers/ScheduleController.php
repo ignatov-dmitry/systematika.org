@@ -196,8 +196,8 @@ class ScheduleController extends Controller
 
     public function getAjaxLoadHistory()
     {
-        $lessonsmodel = new LessonsModel();
-        $lessonsmodel->loadLessonsUserByUserIdMK($this->mk_uid);
+        //$lessonsmodel = new LessonsModel();
+        //$lessonsmodel->loadLessonsUserByUserIdMK($this->mk_uid);
     }
 
     public function getAjaxActivity()
