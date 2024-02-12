@@ -200,9 +200,9 @@ class AddgroupController extends Controller
                 $result['addgroup'] = $AddgroupModel->editJoinGroupByClassId($userId, $classId, $statusId, $autoJoin);
 
                 if($_POST['dateLesson']=='nearest'){
-                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNearest']);
+                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNearest'], (bool)$_POST['isTest']);
                 }elseif($_POST['dateLesson']=='next'){
-                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNext']);
+                    $result['addlesson'] = $AddgroupModel->addRecordLesson($userId, $_POST['idLessonNext'], (bool)$_POST['isTest']);
                 }
 
                 break;
@@ -218,7 +218,7 @@ class AddgroupController extends Controller
                 if($_POST['dateLesson']=='next'){ // Если записываем в группу со следующего занятия. То исключаем запись на ближайщее занятие
                     $excludeLessons[] = $_POST['idLessonNearest'];
                 }
-                $result['addlesson'] = $AddgroupModel->addRecordAllLessonByClassId($userId, $classId, $excludeLessons);
+                $result['addlesson'] = $AddgroupModel->addRecordAllLessonByClassId($userId, $classId, $excludeLessons, (bool)$_POST['isTest']);
 
 
 

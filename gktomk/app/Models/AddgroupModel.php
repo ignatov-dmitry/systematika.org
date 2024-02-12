@@ -63,13 +63,12 @@ class AddgroupModel
     /*
      * Записывает на все будущие уроки в группе, с возможностью исключения
      * */
-    public function addRecordAllLessonByClassId($userId, $classId, $excludeLessons = [])
+    public function addRecordAllLessonByClassId($userId, $classId, $excludeLessons = [], $test = false)
     {
-        $firstTestLesson = true;
+        $firstTestLesson = $test;
         $month_now_first_day = date('Y-m-d', time());
         $month_now_last_day = date('Y-m-d', (time() + (60 * 60 * 24 * 180))); // записываем на полгода
 
-        $lessons = [];
         $lessons = MoyklassModel::getLessons([
             'classId' => intval($classId),
             'date[0]' => $month_now_first_day,

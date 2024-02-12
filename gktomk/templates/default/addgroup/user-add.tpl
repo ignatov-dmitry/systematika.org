@@ -38,7 +38,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="formAddgroup" action="" method="post">
+            <form id="formAddgroup" class="3" action="" method="post">
                 <div class="modal-body" id="modalAddgroupLoading">Загрузка...</div>
                 <div class="modal-body" id="modalAddgroupContent" style="display: none;">
                     <input type="hidden" name="idgroup" value="">
@@ -82,24 +82,46 @@
                     <div class="form-group">
                         <label><b>Записаться</b></label>
                         <div class="form-check">
-                        <div class="row">
-                            <div class="col">
-                                <input class="form-check-input" type="radio" name="periodLesson" id="periodLessonAlways"
-                                       value="always" required checked>
-                                <label class="form-check-label" for="periodLessonAlways">
-                                    На постоянно
-                                </label>
-                            </div>
-                            <div class="col">
-                                <input class="form-check-input" type="radio" name="periodLesson" id="periodLessonOnetime"
-                                       value="onetime" >
-                                <label class="form-check-label" for="periodLessonOnetime">
-                                    На один раз
-                                </label>
-                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <input class="form-check-input" type="radio" name="periodLesson" id="periodLessonAlways"
+                                           value="always" required checked>
+                                    <label class="form-check-label" for="periodLessonAlways">
+                                        На постоянно
+                                    </label>
+                                </div>
+                                <div class="col">
+                                    <input class="form-check-input" type="radio" name="periodLesson" id="periodLessonOnetime"
+                                           value="onetime" >
+                                    <label class="form-check-label" for="periodLessonOnetime">
+                                        На один раз
+                                    </label>
+                                </div>
 
+                            </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label><b>Записаться на пробное</b></label>
+                        <div class="form-check">
+                            <div class="row">
+                                <div class="col">
+                                    <input class="form-check-input" type="radio" name="isTest" id="isTestOff"
+                                           value="0" required checked>
+                                    <label class="form-check-label" for="isTestOff">
+                                        Нет
+                                    </label>
+                                </div>
+                                <div class="col">
+                                    <input class="form-check-input" type="radio" name="isTest" id="isTestOn"
+                                           value="1" >
+                                    <label class="form-check-label" for="isTestOn">
+                                        Да
+                                    </label>
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer" style="display:none;">
