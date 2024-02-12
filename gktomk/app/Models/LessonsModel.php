@@ -203,7 +203,7 @@ class LessonsModel
 
 
         //echo 'SELECT * FROM `recordslesson` `rl`,`lessons` `l` WHERE `rl`.`user_id_mk`=? && `l`.`lesson_id_mk`=`rl`.`lesson_id_mk`';
-        $lessons = DB::getAll('SELECT rl.*, l.*, tl.*, `rl`.`id` `id`, `rl`.`lesson_id_mk` `lesson_id_mk`, `vr`.`status` status
+        $lessons = DB::getAll('SELECT rl.*, l.*, tl.*, `rl`.`id` `id`, `rl`.`lesson_id_mk` `lesson_id_mk`, `vr`.`status`
                                 FROM 
                                 `recordslesson` `rl` 
                                 left join `lessons` `l` on `l`.`lesson_id_mk` = `rl`.`lesson_id_mk`
@@ -213,43 +213,6 @@ class LessonsModel
                                 `rl`.`user_id_mk`=:user_id
                                 GROUP BY `l`.`lesson_id_mk`
                                 ORDER by `timestart` DESC ', ['user_id' => $user_id]);
-        /*$lessons = DB::getAll('(
-	SELECT DESTINCT
-		`l`.*, 
-		"0" `cancel`,
-		`rl`.`id` `id`, 
-		`rl`.`lesson_id_mk` `lesson_id_mk` ,
-        `tl`.`teacher_id_mk` `teacher_id_mk`
-	FROM 
-		`recordslesson` `rl` 
-		left join `lessons` `l` on `l`.`lesson_id_mk` = `rl`.`lesson_id_mk` 
-		left join `videorecords` `vr` on `vr`.`lesson_id_mk` = `rl`.`lesson_id_mk` 
-		left join `teacherslesson` `tl` on `tl`.`lesson_id_mk` = `rl`.`lesson_id_mk` 
-	WHERE 
-		`rl`.`user_id_mk` = :user_id 
-	GROUP BY 
-		`l`.`lesson_id_mk`
-) 
-UNION 
-	(
-		SELECT 
-			`l`.*, 
-			`cl`.`type` `cancel`,
-			`cl`.`id` `id`, 
-			`cl`.`lesson_id` `lesson_id_mk`,
-            `tl`.`teacher_id_mk` `teacher_id_mk`
-		FROM 
-			`cancellesson` `cl` 
-			left join `lessons` `l` on `l`.`lesson_id_mk` = `cl`.`lesson_id` 
-			left join `videorecords` `vr` on `vr`.`lesson_id_mk` = `cl`.`lesson_id` 
-			left join `teacherslesson` `tl` on `tl`.`lesson_id_mk` = `cl`.`lesson_id` 
-		WHERE 
-			`cl`.`member_id` = :member_id
-		GROUP BY 
-			`l`.`lesson_id_mk`
-	)
-    ORDER BY `timestart` DESC', ['user_id' => $user_id, 'member_id' => $memberId]);*/
-
 
 
         # Запрашиваем отмененные занятия, чтобы встроить их в список
@@ -260,7 +223,7 @@ UNION
         $lessons = array_merge($lessons, $CancelLessonsHaveNotStarted);
 
         // Сортируем все уроки по дате и времени
-        //usort($lessons, "\GKTOMK\Models\LessonsModel::cmp");
+        usort($lessons, "\GKTOMK\Models\LessonsModel::cmp");
 
         $dataList = [];
         $ind = 0;
