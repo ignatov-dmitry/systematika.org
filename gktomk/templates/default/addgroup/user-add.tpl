@@ -97,29 +97,15 @@
                                         На один раз
                                     </label>
                                 </div>
-
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label><b>Записаться на пробное</b></label>
-                        <div class="form-check">
                             <div class="row">
                                 <div class="col">
-                                    <input class="form-check-input" type="radio" name="isTest" id="isTestOff"
-                                           value="0" required checked>
-                                    <label class="form-check-label" for="isTestOff">
-                                        Нет
-                                    </label>
-                                </div>
-                                <div class="col">
-                                    <input class="form-check-input" type="radio" name="isTest" id="isTestOn"
+                                    <input class="form-check-input" type="checkbox" name="isTest" id="isTestOff"
                                            value="1" >
-                                    <label class="form-check-label" for="isTestOn">
-                                        Да
+                                    <label class="form-check-label" for="isTestOff">
+                                        Пробное занятие
                                     </label>
                                 </div>
-
                             </div>
                         </div>
                     </div>
