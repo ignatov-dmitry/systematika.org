@@ -85,7 +85,7 @@ class ScheduleModel
 
             $homework_group = $HomeworklinksModel->findGroup($lesson['description']);
             $homework_link = $HomeworklinksModel->getWomeworklinkByGroup($homework_group);
-            $lesson['homework_link'] = $homework_link['link'];
+            $lesson['homework_link'] = @$homework_link['link'];
 
 
             $dataList[] = $lesson;
@@ -122,8 +122,8 @@ class ScheduleModel
     function cmp($a, $b)
     {
         // extract year, month and day from date
-        list($a_month, $a_day, $a_year) = explode('/', $a['date']);
-        list($b_month, $b_day, $b_year) = explode('/', $b['date']);
+        list($a_year, $a_month, $a_day) = explode('-', $a['date']);
+        list($b_year, $b_month, $b_day) = explode('-', $b['date']);
         // compare the correctly ordered strings
         return strcmp($a_year . $a_month . $a_day . $a['beginTime'] . $a['endTime'],
             $b_year . $b_month . $b_day . $b['beginTime'] . $b['endTime']);
@@ -228,7 +228,7 @@ class ScheduleModel
     /*
      * Считает количество записей и посещений
      * */
-    private function getCalcStatRecords($records = [], $mk_uid, $timelesson)
+    private function getCalcStatRecords($records, $mk_uid, $timelesson)
     {
         //echo $timelesson;
 

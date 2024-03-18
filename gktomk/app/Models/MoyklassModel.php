@@ -145,7 +145,7 @@ class MoyklassModel
             '_request' => json_encode($_REQUEST),
             '_server' => json_encode($_SERVER),
             '_server_request_uri' => $_SERVER['REQUEST_URI'],
-            '_server_http_referer' => $_SERVER['HTTP_REFERER'],
+            '_server_http_referer' => @$_SERVER['HTTP_REFERER'],
         ]);
 
         return $result;

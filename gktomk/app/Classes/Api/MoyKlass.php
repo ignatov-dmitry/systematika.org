@@ -117,7 +117,7 @@ class MoyKlass
         return $data;
     }
 
-    public function insertApiDataToDB($function, $tableName, $async = false, $jsonField = '', $url = '', $clean = false)
+    public function insertApiDataToDB($function, $tableName, $async = false, $jsonField = '', $url = '', $clean = false, $filterData = [])
     {
         $start = microtime(true);
 
@@ -130,28 +130,39 @@ class MoyKlass
         }
         if ($async)
         {
-            $filterData = array(
+            $filterData = array_merge($filterData, array(
                 'limit' => $limit,
                 'offset' => 0,
                 'sort' => 'id',
                 'sortDirection' => 'asc'
-            );
+            ));
             $lastRecord = DB::getRow('SELECT * FROM ' . $tableName . ' ORDER BY id DESC LIMIT 1');
             if ($lastRecord && !in_array($function, ['getLessonRecords', 'getLessons', 'getUserSubscriptions']) && !$clean){
                 $lastCreateDate = date('Y-m-d', strtotime($lastRecord['createdAt']));
                 $filterData['createdAt[0]'] = $lastCreateDate;
                 $filterData['createdAt[1]'] = date('Y-m-d');
+                $filterData['sort'] = 'id';
+                $filterData['sortDirection'] = 'asc';
 
                 $TotalItems = ($this->$function(['limit' => 1, 'createdAt[0]' => $lastCreateDate, 'createdAt[1]' => date('Y-m-d')]))['stats']['totalItems'];
             }
             elseif ($lastRecord && in_array($function, ['getLessonRecords', 'getLessons']) && !$clean) {
-                $filterData['date[0]'] = date('Y-m-d', strtotime(date('Y-m-d') . '-4 days'));
-                $filterData['date[1]'] = date('Y-m-d');
+
+                if (!$filterData)
+                {
+                    $filterData['date[0]'] = date('Y-m-d', strtotime(date('Y-m-d') . '-4 days'));
+                    $filterData['date[1]'] = date('Y-m-d');
+                }
+
                 $TotalItems = ($this->$function(['limit' => 1, 'date[0]' => $filterData['date[0]'], 'date[1]' => $filterData['date[1]']]))['stats']['totalItems'];
             }
             elseif ($lastRecord && $function == 'getUserSubscriptions' && !$clean) {
-                $filterData['sellDate[0]'] = date('Y-m-d', strtotime(date('Y-m-d') . '-4 days'));
-                $filterData['sellDate[1]'] = date('Y-m-d');
+
+                if (!$filterData) {
+                    $filterData['sellDate[0]'] = date('Y-m-d', strtotime(date('Y-m-d') . '-4 days'));
+                    $filterData['sellDate[1]'] = date('Y-m-d');
+                }
+
                 $TotalItems = ($this->$function(['limit' => 1, 'sellDate[0]' => $filterData['sellDate[0]'], 'sellDate[1]' => $filterData['sellDate[1]']]))['stats']['totalItems'];
             }
             else {
@@ -160,8 +171,6 @@ class MoyKlass
 
 
             for ($offset = 0; $offset < $TotalItems; $offset += $limit) {
-                if ($TotalItems < $offset)
-                    $offset = $TotalItems;
 
                 $filterData['offset'] = $offset;
                 $this->addAsyncRoute($url, $filterData, 'GET');
@@ -169,9 +178,10 @@ class MoyKlass
 
             $data = $this->runAsyncRoute($url);
 
+            $tableColumns = Model::getInstance()->getTableColumn($tableName);
             foreach ($data as $response)
             {
-                foreach (Model::getColumnValues($response[$jsonField], Model::getInstance()->getTableColumn($tableName)) as $item) {
+                foreach (Model::getColumnValues($response[$jsonField], $tableColumns) as $item) {
                     $keys = array_keys($item);
                     $items[] = $item;
                 }
@@ -182,14 +192,27 @@ class MoyKlass
             $data = $this->$function();
             foreach (Model::getColumnValues($data, Model::getInstance()->getTableColumn($tableName)) as $item) {
                 $keys = array_keys($item);
+
+//                if ($item['name'] === 'Индивидуальное обучение')
+//                    continue;
+
+                if (isset($item['courseId']))
+                    $item['courseId'] = (int)$item['courseId'];
+
                 $items[] = $item;
             }
         }
 
 
         $sql = Model::getInstance()->prepareBulkInsert($tableName, $keys, $items, true);
+
         DB::exec($sql);
         echo 'Время выполнения скрипта для : "' . $url . '" ' . round(microtime(true) - $start, 4) . ' сек.<br>';
+    }
+
+    public function updateFromApi($data = [])
+    {
+        
     }
 
     public function getUsers($filter = [])

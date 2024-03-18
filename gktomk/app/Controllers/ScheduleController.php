@@ -88,7 +88,7 @@ class ScheduleController extends Controller
         $this->View->varTpl('TEACHERS', MoyklassModel::getManagersAssoc());
         //print_r($this->View->varTpl('TEACHERS'));
         $this->View->varTpl('COUNT_SUBSCRIPTIONS_REMIND', [
-            'individual' => $countUserSubscriptions['individual']['visitCount'] - $countUserSubscriptions['individual']['visitedCount'],
+            'individual' => (int)@$countUserSubscriptions['individual']['visitCount'] - (int)@$countUserSubscriptions['individual']['visitedCount'],
             'group' => $countUserSubscriptions['group']['visitCount'] - $countUserSubscriptions['group']['visitedCount'],
         ]);
 

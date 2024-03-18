@@ -12,6 +12,7 @@ class ViewsModel
      */
     private static $DATATPL = [];
     private static $OUTPUT;
+    public $tpl_root_dir;
 
     /*
      * Универсальна функция

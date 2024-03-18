@@ -174,7 +174,7 @@ class WhatsappModel
         return file_get_contents($url, false, $options);
     }
 
-    private function sendApiWazzup($phone, $message, $userPhone)
+    public function sendApiWazzup($phone, $message, $userPhone)
     {
         $data = [
             'channelId' => 'a7d9355f-4d4b-452e-ad7d-d1348f64ea5f',

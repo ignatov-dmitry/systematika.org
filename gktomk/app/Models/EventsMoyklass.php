@@ -110,6 +110,9 @@ class EventsMoyklass extends Events
             $MissingTrial = new MissingTrialModel();
             $MissingTrial->addMissing($this->request['object']['lessonId']);
         }
+
+        foreach ($res['records'] as $record)
+            LessonRecord::getInstance()->updateRecord($record);
     }
 
     /**
@@ -121,16 +124,17 @@ class EventsMoyklass extends Events
         $currentDateTime = new DateTime();
         $lessonDateTime = new DateTime($request['object']['date'] . ' ' . $request['object']['beginTime']);
 
-        $lesson_id = $this->request['object']['lessonId'];
-        $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
-        $lessons = new LessonsModel();
-        $lessons->editLesson($res);
-
         if (date_diff($currentDateTime, $lessonDateTime)->h <= 2)
         {
             $lessonRecords = new LessonRecord();
             (new WhatsappModel())->sendMessages($lessonRecords->getRecordsWithUsers($request['object']['lessonId'], $request['object']['date']), $request);
         }
+
+        $lesson_id = $this->request['object']['lessonId'];
+        $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
+        $lessons = new LessonsModel();
+        $lessons->editLesson($res);
+
 
         if (date_diff($currentDateTime, $lessonDateTime)->h <= 6)
         {
@@ -197,6 +201,8 @@ class EventsMoyklass extends Events
         foreach ($lessonRecords['lessonRecords'] as $record)
             (new LessonsModel())->editRecordLesson($record);
 
+        foreach ($lessonRecords['lessonRecords'] as $record)
+            LessonRecord::getInstance()->updateRecord($record);
         GetcourseModel::updateUser($this->request['object']);
     }
 }

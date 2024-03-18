@@ -55,8 +55,8 @@ class LessonRecord extends Model
     public function updateRecord($data)
     {
         $sql = "
-            UPDATE {table} SET free = {free}, skip = {skip}, visit = {visit}, goodReason = {goodReason}, test = {test}, paid = {paid}
-            WHERE id = {id} AND userId = {userId}
+            UPDATE {table} SET free = {free}, lessonId = {lessonId}, skip = {skip}, visit = {visit}, goodReason = {goodReason}, test = {test}, paid = {paid}
+            WHERE id = {id}
         ";
 
         $sql = Util::replaceTokens($sql, array(
@@ -68,7 +68,8 @@ class LessonRecord extends Model
             'visit'         => $data['visit'] ?: 'NULL',
             'goodReason'    => $data['goodReason'] ?: 'NULL',
             'paid'          => $data['paid'] ?: 'NULL',
-            'userId'        => $data['userId'] ?: 'NULL'
+            'userId'        => $data['userId'] ?: 'NULL',
+            'lessonId'      => $data['lessonId'] ?: 'NULL',
         ));
 
         DB::exec($sql);

@@ -47,8 +47,6 @@ class MoyklassController extends Controller
 
         $this->writeToLog([$res], 'Event handle', 'mk');
         $WebhookModel->editLogWebhook(['id' => $WebhookID, 'date_loaded' => time(), 'status' => 'loaded']);
-
-
     }
 
     public function getCron()

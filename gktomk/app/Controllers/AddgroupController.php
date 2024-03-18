@@ -335,7 +335,7 @@ class AddgroupController extends Controller
             ['text' => 'Перейти', 'url' => CONFIG['url_gk'] . "/user/control/user/update/id/" . @$this->userData['gk_uid']],
         ];
 
-        return TelegramModel::sendMessage(CONFIG['support_group_id'], $text, $inline_keyboard);
+        return TelegramModel::sendMessage('-1001960985896', $text, $inline_keyboard);
       }
 
 }

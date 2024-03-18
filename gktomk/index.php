@@ -1,6 +1,13 @@
 <?php
+ini_set('max_execution_time', '900');
+ini_set('max_input_time', '900');
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+//ini_set('log_errors', 'On');
+//ini_set('error_log', 'php_errors.log');
 
-if($_GET['debug'] == 1) {
+set_time_limit(900);
+if(@$_GET['debug'] == 1) {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);

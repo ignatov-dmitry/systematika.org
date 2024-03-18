@@ -44,9 +44,9 @@ class SubscriptionsModel
                 $countSubscriptions['individual']['visitedCount'] = $countSubscriptions['individual']['visitedCount'] + $user_subscription['stats']['totalVisited'];
             }
             if(in_array($user_subscription['subscriptionId'], $getSyncOnlyMkSubIds) == false) {
-                $countSubscriptions['group']['itemCount'] = $countSubscriptions['group']['itemCount'] + 1;
-                $countSubscriptions['group']['visitCount'] = $countSubscriptions['group']['visitCount'] + $user_subscription['visitCount'];
-                $countSubscriptions['group']['visitedCount'] = $countSubscriptions['group']['visitedCount'] + $user_subscription['stats']['totalVisited'];
+                $countSubscriptions['group']['itemCount'] = (int)@$countSubscriptions['group']['itemCount'] + 1;
+                $countSubscriptions['group']['visitCount'] = (int)@$countSubscriptions['group']['visitCount'] + $user_subscription['visitCount'];
+                $countSubscriptions['group']['visitedCount'] = (int)@$countSubscriptions['group']['visitedCount'] + $user_subscription['stats']['totalVisited'];
             }
         }
         $countSubscriptions['all']['itemCount'] = $user_subscriptions['stats']['totalItems'];

@@ -4,6 +4,7 @@
 namespace GKTOMK\Controllers;
 
 
+use DateTime;
 use GKTOMK\Classes\Api\MoyKlass;
 use GKTOMK\Models\DB;
 use GKTOMK\Models\EventsMoyklass;
@@ -30,13 +31,19 @@ class TestController extends Controller
 
     public function getDate()
     {
+        var_dump((new DateTime()));
         var_dump(date_diff(new \DateTime(), new \DateTime('2023-07-06 00:00'))->h);
     }
 
     public function getMessage()
     {
-        $wazzup = new Wazzup24Model();
-        $wazzup->sendMessage();
+        $currentDateTime = new DateTime();
+        $lessonDateTime = new DateTime('2024-03-04 19:50');
+
+        $lessonRecords = new LessonRecord();
+        //var_dump($lessonRecords->getRecordsWithUsers(30162904, '2024-03-04'));die();
+        (new WhatsappModel())->sendMessages($lessonRecords->getRecordsWithUsers(30162904, '2024-03-04'), ['object' => ['beginTime' => '19:50', 'topic' => 'https://us06web.zoom.us/j/88978107600']]);
+        //(new WhatsappModel())->sendApiWazzup('79858683061', 'wqeqwewqeqweqwe', 'sdasdasdasd');
     }
 
     public function getCall()
@@ -63,6 +70,32 @@ class TestController extends Controller
 
         //Get all users
         $MK->insertApiDataToDB('getUsers', 'mk_users', true, 'users', 'company/users',);
+    }
+
+    public function getCourses()
+    {
+        $items = [];
+        $keys = [];
+        $tableName = 'mk_lesson_records';
+        $MK = new MoyKlass();
+
+        $filterData = [
+            'date[0]'   => date('Y-m-d'),
+            'date[1]'   => date('Y-m-d', strtotime(date('Y-m-d') . '+2 years')),
+            'sort'      => 'id',
+            'limit'     => 500,
+            'offset'    => 0
+        ];
+        $userSubscriptions = $MK->getLessonRecords($filterData);
+
+        foreach (Model::getColumnValues($userSubscriptions['lessonRecords'], Model::getInstance()->getTableColumn($tableName)) as $item) {
+            $keys = array_keys($item);
+            $items[] = $item;
+        }
+
+        $sql = Model::getInstance()->prepareBulkInsert($tableName, $keys, $items, true);
+
+        //DB::exec($sql);
     }
 
     public function getUpdateUsers()
@@ -212,91 +245,18 @@ class TestController extends Controller
 
     }
 
-    public function getInsert()
-    {
-//        $res = MoyklassModel::getLessonRecord(118562449);
-//        $lessonRecords = new LessonRecord();
-//
-//        $lessonRecords->updateRecord($res);
-
-        $date = new \DateTime('2023-05-10T15:05:06+00:00');
-        $date->format('Y-m-d H:i:s');
-
-        $sql = Model::getInstance()->prepareBulkInsert('mk_lesson_records',
-            ['id', 'free', 'test', 'skip', 'visit', 'userId', 'lessonId', 'createdAt', 'goodReason'],
-            [[99719551, null, null, null, null, 2952920, 24988196, $date->format('Y-m-d H:i:s'), null]]);
-
-        $sql = Model::getInstance()->prepareBulkInsert('mk_lessons',
-            [
-                'id',
-                'date',
-                'beginTime',
-                'endTime',
-                'createdAt',
-                'filialId',
-                'roomId',
-                'classId',
-                'status',
-                'comment',
-                'maxStudents',
-                'topic',
-                'description'
-            ],
-            [[
-                9999999999999,
-                '2023-09-17',
-                '16:10',
-                '17:10',
-                $date->format('Y-m-d H:i:s'),
-                16344,
-                22696,
-                118238,
-                1,
-                'NULL',
-                0,
-                'https://us06web.zoom.us/j/81206822410',
-                'sys.s1@mail.ru',
-            ]]);
-
-        var_dump($sql);
-        die();
-        DB::exec($sql);
-    }
-
     public function getTest()
     {
-        $data = [];
 
-        $lessonNextPaid = DB::getRow('SELECT l.date
-            FROM member as m
-            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
-            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
-            WHERE m.email = \'lenchikdem@mail.ru\' AND l.date > NOW() order by l.date limit 1')['date'];
-
-        $lessonNextFree = DB::getRow('SELECT l.date
-            FROM member as m
-            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
-            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
-            WHERE rl.free = 1 and m.email = \'lenchikdem@mail.ru\' AND l.date > NOW() order by l.date limit 1')['date'];
-
-        $lessonSkipLast = DB::getRow('SELECT l.date
-            FROM member as m
-            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
-            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
-            WHERE rl.visit = 0 and m.email = \'lenchikdem@mail.ru\' and l.date < NOW() order by l.date desc limit 1')['date'];
-
-        $lessonVisitLast = DB::getRow('SELECT l.date
-            FROM member as m
-            left join recordslesson as rl on rl.user_id_mk = m.mk_uid
-            left join lessons as l on l.lesson_id_mk = rl.lesson_id_mk
-            WHERE rl.visit = 1 and m.email = \'lenchikdem@mail.ru\' order by l.date desc limit 1')['date'];
-
+        LessonRecord::getInstance()->getRecordsWithUsers(26539101, '2024-03-04 16:30');
+        die();
 //        $member = new MemberModel();
 //        $memberData = $member->getMemberByMkUid(1790260)['email'];
 
-//        $res = MoyklassModel::getLessonById(31332770, ['includeRecords' => 'true']);
-//        $lessons = new LessonsModel();
-//        $lessons->editLesson($res);
+        $res = MoyklassModel::getLessonById(28635536, ['includeRecords' => 'true']);
+
+        foreach ($res['records'] as $record)
+            LessonRecord::getInstance()->updateRecord($record);
 
 
 
@@ -306,6 +266,6 @@ class TestController extends Controller
         //$lessonRecords = MoyklassModel::getUserLessonRecords(3042193);
 //        foreach ($lessonRecords['lessonRecords'] as $record)
 //            (new LessonsModel())->editRecordLesson($record);
-        var_dump($lessonNextPaid, $lessonNextFree, $lessonSkipLast, $lessonVisitLast);
+
     }
 }

@@ -38,7 +38,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="formAddgroup" class="3" action="" method="post">
+            <form id="formAddgroup" action="" method="post">
                 <div class="modal-body" id="modalAddgroupLoading">Загрузка...</div>
                 <div class="modal-body" id="modalAddgroupContent" style="display: none;">
                     <input type="hidden" name="idgroup" value="">

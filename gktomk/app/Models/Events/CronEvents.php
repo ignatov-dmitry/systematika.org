@@ -6,6 +6,7 @@ namespace GKTOMK\Models\Events;
 
 use GKTOMK\Classes\Api\MoyKlass;
 use GKTOMK\Models\ChatModels\ChatAdminModel;
+use GKTOMK\Models\DB;
 use GKTOMK\Models\Events;
 use GKTOMK\Models\HandlerHwkModel;
 use GKTOMK\Models\LessonsModel;
@@ -18,9 +19,11 @@ use GKTOMK\Models\ZoomModel;
 class CronEvents extends Events
 {
 
+    public $MK;
 
     public function __construct($request)
     {
+        $this->MK = new MoyKlass();
         parent::__construct($request);
     }
 
@@ -144,28 +147,60 @@ class CronEvents extends Events
         $LessonsModel->setSynchronizationByDate(time(), time());
     }
 
-    private function update_lessons(){
-        $MK = new MoyKlass();
-
-        //Get all lesson records
-//        $MK->insertApiDataToDB('getLessonRecords', 'mk_lesson_records', true,  'lessonRecords', 'company/lessonRecords');
-//
-//        //Get all lessons
-//        $MK->insertApiDataToDB('getLessons', 'mk_lessons', true, 'lessons','company/lessons',);
-//
-//        //Get subscriptions
-//        $MK->insertApiDataToDB('getSubscriptions', 'mk_subscriptions', true, 'subscriptions', 'company/subscriptions',);
-//
-//        //Get user subscriptions
-//        $MK->insertApiDataToDB('getUserSubscriptions', 'mk_user_subscriptions', true, 'subscriptions','company/userSubscriptions',);
-//
-//        //Get all users
-//        $MK->insertApiDataToDB('getUsers', 'mk_users', true, 'users', 'company/users',);
-
+    public function update_classes()
+    {
+        $this->MK->insertApiDataToDB('getClasses', 'mk_classes', false);
     }
 
-    private function webhook_every1minute(){
+    public function update_courses()
+    {
+        $this->MK->insertApiDataToDB('getCourses', 'mk_courses', false);
+    }
 
+    private function update_lessons(){
+        $filterData['date[0]'] = date('Y-m-d');
+        $filterData['date[1]'] = date('Y-m-d', strtotime(date('Y-m-d') . '+2 years'));
+        $this->MK->insertApiDataToDB('getLessons', 'mk_lessons', true, 'lessons','company/lessons', false, $filterData);
+    }
+
+    public function update_lesson_records()
+    {
+        $filterData['date[0]'] = date('Y-m-d');
+        $filterData['date[1]'] = date('Y-m-d', strtotime(date('Y-m-d') . '+2 years'));
+        $this->MK->insertApiDataToDB('getLessonRecords', 'mk_lesson_records', true, 'lessonRecords', 'company/lessonRecords', false, $filterData);
+    }
+
+    public function update_subscriptions()
+    {
+        $this->MK->insertApiDataToDB('getSubscriptions', 'mk_subscriptions', true, 'subscriptions', 'company/subscriptions',);
+    }
+
+    public function update_user_subscriptions()
+    {
+        $items = [];
+        $keys = [];
+        $tableName = 'mk_user_subscriptions';
+        $MK = new MoyKlass();
+        $filterData['sellDate[0]'] = date('Y-m-d', strtotime(date('Y-m-d') . '-4 days'));
+        $filterData['sellDate[1]'] = date('Y-m-d');
+        $userSubscriptions = $MK->getUserSubscriptions($filterData);
+
+        if (!isset($userSubscriptions['subscriptions']))
+            return;
+
+        foreach (Model::getColumnValues($userSubscriptions['subscriptions'], Model::getInstance()->getTableColumn($tableName)) as $item) {
+            $keys = array_keys($item);
+            $items[] = $item;
+        }
+
+        $sql = Model::getInstance()->prepareBulkInsert($tableName, $keys, $items, true);
+
+        DB::exec($sql);
+    }
+
+    public function update_users()
+    {
+        $this->MK->insertApiDataToDB('getUsers', 'mk_users', true, 'users', 'company/users',);
     }
 
     private function synchronizationchatmanagers_manual(){
