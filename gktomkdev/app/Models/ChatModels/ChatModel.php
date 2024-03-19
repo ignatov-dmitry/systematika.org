@@ -98,10 +98,11 @@ class ChatModel
             if (ob_get_level()) {
                 ob_end_clean();
             }
+
             // заставляем браузер показать окно сохранения файла
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename=' . $name);
+            //header('Content-Description: File Transfer');
+            header('Content-Type: ' . mime_content_type($pathfile));
+            //header('Content-Disposition: attachment; filename=' . $name);
             header('Content-Transfer-Encoding: binary');
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
@@ -218,8 +219,11 @@ class ChatModel
 
         $data = $this->uploadFile($dialog_id);
 
-        if(empty($data['error'])){
-            $data['attachment_id'] = $this->addAttachmentByDialogId($dialog_id, $data['attachment_name'], $data['attachment_realname']);
+        for ($i = 0; $i < count($data); $i++)
+        {
+            if(empty($data[$i]['error'])){
+                $data[$i]['attachment_id'] = $this->addAttachmentByDialogId($dialog_id, $data[$i]['attachment_name'], $data[$i]['attachment_realname']);
+            }
         }
         return $data;
     }
@@ -252,41 +256,51 @@ class ChatModel
 
 
         $error = $success = '';
-        if (!isset($_FILES[$input_name])) {
+        if (!isset($_FILES)) {
             $error = 'Файл не загружен.';
         } else {
-            $file = $_FILES[$input_name];
+            $files = $_FILES;
+            foreach ($files as $file)
+            {
 
-            // Проверим на ошибки загрузки.
-            if (!empty($file['error']) || empty($file['tmp_name'])) {
-                $error = 'Не удалось загрузить файл.';
-            } elseif ($file['tmp_name'] == 'none' || !is_uploaded_file($file['tmp_name'])) {
-                $error = 'Не удалось загрузить файл.';
-            } else {
-                // Оставляем в имени файла только буквы, цифры и некоторые символы.
-                $pattern = "[^a-zа-яё0-9,~!@#%^-_\$\?\(\)\{\}\[\]\.]";
-                $name = mb_eregi_replace($pattern, '-', $file['name']);
-                $name = mb_ereg_replace('[-]+', '-', $name);
-                $parts = pathinfo($name);
+                // Проверим на ошибки загрузки.
+                if (!empty($file['error']) || empty($file['tmp_name'])) {
+                    $error = 'Не удалось загрузить файл.';
+                } elseif ($file['tmp_name'] == 'none' || !is_uploaded_file($file['tmp_name'])) {
+                    $error = 'Не удалось загрузить файл.';
+                } else {
+                    // Оставляем в имени файла только буквы, цифры и некоторые символы.
+                    $pattern = "[^a-zа-яё0-9,~!@#%^-_\$\?\(\)\{\}\[\]\.]";
+                    $name = mb_eregi_replace($pattern, '-', $file['name']);
+                    $name = mb_ereg_replace('[-]+', '-', $name);
+                    $parts = pathinfo($name);
 
-                if (empty($name) || empty($parts['extension'])) {
-                    $error = 'Недопустимый тип файла';
-                } elseif (!empty($allow) && !in_array(strtolower($parts['extension']), $allow)) {
-                    $error = 'Недопустимый тип файла';
-                } elseif (!empty($deny) && in_array(strtolower($parts['extension']), $deny)) {
-                    $error = 'Недопустимый тип файла';
-                } elseif($file['size'] > (8 * 1024 * 1024 * 50)) {
-                    $error = 'Слишком большой размер ('.$file['size'].') файла';
-                }else{
-                    // Перемещаем файл в директорию.
-                    $newname = md5($name . rand(9999, 999999)) .'.'. $parts['extension'];
-                    if (move_uploaded_file($file['tmp_name'], $path .'/'. $newname)) {
-                        // Далее можно сохранить название файла в БД и т.п.
-                        $success = 'Файл «' . $name . '» успешно загружен.';
-                    } else {
-                        $error = 'Не удалось загрузить файл.';
+                    if (empty($name) || empty($parts['extension'])) {
+                        $error = 'Недопустимый тип файла';
+                    } elseif (!empty($allow) && !in_array(strtolower($parts['extension']), $allow)) {
+                        $error = 'Недопустимый тип файла';
+                    } elseif (!empty($deny) && in_array(strtolower($parts['extension']), $deny)) {
+                        $error = 'Недопустимый тип файла';
+                    } elseif($file['size'] > (8 * 1024 * 1024 * 50)) {
+                        $error = 'Слишком большой размер ('.$file['size'].') файла';
+                    }else{
+                        // Перемещаем файл в директорию.
+                        $newname = md5($name . rand(9999, 999999)) .'.'. $parts['extension'];
+                        if (move_uploaded_file($file['tmp_name'], $path .'/'. $newname)) {
+                            // Далее можно сохранить название файла в БД и т.п.
+                            $success = 'Файл «' . $name . '» успешно загружен.';
+                        } else {
+                            $error = 'Не удалось загрузить файл.';
+                        }
                     }
                 }
+
+                $data[] = array(
+                    'error'   => $error,
+                    'success' => $success,
+                    'attachment_name' => $name,
+                    'attachment_realname' => $newname,
+                );
             }
         }
 
@@ -295,13 +309,6 @@ class ChatModel
         if (!empty($error)) {
             $error = '' . $error . '';
         }
-
-        $data = array(
-            'error'   => $error,
-            'success' => $success,
-            'attachment_name' => $name,
-            'attachment_realname' => $newname,
-        );
 
         return $data;
 

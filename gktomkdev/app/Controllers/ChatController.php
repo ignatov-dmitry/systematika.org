@@ -173,21 +173,25 @@ class ChatController extends Controller
         $from_member_id = $this->Member->getMemberId();
 
         $dialog_id = $_POST['dialog_id'];
-        $result = $this->chatUserModel->uploadAttachment($dialog_id);
+        $data = $this->chatUserModel->uploadAttachment($dialog_id);
 
-        if (empty($result['error'])) {
-            $this->chatUserModel->addMessageByMemberIdAndDialogId(
-                $from_member_id,
-                $dialog_id,
-                [
-                    'message' => $result['attachment_name'],
-                    'attachment_id' => $result['attachment_id']
-                ]
-            );
+        foreach ($data as $result)
+        {
+            if (empty($result['error'])) {
+                $this->chatUserModel->addMessageByMemberIdAndDialogId(
+                    $from_member_id,
+                    $dialog_id,
+                    [
+                        'message' => $result['attachment_name'],
+                        'attachment_id' => $result['attachment_id']
+                    ]
+                );
+            }
         }
 
+
         header('Content-Type: application/json');
-        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
         exit();
     }
 

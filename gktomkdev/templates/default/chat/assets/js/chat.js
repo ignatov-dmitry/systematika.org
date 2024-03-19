@@ -567,7 +567,7 @@ var chat = {
                         let messageText = message['message'];
 
                         if(message['attachment_id'])
-                            messageText = '<a href="'+SETT.URL_SITE+'/chat/attach/'+message['id']+'">'+messageText+'</a>';
+                            messageText = '<a target="_blank" href="'+SETT.URL_SITE+'/chat/attach/'+message['id']+'">'+messageText+'</a>';
                         messagesHtml += `<div class="row message-body">
                     <div class="col-sm-12 message-main-${sender}">
                         <div class="${sender}">
@@ -660,10 +660,15 @@ var chat = {
                 input.attr('disabled','disabled');;
                 label.html(spinner);
                 var formData = new FormData();
-                let filedata = $("#message_file")[0].files[0];
+                let filedata = $("#message_file")[0].files;
                 if(!filedata)
                     return;
-                formData.append('file', filedata);
+
+                $.each( filedata, function( key, value ){
+                    formData.append( key, value );
+                });
+
+                //formData.append('file', filedata);
                 formData.append('dialog_id', dialog_id);
 
                 function setProgress(e) {

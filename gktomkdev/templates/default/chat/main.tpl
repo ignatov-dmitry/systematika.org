@@ -14,7 +14,7 @@
         {?*MEMBER.mk_manager_id*}MEMBER_MANAGER: '{*MEMBER.mk_manager_id*}',{?}
     };
 </script>
-<script src="{*URL_SITE*}/templates/{*TPL_NAME*}/chat/assets/js/chat.js?v=3"></script>
+<script src="{*URL_SITE*}/templates/{*TPL_NAME*}/chat/assets/js/chat.js?v=3.0"></script>
 <link rel="stylesheet" href="{*URL_SITE*}/templates/{*TPL_NAME*}/chat/assets/css/style.css?v=4">
 
 
@@ -204,7 +204,7 @@
                     <input type="hidden" name="dialog_id" value="">
                     <input type="hidden" name="manager_id" value="">
                     <input type="hidden" name="client_id" value="">
-                    <input type="file" id="message_file" name="message_file" value="" style="display: none;">
+                    <input type="file" multiple id="message_file" name="message_file[]" value="" style="display: none;">
 
                     <textarea class="form-control" rows="1" name="message" id="dialogFormMessage" required="required"></textarea>
                 </div>
