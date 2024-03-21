@@ -219,4 +219,50 @@
         </div>
     </div>
 </div>
+<div class="popup"><span class="close">&times;</span><img src=""></div>
+<style>
+    .popup {
+        display: none;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 35px 90px;
+        height: auto;
+        width: auto;
+        position: fixed;
+        z-index: 999;
+        padding: 20px;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        overflow-y: auto;
+        max-width: max-content;
+    }
 
+    .popup img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        left: 97%;
+        font-size: 24px;
+        cursor: pointer;
+    }
+</style>
+<script>
+    $(document).ready(function(){
+        $(document).on('click', '.thumbnail', function(){
+            console.log($(this).data('attachment-id'))
+            $(".popup").show();
+            $(".popup img").attr('src', $(this).attr('src'));
+        });
+
+        $(document).on('click', '.close', function(){
+            $(".popup").hide();
+        });
+    });
+</script>

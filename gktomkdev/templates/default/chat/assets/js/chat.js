@@ -567,7 +567,17 @@ var chat = {
                         let messageText = message['message'];
 
                         if(message['attachment_id'])
-                            messageText = '<a target="_blank" href="'+SETT.URL_SITE+'/chat/attach/'+message['id']+'">'+messageText+'</a>';
+                        {
+                            let fileFormat = messageText.split('.').slice(-1)[0]
+                            let imgFormats = ['png', 'jpeg', 'jpg', 'bmp', 'gif', 'svg'];
+
+                            if(imgFormats.includes(fileFormat.toLowerCase()))
+                            {
+                                messageText = '<div><img class="thumbnail" data-attachment-id="' + message['attachment_id'] + '" style="max-width: 200px;cursor: pointer" src="'+SETT.URL_SITE+'/chat/attach/'+message['id']+'"/></div><a target="_blank" href="'+SETT.URL_SITE+'/chat/attach/'+message['id']+'">'+messageText+'</a>';
+                            }
+
+                        }
+
                         messagesHtml += `<div class="row message-body">
                     <div class="col-sm-12 message-main-${sender}">
                         <div class="${sender}">
@@ -575,8 +585,6 @@ var chat = {
                                 ${senderText} ${messageText}
                             </div>
                             <span class="message-time pull-right">${time}</span>
-                            
-                
                         </div>
                     </div>
                 </div>`;
