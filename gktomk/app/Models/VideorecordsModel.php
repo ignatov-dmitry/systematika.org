@@ -197,6 +197,11 @@ class VideorecordsModel
         return $name;
     }
 
+    public function setSafe($recordId, $value): void
+    {
+        $this->setDataRecord($recordId, 'is_safe', $value);
+    }
+
     private function setDataRecord($recordId, $key, $value)
     {
         $record = DB::load('videorecords', $recordId);

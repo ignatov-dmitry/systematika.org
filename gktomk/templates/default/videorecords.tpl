@@ -71,6 +71,16 @@
                 <button class="btn" data-id-btnview="{*LOGS:id*}" title="Копировать ссылку" onclick="videorecords.view.copyLink({*LOGS:id*});"><i class="far fa-copy"></i></button>
                 {?}
             </td>
+            <td>
+                {?*LOGS:status="OK" | LOGS:path!=false*}
+                <button class="btn" data-id-btnview="{*LOGS:id*}" title="Копировать html код для вставки" onclick="videorecords.view.copyHtmlModal({*LOGS:id*});">
+                    <i class="fa fa-code"></i>
+                    {?*LOGS:is_safe="1"*}
+                        <img title="Защищено от удаления" src="https://lh7-us.googleusercontent.com/g3e7G82I6BFLXlQKlVy8aD0HzF4zoRlH5T_Ez3cWi_22PXN2qji2VB5LVMBxnBKberStAX6TIrWa6sUJYvO_zvc6MFffH7E0WKDbrpHSGiWQk9lAP4qttfLpWGIS-oHQXNZkCiOlw_jun1hfjrDZu5Q" width="23" height="20" style="margin-left:0px;margin-top:0px;">
+                    {?}
+                </button>
+                {?}
+            </td>
         </tr>
         {*LOGS*%}
         </tbody>
@@ -122,6 +132,27 @@
             </div>
             <div class="modal-body">
                 <div id="folders"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="copyHtmlLink" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">  <!--style="width: 500px; height: 264px;"-->
+            <div class="modal-header">
+                <h5 class="modal-title">Копировать html код</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6"><button onclick="videorecords.view.copyHtmlSafe()" id="copySafe" class="btn btn-primary">Скопировать код и защитить от удаления</button></div>
+                    <div class="col-md-6"><button onclick="videorecords.view.copyHtmlUnsafe()" id="copyUnsafe" class="btn btn-primary">Скопировать код без защиты</button></div>
+                </div>
+                <div class="row">
+                    <textarea style="margin-top: 20px;" class="form-control" id="htmlCode"></textarea>
+                </div>
             </div>
         </div>
     </div>

@@ -158,4 +158,10 @@ class VideorecordsController extends Controller
         $VideorecordsModel = new VideorecordsModel();
         $VideorecordsModel->getLoadOldLesson();
     }
+
+    public function getSafe(int $id)
+    {
+        $VideorecordsModel = new VideorecordsModel();
+        $VideorecordsModel->setSafe($id, 1);
+    }
 }
