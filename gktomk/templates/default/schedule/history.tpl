@@ -117,10 +117,8 @@
         {background-color:#d2e8b9; padding:3px;border-radius:4px;}
 
     </style>
-
-
             {%*LESSONS*}
-            <div class="card" data-id="{*LESSONS:id*}" data-date="{*LESSONS:date*}" data-class-name="{*LESSONS:class_name*}">
+            <div class="card" data-id="{*LESSONS:id*}" data-date="{*LESSONS:date*}" data-unassigned="{?*LESSONS:unassigned*}true{?}{?!*LESSONS:unassigned*}false{?}" data-meeting-topic="{*LESSONS:meeting_topic*}" data-class-name="{*LESSONS:class_name*}">
                 <div class="card-top">
                     <div class="first">
                         <div class="date-item">
@@ -152,7 +150,7 @@
                         {?*LESSONS:color>0*}<p><span style="font-size: 18px;color: {?*LESSONS:color=1*}#28ff00{?}{?*LESSONS:color=2*}#001afd{?};">&#x25CF;</span> {*LESSONS:color*}-й трек</p>{?}
                     </div>
                     <div class="card-bottom-left">
-                        {?*LESSONS:status="OK"*}<a href="#!" onclick="schedule.history.view.openModal({*LESSONS:id*});" class="blue-btn"><i class="fas fa-play"></i> Видео</a>{?}
+                        {?*LESSONS:status="OK" | LESSONS:path!=false*}<a href="#!" onclick="schedule.history.view.openModal({*LESSONS:id*});" class="blue-btn"><i class="fas fa-play"></i> Видео</a>{?}
                         {?*LESSONS:homework_link*}<a href="{*LESSONS:homework_link*}" target="_blank"><i class="fas fa-external-link-alt"></i> Материалы</a>{?}
                         <div id="lesson-url{*LESSONS:index*}" style="display:none;">{*LESSONS:url*}</div>
                     </div>

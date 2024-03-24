@@ -146,10 +146,19 @@ let schedule = {
                 let tr = $('.card[data-id="' + id + '"]');
                 let date = tr.data('date');
                 let classname = tr.data('class-name');
+                let meeting_topic = tr.data('meeting-topic');
+                let unassigned = tr.data('unassigned');
 
                 var re = '-';
                 var str = date;
                 var newstr = str.replaceAll(re, '/');
+
+                if (unassigned){
+                    newstr = 'unassigned_videos/' + newstr;
+                    classname = meeting_topic;
+                }
+
+
                 let url = SETT.URL_SITE + '/zoom/video/?v=videorecord/' + newstr + '/' + classname;
                 let url_prev = SETT.URL_SITE + "/templates/default/images/logo-new.png.webp";
 

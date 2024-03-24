@@ -203,7 +203,7 @@ class LessonsModel
 
 
         //echo 'SELECT * FROM `recordslesson` `rl`,`lessons` `l` WHERE `rl`.`user_id_mk`=? && `l`.`lesson_id_mk`=`rl`.`lesson_id_mk`';
-        $lessons = DB::getAll('SELECT rl.*, l.*, tl.*, `rl`.`id` `id`, `rl`.`lesson_id_mk` `lesson_id_mk`, `vr`.`status`
+        $lessons = DB::getAll('SELECT rl.*, l.*, tl.*, `rl`.`id` `id`, `rl`.`lesson_id_mk` `lesson_id_mk`, `vr`.`status`, `vr`.`meeting_topic`
                                 FROM 
                                 `recordslesson` `rl` 
                                 left join `lessons` `l` on `l`.`lesson_id_mk` = `rl`.`lesson_id_mk`
@@ -272,6 +272,21 @@ class LessonsModel
             $homework_group = $HomeworklinksModel->findGroup($lesson['description']);
             $homework_link = $HomeworklinksModel->getWomeworklinkByGroup($homework_group);
             $lesson['homework_link'] = $homework_link['link'];
+
+            $lesson['unassigned'] = false;
+            $path = DIR_PATH . '/videorecord/' . str_replace('-', '/', $lesson['date']) . '/' . $lesson['class_name'];
+            $unassignedPath = DIR_PATH . '/videorecord/unassigned_videos/' . str_replace('-', '/', $lesson['date']) . '/' . $lesson['meeting_topic'];
+
+            if (glob($path . '.{mp4,MP4}', GLOB_BRACE))
+                $lesson['path'] = $path;
+            elseif (glob($unassignedPath . '*.{mp4,MP4}', GLOB_BRACE)) {
+                $lesson['path'] = $unassignedPath;
+                $lesson['unassigned'] = true;
+            }
+            else
+                $lesson['path'] = false;
+
+            $lesson['meeting_topic'] = htmlspecialchars($lesson['meeting_topic']);
 
             $dataList[] = $lesson;
         }
