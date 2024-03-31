@@ -14,7 +14,7 @@
         {?*MEMBER.mk_manager_id*}MEMBER_MANAGER: '{*MEMBER.mk_manager_id*}',{?}
     };
 </script>
-<script src="{*URL_SITE*}/templates/{*TPL_NAME*}/chat/assets/js/chat.js?v=3.0"></script>
+<script src="{*URL_SITE*}/templates/{*TPL_NAME*}/chat/assets/js/chat.js?v=3.1"></script>
 <link rel="stylesheet" href="{*URL_SITE*}/templates/{*TPL_NAME*}/chat/assets/css/style.css?v=4">
 
 

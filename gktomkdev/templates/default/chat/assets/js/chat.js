@@ -575,6 +575,8 @@ var chat = {
                             {
                                 messageText = '<div><img class="thumbnail" data-attachment-id="' + message['attachment_id'] + '" style="max-width: 200px;cursor: pointer" src="'+SETT.URL_SITE+'/chat/attach/'+message['id']+'"/></div><a target="_blank" href="'+SETT.URL_SITE+'/chat/attach/'+message['id']+'">'+messageText+'</a>';
                             }
+                            else
+                                messageText = '<a target="_blank" href="'+SETT.URL_SITE+'/chat/attach/'+message['id']+'">'+messageText+'</a>';
 
                         }
 
