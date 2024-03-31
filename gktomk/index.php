@@ -3,6 +3,7 @@ ini_set('max_execution_time', '900');
 ini_set('max_input_time', '900');
 ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
+ini_set('memory_limit', '1024M');
 //ini_set('log_errors', 'On');
 //ini_set('error_log', 'php_errors.log');
 

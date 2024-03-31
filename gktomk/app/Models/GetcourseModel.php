@@ -272,7 +272,7 @@ class GetcourseModel
      * */
     public function updateUserDateVisitByUserIdMK($userId){
         // Обновляем дату последнего пробного
-        $lesson_last_test = MoyklassModel::getLessonVisitLastTest($userId);
+        $lesson_last_test = MoyklassModel::getLessonVisitLastTestFromDb($userId);
 
         if (isset($lesson_last_test) and !empty($lesson_last_test)) {
             $date_last_lesson = @date("d.m.Y", strtotime($lesson_last_test['date']));
@@ -282,7 +282,7 @@ class GetcourseModel
         }
 
         // Дата последнего посещения урока
-        $lesson_last = MoyklassModel::getLessonVisitLast($userId);
+        $lesson_last = MoyklassModel::getLessonVisitLastFromDb($userId);
         if (isset($lesson_last) and !empty($lesson_last)) {
             $date_last_lesson = @date("d.m.Y", strtotime($lesson_last['date']));
             $this->DataUser['date_last_lesson'] = $date_last_lesson;
@@ -290,7 +290,8 @@ class GetcourseModel
             $this->DataUser['date_last_lesson'] = '01.01.1970';
         }
 
-        $lessonNextPaid = MoyklassModel::getNextPaidAndFreeRecording($userId);
+        $lessonNextPaid = MoyklassModel::getNextPaidAndFreeRecordingFromDb($userId);
+
         if (isset($lessonNextPaid) and !empty($lessonNextPaid)) {
             $this->DataUser['date_next_paid_lesson'] = $lessonNextPaid['date_next_paid_lesson'];
             $this->DataUser['date_next_free_lesson'] = $lessonNextPaid['date_next_free_lesson'];

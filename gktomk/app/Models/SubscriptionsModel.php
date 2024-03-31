@@ -26,7 +26,8 @@ class SubscriptionsModel
 
 
         // Получаем количество абонементов у клиента
-        $user_subscriptions = MoyklassModel::getUserSubscriptions(['userId' => $mk_uid, 'statusId' => '2']);
+        //$user_subscriptions = MoyklassModel::getUserSubscriptions(['userId' => $mk_uid, 'statusId' => '2']);
+        $user_subscriptions['subscriptions'] = MoyklassModel::getUserSubscriptionsFromDb($mk_uid);
 
         //print_r($user_subscriptions);
 
@@ -48,12 +49,14 @@ class SubscriptionsModel
                 $countSubscriptions['group']['visitCount'] = (int)@$countSubscriptions['group']['visitCount'] + $user_subscription['visitCount'];
                 $countSubscriptions['group']['visitedCount'] = (int)@$countSubscriptions['group']['visitedCount'] + $user_subscription['stats']['totalVisited'];
             }
-        }
-        $countSubscriptions['all']['itemCount'] = $user_subscriptions['stats']['totalItems'];
-        $countSubscriptions['all']['visitCount'] = $user_subscriptions['stats']['totalVisits'];
-        $countSubscriptions['all']['visitedCount'] = $user_subscriptions['stats']['totalVisited'];
 
-        //var_dump($countSubscriptions);
+            $countSubscriptions['all']['itemCount'] = count($user_subscriptions['subscriptions']);
+            $countSubscriptions['all']['visitCount'] += $user_subscription['visitCount'];
+            $countSubscriptions['all']['visitedCount'] += $user_subscription['visitedCount'];
+        }
+
+
+        //var_dump($countSubscriptions);die();
         //var_dump($user_subscriptions['stats']);
 
         return $countSubscriptions;

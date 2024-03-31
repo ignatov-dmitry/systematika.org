@@ -210,9 +210,31 @@ class MoyKlass
         echo 'Время выполнения скрипта для : "' . $url . '" ' . round(microtime(true) - $start, 4) . ' сек.<br>';
     }
 
-    public function updateFromApi($data = [])
+    public function getAllDataFromApi($function, $tableName, $jsonField, $data = [], $url = '')
     {
-        
+        $items = array();
+        $filterData = $data;
+        $data['limit'] = 1;
+        $TotalItems = ($this->$function($data))['stats']['totalItems'];
+
+        $filterData['limit'] = 500;
+        for ($offset = 0; $offset < $TotalItems; $offset += 500) {
+
+            $filterData['offset'] = $offset;
+            $this->addAsyncRoute($url, $filterData, 'GET');
+        }
+
+
+        $data = $this->runAsyncRoute($url);
+
+        $tableColumns = Model::getInstance()->getTableColumn($tableName);
+        foreach ($data as $response)
+        {
+            foreach (Model::getColumnValues($response[$jsonField], $tableColumns) as $item) {
+                $items[] = $item;
+            }
+        }
+        return $items;
     }
 
     public function getUsers($filter = [])

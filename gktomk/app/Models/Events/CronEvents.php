@@ -203,6 +203,28 @@ class CronEvents extends Events
         $this->MK->insertApiDataToDB('getUsers', 'mk_users', true, 'users', 'company/users',);
     }
 
+    public function get_canceled_subscriptions()
+    {
+        $MK = new MoyKlass();
+        $data = $MK->getAllDataFromApi('getUserSubscriptions', 'mk_user_subscriptions', 'subscriptions', ['statusId' => 4], 'company/userSubscriptions');
+
+        $sql = "UPDATE mk_user_subscriptions SET statusId = 4 WHERE id in (" . implode(',', array_column($data, 'id')) . ")";
+
+        DB::exec($sql);
+    }
+
+    public function update_user_subscriptions_data()
+    {
+        $MK = new MoyKlass();
+        $data = $MK->getAllDataFromApi('getUserSubscriptions', 'mk_user_subscriptions', 'subscriptions', ['statusId' => 2], 'company/userSubscriptions');
+
+        $sql = "DELETE FROM mk_user_subscriptions WHERE id in (" . implode(',', array_column($data, 'id')) . ")";
+        DB::exec($sql);
+
+        $sql = Model::getInstance()->prepareBulkInsert('mk_user_subscriptions', array_keys($data[0]), $data);
+        DB::exec($sql);
+    }
+
     private function synchronizationchatmanagers_manual(){
         $ChatAdminModel = new ChatAdminModel();
         $ChatAdminModel->getSyncManagers();

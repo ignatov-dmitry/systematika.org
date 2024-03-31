@@ -75,6 +75,7 @@ class EventsMoyklass extends Events
         // Сохраняем занятие в историю уроков
         $lessons = new LessonsModel();
         $lessons->editLesson($res);
+        $this->updateUserGetcourse();
     }
 
     public function lesson_deleted()
@@ -86,6 +87,7 @@ class EventsMoyklass extends Events
 
         DB::exec('DELETE FROM `mk_lesson_records` WHERE `lessonId`=:lesson_id', ['lesson_id' => $lesson_id]);
         DB::exec('DELETE FROM `mk_lessons` WHERE `id`=:lesson_id', ['lesson_id' => $lesson_id]);
+        $this->updateUserGetcourse();
     }
 
     /*
@@ -113,6 +115,7 @@ class EventsMoyklass extends Events
 
         foreach ($res['records'] as $record)
             LessonRecord::getInstance()->updateRecord($record);
+        $this->updateUserGetcourse();
     }
 
     /**
@@ -142,6 +145,7 @@ class EventsMoyklass extends Events
             $homework = new HomeworkModel();
             $homework->sendRecords($res['records']);
         }
+        $this->updateUserGetcourse();
     }
 
     /**
@@ -167,7 +171,7 @@ class EventsMoyklass extends Events
             'timeend' => strtotime($res['date'] .' ' . $res['endTime']),
             'status' => 'new',
         ]);*/
-
+        $this->updateUserGetcourse();
     }
 
     public function lesson_record_deleted(){
@@ -176,6 +180,7 @@ class EventsMoyklass extends Events
         $user_id = $this->request['object']['userId'];
         $lessons->deleteRecordLessonByLessonIdAndUserId($lesson_id, $user_id);
         DB::exec('DELETE FROM `mk_lesson_records` WHERE `lessonId`=:lesson_id && `userId`=:user_id', ['lesson_id' => $lesson_id, 'user_id' => $user_id]);
+        $this->updateUserGetcourse();
     }
 
 
@@ -204,5 +209,6 @@ class EventsMoyklass extends Events
         foreach ($lessonRecords['lessonRecords'] as $record)
             LessonRecord::getInstance()->updateRecord($record);
         GetcourseModel::updateUser($this->request['object']);
+        $this->updateUserGetcourse();
     }
 }

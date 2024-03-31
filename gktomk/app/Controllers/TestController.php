@@ -9,6 +9,7 @@ use GKTOMK\Classes\Api\MoyKlass;
 use GKTOMK\Models\DB;
 use GKTOMK\Models\EventsMoyklass;
 use GKTOMK\Models\GetCourse\Account;
+use GKTOMK\Models\GetcourseModel;
 use GKTOMK\Models\LessonsModel;
 use GKTOMK\Models\MemberModel;
 use GKTOMK\Models\MoyklassModel;
@@ -248,24 +249,21 @@ class TestController extends Controller
     public function getTest()
     {
 
-        LessonRecord::getInstance()->getRecordsWithUsers(26539101, '2024-03-04 16:30');
-        die();
-//        $member = new MemberModel();
-//        $memberData = $member->getMemberByMkUid(1790260)['email'];
-
-        $res = MoyklassModel::getLessonById(28635536, ['includeRecords' => 'true']);
-
-        foreach ($res['records'] as $record)
-            LessonRecord::getInstance()->updateRecord($record);
-
+//        $MK = new MoyKlass();
+//        $data = $MK->getAllDataFromApi('getUserSubscriptions', 'mk_user_subscriptions', 'subscriptions', ['statusId' => 2], 'company/userSubscriptions');
+//
+//        $sql = "DELETE FROM mk_user_subscriptions WHERE id in (" . implode(',', array_column($data, 'id')) . ")";
+//        DB::exec($sql);
+//
+//        $sql = Model::getInstance()->prepareBulkInsert('mk_user_subscriptions', array_keys($data[0]), $data);
+//        DB::exec($sql);
 
 
-        //$event = new EventsMoyklass(['event' => 'join_changed', 'object' => ['userId' => 3042193, 'stats' => ['lastVisit' => '2023-10-13']]]);
-        //$event->handle();
-        //$event->join_changed();
-        //$lessonRecords = MoyklassModel::getUserLessonRecords(3042193);
-//        foreach ($lessonRecords['lessonRecords'] as $record)
-//            (new LessonsModel())->editRecordLesson($record);
-
+        $userMk = MoyklassModel::getUserByIdFromDb(1945522);
+        $GetCourse = new GetcourseModel();
+        $GetCourse->updateUserDateVisitByUserIdMK(1945522)
+            ->updateUserSubscriptionsByUserIdMK(1945522)
+            ->setEmail($userMk['email'])
+            ->sendUser();
     }
 }

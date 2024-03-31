@@ -104,6 +104,11 @@ class MoyklassModel
         return self::startApi('company/users/' . $filter['userId'], '', 'GET');
     }
 
+    public static function getUserByIdFromDb($userId)
+    {
+        return DB::getRow('SELECT * FROM `mk_users` WHERE id = ?', [$userId]);
+    }
+
     /*
      * Находит пользователя по email
      * */
@@ -201,6 +206,11 @@ class MoyklassModel
     public static function getUserSubscriptions($filter = ['userId' => ''])
     {
         return self::startApi('company/userSubscriptions', $filter, 'GET');
+    }
+
+    public static function getUserSubscriptionsFromDb($userId)
+    {
+        return DB::getAll('SELECT * FROM `mk_user_subscriptions` WHERE userId = ? and statusId = 2', [$userId]);
     }
 
     /*
@@ -425,6 +435,47 @@ class MoyklassModel
         return ['date_next_paid_lesson' => $nextDatePaid, 'date_next_free_lesson' => $nextDateFree];
     }
 
+    public static function getNextPaidAndFreeRecordingFromDb($userId)
+    {
+        $sqlPaid = "
+            SELECT * 
+            FROM mk_lessons as ml
+            LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
+            
+            WHERE mlr.userId = ? AND date > CURRENT_DATE AND mlr.free is null
+            ORDER BY date ASC limit 1
+        ";
+
+        $sqlFree = "
+            SELECT * 
+            FROM mk_lessons as ml
+            LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
+            
+            WHERE mlr.userId = ? AND date > CURRENT_DATE AND mlr.free = 1
+            ORDER BY date ASC limit 1
+        ";
+
+
+        $nextDatePaid = '9999-12-31';
+        $nextDateFree = '9999-12-31';
+
+        $paidLesson = DB::getRow($sqlPaid, [$userId]);
+        if ($paidLesson)
+            $nextDatePaid = $paidLesson['date'];
+
+        $freeLesson = DB::getRow($sqlFree, [$userId]);
+
+        if ($freeLesson)
+            $nextDateFree = $freeLesson['date'];
+
+
+        $nextDatePaid = $nextDatePaid !== '9999-12-31' ? (new \DateTime($nextDatePaid))->format('d.m.Y') : '';
+        $nextDateFree = $nextDateFree !== '9999-12-31' ? (new \DateTime($nextDateFree))->format('d.m.Y') : '';
+
+
+        return ['date_next_paid_lesson' => $nextDatePaid, 'date_next_free_lesson' => $nextDateFree];
+    }
+
     /**
      * Возвращает дату последнего и пробного занятия
      *
@@ -510,6 +561,20 @@ class MoyklassModel
         return $dataLesson;
     }
 
+    public static function getLessonVisitLastFromDb($userId)
+    {
+        $sql = "
+            SELECT * 
+            FROM mk_lessons as ml
+            LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
+            
+            WHERE mlr.userId = ? AND date < CURRENT_DATE and mlr.visit = 1
+            ORDER BY date DESC limit 1
+        ";
+
+        return DB::getRow($sql, [$userId]);
+    }
+
     /**
      * Возвращает последнее занятие для пользователя
      *
@@ -578,6 +643,20 @@ class MoyklassModel
             }
         }
         return $dataLesson;
+    }
+
+    public static function getLessonVisitLastTestFromDb($userId)
+    {
+        $sql = "
+            SELECT * 
+            FROM mk_lessons as ml
+            LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
+            
+            WHERE mlr.userId = ? AND date < CURRENT_DATE and mlr.visit = 1 and mlr.test = 1
+            ORDER BY date DESC limit 1
+        ";
+
+        return DB::getRow($sql, [$userId]);
     }
 
     /** Возвращает следующее платное и бесплатное занятие для каждого ученика
