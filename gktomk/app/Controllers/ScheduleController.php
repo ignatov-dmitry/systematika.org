@@ -94,8 +94,6 @@ class ScheduleController extends Controller
 
 
         $this->View->parseTpl('schedule/index', false)->parseTpl('schedule/main')->output();
-
-
     }
 
     public function getHistory()

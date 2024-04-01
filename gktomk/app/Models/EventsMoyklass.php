@@ -43,7 +43,6 @@ class EventsMoyklass extends Events
      * */
     public function lesson_record_new()
     {
-        $this->updateUserGetcourse(); // Обновляем данные в гк
         $lesson_id = $this->request['object']['lessonId'];
         $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
 
@@ -75,7 +74,6 @@ class EventsMoyklass extends Events
         // Сохраняем занятие в историю уроков
         $lessons = new LessonsModel();
         $lessons->editLesson($res);
-        $this->updateUserGetcourse();
     }
 
     public function lesson_deleted()
@@ -85,9 +83,8 @@ class EventsMoyklass extends Events
         $lessons = new LessonsModel();
         $lessons->deleteLessonByLessonId($lesson_id);
 
-        DB::exec('DELETE FROM `mk_lesson_records` WHERE `lessonId`=:lesson_id', ['lesson_id' => $lesson_id]);
-        DB::exec('DELETE FROM `mk_lessons` WHERE `id`=:lesson_id', ['lesson_id' => $lesson_id]);
-        $this->updateUserGetcourse();
+        DB::exec('DELETE FROM `mk_lesson_records` WHERE `lessonId`= ?', [$lesson_id]);
+        DB::exec('DELETE FROM `mk_lessons` WHERE `id`= ?', [$lesson_id]);
     }
 
     /*
@@ -95,8 +92,6 @@ class EventsMoyklass extends Events
      * */
     public function lesson_record_changed()
     {
-        $this->updateUserGetcourse(); // Чисто обновляем данные в гк
-
         $lesson_id = $this->request['object']['lessonId'];
 
         $res = MoyklassModel::getLessonById($lesson_id, ['includeRecords' => 'true']);
@@ -115,7 +110,6 @@ class EventsMoyklass extends Events
 
         foreach ($res['records'] as $record)
             LessonRecord::getInstance()->updateRecord($record);
-        $this->updateUserGetcourse();
     }
 
     /**
@@ -145,7 +139,6 @@ class EventsMoyklass extends Events
             $homework = new HomeworkModel();
             $homework->sendRecords($res['records']);
         }
-        $this->updateUserGetcourse();
     }
 
     /**
@@ -171,7 +164,6 @@ class EventsMoyklass extends Events
             'timeend' => strtotime($res['date'] .' ' . $res['endTime']),
             'status' => 'new',
         ]);*/
-        $this->updateUserGetcourse();
     }
 
     public function lesson_record_deleted(){
@@ -208,7 +200,8 @@ class EventsMoyklass extends Events
 
         foreach ($lessonRecords['lessonRecords'] as $record)
             LessonRecord::getInstance()->updateRecord($record);
+
         GetcourseModel::updateUser($this->request['object']);
-        $this->updateUserGetcourse();
+
     }
 }

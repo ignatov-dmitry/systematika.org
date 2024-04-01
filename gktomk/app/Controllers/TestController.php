@@ -259,10 +259,10 @@ class TestController extends Controller
 //        DB::exec($sql);
 
 
-        $userMk = MoyklassModel::getUserByIdFromDb(1945522);
+        $userMk = MoyklassModel::getUserByIdFromDb(4879241);
         $GetCourse = new GetcourseModel();
-        $GetCourse->updateUserDateVisitByUserIdMK(1945522)
-            ->updateUserSubscriptionsByUserIdMK(1945522)
+        $GetCourse->updateUserDateVisitByUserIdMK(4879241)
+            ->updateUserSubscriptionsByUserIdMK(4879241)
             ->setEmail($userMk['email'])
             ->sendUser();
     }

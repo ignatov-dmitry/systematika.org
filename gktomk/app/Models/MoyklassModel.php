@@ -442,7 +442,7 @@ class MoyklassModel
             FROM mk_lessons as ml
             LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
             
-            WHERE mlr.userId = ? AND date > CURRENT_DATE AND mlr.free is null
+            WHERE mlr.userId = ? AND date >= CURRENT_DATE AND mlr.free is null
             ORDER BY date ASC limit 1
         ";
 
@@ -451,7 +451,7 @@ class MoyklassModel
             FROM mk_lessons as ml
             LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
             
-            WHERE mlr.userId = ? AND date > CURRENT_DATE AND mlr.free = 1
+            WHERE mlr.userId = ? AND date >= CURRENT_DATE AND mlr.free = 1
             ORDER BY date ASC limit 1
         ";
 
@@ -568,7 +568,7 @@ class MoyklassModel
             FROM mk_lessons as ml
             LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
             
-            WHERE mlr.userId = ? AND date < CURRENT_DATE and mlr.visit = 1
+            WHERE mlr.userId = ? AND date <= CURRENT_DATE and mlr.visit = 1
             ORDER BY date DESC limit 1
         ";
 
@@ -652,7 +652,7 @@ class MoyklassModel
             FROM mk_lessons as ml
             LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
             
-            WHERE mlr.userId = ? AND date < CURRENT_DATE and mlr.visit = 1 and mlr.test = 1
+            WHERE mlr.userId = ? AND date <= CURRENT_DATE and mlr.visit = 1 and mlr.test = 1
             ORDER BY date DESC limit 1
         ";
 

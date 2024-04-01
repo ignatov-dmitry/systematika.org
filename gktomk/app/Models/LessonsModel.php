@@ -45,6 +45,13 @@ class LessonsModel
             $this->deleteRecordsLessonByLessonId($data['id']);
             foreach ($data['records'] as $record) {
                 $this->editRecordLesson($record);
+
+                $userMk = MoyklassModel::getUserById(['userId' => $record['userId']]);
+                $GetCourse = new GetcourseModel();
+                $GetCourse->updateUserDateVisitByUserIdMK($record['userId'])
+                    ->updateUserSubscriptionsByUserIdMK($record['userId'])
+                    ->setEmail($userMk['email'])
+                    ->sendUser();
             }
         }
 
@@ -126,6 +133,18 @@ class LessonsModel
 
     public function deleteRecordsLessonByLessonId($lesson_id){
         DB::exec('DELETE FROM `recordslesson` WHERE `lesson_id_mk`=?', [$lesson_id]);
+
+        $records = DB::getAll('SELECT * FROM mk_lesson_records WHERE lessonId = ?', [$lesson_id]);
+
+        foreach ($records as $record)
+        {
+            $userMk = MoyklassModel::getUserById(['userId' => $record['userId']]);
+            $GetCourse = new GetcourseModel();
+            $GetCourse->updateUserDateVisitByUserIdMK($record['userId'])
+                ->updateUserSubscriptionsByUserIdMK($record['userId'])
+                ->setEmail($userMk['email'])
+                ->sendUser();
+        }
     }
 
     public function deleteRecordLessonByLessonIdAndUserId($lesson_id, $user_id){
