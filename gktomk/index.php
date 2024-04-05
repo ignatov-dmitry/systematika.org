@@ -4,14 +4,14 @@ ini_set('max_input_time', '900');
 ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
 ini_set('memory_limit', '1024M');
-//ini_set('log_errors', 'On');
-//ini_set('error_log', 'php_errors.log');
+error_reporting(E_ERROR | E_PARSE);
+ini_set('log_errors', 'On');
+ini_set('error_log', 'php_errors.log');
 
 set_time_limit(900);
 if(@$_GET['debug'] == 1) {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
 }
 
 define('GLOBAL_TIMER', microtime(true));

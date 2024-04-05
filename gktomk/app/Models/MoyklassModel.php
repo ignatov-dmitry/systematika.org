@@ -442,7 +442,7 @@ class MoyklassModel
             FROM mk_lessons as ml
             LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
             
-            WHERE mlr.userId = ? AND date >= CURRENT_DATE AND mlr.free is null
+            WHERE mlr.userId = ? AND date > CURRENT_DATE AND mlr.free is null
             ORDER BY date ASC limit 1
         ";
 
@@ -451,7 +451,7 @@ class MoyklassModel
             FROM mk_lessons as ml
             LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
             
-            WHERE mlr.userId = ? AND date >= CURRENT_DATE AND mlr.free = 1
+            WHERE mlr.userId = ? AND date > CURRENT_DATE AND mlr.free = 1
             ORDER BY date ASC limit 1
         ";
 
@@ -485,6 +485,9 @@ class MoyklassModel
         $lessons = self::getLessons(['userId' => $userId, 'includeRecords' => 'true']);
 
         //print_r($lessons);
+
+        if (!isset($lessons['lessons']))
+            return ['date_last_test_lesson' => null, 'date_last_lesson' => null];
 
         $lessons = $lessons['lessons'];
         $dataLesson = [];
@@ -611,6 +614,34 @@ class MoyklassModel
 
 
         return $dataLesson;
+    }
+
+    public static function getLessonSkipLastFromDb($userId)
+    {
+        $sql = "
+            SELECT * 
+            FROM mk_lessons as ml
+            LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
+            
+            WHERE mlr.userId = ? AND date <= CURRENT_DATE and (mlr.visit is null or mlr.visit = 0) and (mlr.test is null or mlr.test = 0)
+            ORDER BY date DESC limit 1
+        ";
+
+        return DB::getRow($sql, [$userId]);
+    }
+
+    public static function getLessonSkipLastTestFromDb($userId)
+    {
+        $sql = "
+            SELECT * 
+            FROM mk_lessons as ml
+            LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
+            
+            WHERE mlr.userId = ? AND date <= CURRENT_DATE and (mlr.visit is null or mlr.visit = 0) AND mlr.test = 1
+            ORDER BY date DESC limit 1
+        ";
+
+        return DB::getRow($sql, [$userId]);
     }
 
     /**

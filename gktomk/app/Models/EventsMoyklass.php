@@ -8,6 +8,8 @@ use Exception;
 use GKTOMK\Classes\Api\MoyKlass;
 use GKTOMK\Models\Systematika\MoyKlass\Lesson;
 use GKTOMK\Models\Systematika\MoyKlass\LessonRecord;
+use GKTOMK\Models\Systematika\MoyKlass\User;
+
 class EventsMoyklass extends Events
 {
 
@@ -203,5 +205,10 @@ class EventsMoyklass extends Events
 
         GetcourseModel::updateUser($this->request['object']);
 
+    }
+
+    public function user_changed()
+    {
+        User::getInstance()->updateRecord($this->request['object']);
     }
 }

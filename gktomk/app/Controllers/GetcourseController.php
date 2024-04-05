@@ -57,6 +57,7 @@ class GetcourseController extends Controller
     }
 
     public function getCreateMember(){
+        self::writeToLog($_REQUEST, 'Дебаг GK. getCreateMember', 'test');
         $member_id = $this->Member->updateMemberByGkUhash([
             'gk_uid' => $_GET['uid'],
             'gk_uhash' => $_GET['gk_uhash'],
@@ -65,6 +66,7 @@ class GetcourseController extends Controller
             'email' => $_GET['email'],
             'phone' => $_GET['phone'],
         ]);
+        self::writeToLog(['member_id' => $member_id], 'Дебаг GK. updateMemberByGkUhash', 'test');
         $this->Member->sendMemberToMoyKlassById($member_id);
     }
 

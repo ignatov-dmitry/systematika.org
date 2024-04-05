@@ -28,7 +28,7 @@ class MemberModel
         if(empty($data['gk_uhash']))
             return;
         $getMember = $this->getMemberByGkUserHash($data['gk_uhash']);
-        var_dump($getMember);
+
         if (!empty($getMember['id'])) {
             $data['id'] = $getMember['id'];
             return $this->setUpdateMember($data);
@@ -121,8 +121,16 @@ class MemberModel
                 $dataCreate['email'] = $member['email'];
             }
 
-            if (!empty($member['gk_phone'])) {
+            if (!empty($member['phone'])) {
                 $dataCreate['phone'] = $member['phone'];
+            }
+
+            if (!empty($member['gk_uid']))
+            {
+                $dataCreate['attributes'][] = [
+                    'attributeId' => 2236,
+                    'value' => $member['gk_uid'],
+                ];
             }
 
             $mk_user = MoyklassModel::createUser($dataCreate);
@@ -144,6 +152,12 @@ class MemberModel
 
     public function sendMemberToMoyKlassById($memberId)
     {
+        $log = "\n------------------------\n";
+        $log .= date("Y.m.d G:i:s") . "\n";
+        $log .= ('sendMemberToMoyKlassById') . "\n";
+
+        $log .= "\n------------------------\n";
+        file_put_contents(__DIR__ . '/../../logs/' . 'test' . '.log', $log, FILE_APPEND);
         return $this->sendMemberToMoyKlass($this->getMember('id', $memberId));
     }
 
