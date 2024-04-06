@@ -62,7 +62,7 @@
             {*LOGS*%}
             </tbody>
             </table>
-
+{*PAGINATION*}
 </div>
 
 <div class="modal fade" id="modalAddclass_bak" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

@@ -84,9 +84,21 @@ class LeadsModel
         return DB::store($users);
     }
 
-    public function getAllUsers()
+    public function getAllUsers($args = array())
     {
-        return DB::exportAll(DB::findAll('users', 'ORDER BY `id` DESC LIMIT 250'));
+        $offset = 0;
+        if (isset($args['page']) && $args['page'] !== ''){
+            $offset = $args['offset'];
+        }
+
+        return DB::exportAll(DB::findAll('users', 'ORDER BY `id` DESC LIMIT ' . $args['limit'] . ' OFFSET ' . $offset));
+    }
+
+    public function getCountUsers()
+    {
+        $result = DB::getRow('SELECT COUNT(`id`) as count FROM `users`');
+
+        return $result['count'];
     }
 
     /*

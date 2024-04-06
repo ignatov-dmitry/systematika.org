@@ -9,10 +9,10 @@ namespace GKTOMK\Models;
 
 class LogsModel
 {
-    public function buildLogs(){
+    public function buildLogs($args = array()){
         $LeadsModel = new LeadsModel();
         $SyncModel = new SyncModel();
-        $logs = $LeadsModel->getAllUsers();
+        $logs = $LeadsModel->getAllUsers($args);
 
 
         $new_logs = [];

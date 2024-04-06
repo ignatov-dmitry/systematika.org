@@ -4,6 +4,7 @@ namespace GKTOMK\Controllers;
 //use \GKTOMK\Lib\Controller;
 
 //use \GKTOMK\Views\IndexView;
+use GKTOMK\Classes\Pagination;
 use GKTOMK\Models\AddclassModel;
 use GKTOMK\Models\CancelLessonModel;
 use GKTOMK\Models\EventsMoyklass;
@@ -36,13 +37,27 @@ class IndexController extends Controller
 
     function main()
     {
+        $args = $_GET;
+        $args['page'] = '{page}';
 
-
+        $leads = new LeadsModel();
         $LogsModel = new LogsModel();
-        $all_users = $LogsModel->buildLogs();
+        $pagination = new Pagination();
+
+        $pagination->total = $leads->getCountUsers();
+        $pagination->page = $_GET['page'] ?: 1;
+        $pagination->limit = 100;
+        $pagination->url = '?' . http_build_query($args);
+
+        $args['limit'] = $pagination->limit;
+        $args['offset'] = $pagination->limit * ($pagination->page - 1);
+
+        $all_users = $LogsModel->buildLogs($args);
 
         // Регистрируем функции, чтобы можно было вызвать их в шаблоне
         $this->View->setVar('Logs', $LogsModel);
+        $this->View->setVars($_GET);
+        $this->View->setVar('PAGINATION', $pagination->render());
         $this->View->regFunc('GKTOMK\Models\LogsModel::timeFormat');
 
 

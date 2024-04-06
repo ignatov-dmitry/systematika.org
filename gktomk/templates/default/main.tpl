@@ -38,10 +38,7 @@
 </main>
 
 <footer class="footer mt-auto py-3">
-    <div class="container">
-        <span class="text-muted">Version 5.0 | Powered by <a href="https://ed-support.ru/"
-                                                             target="_blank">ED-Support.RU</a>  © 2020-2021</span>
-    </div>
+
 </footer>
 
 
