@@ -52,6 +52,7 @@ class LessonsModel
                     ->updateUserSubscriptionsByUserIdMK($record['userId'])
                     ->setEmail($userMk['email'])
                     ->sendUser();
+                //DB::exec("UPDATE mk_users set last_update = CURRENT_TIMESTAMP() where id = '" . $record['userId'] . "'");
             }
         }
 
