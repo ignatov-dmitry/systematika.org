@@ -321,7 +321,6 @@ class GetcourseModel
             $this->DataUser['date_last_skip_test_lesson'] = '01.01.1970';
         }
 
-        var_dump($this->DataUser['date_last_skip_lesson'], $this->DataUser['date_last_skip_test_lesson']);
         return $this;
     }
 

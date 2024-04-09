@@ -8,9 +8,11 @@ use GKTOMK\Classes\Api\MoyKlass;
 use GKTOMK\Models\ChatModels\ChatAdminModel;
 use GKTOMK\Models\DB;
 use GKTOMK\Models\Events;
+use GKTOMK\Models\GetcourseModel;
 use GKTOMK\Models\HandlerHwkModel;
 use GKTOMK\Models\LessonsModel;
 use GKTOMK\Models\MissingTrialModel;
+use GKTOMK\Models\MoyklassModel;
 use GKTOMK\Models\StatisticsModel;
 use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\VideorecordsModel;
@@ -203,12 +205,12 @@ class CronEvents extends Events
         $this->MK->insertApiDataToDB('getUsers', 'mk_users', true, 'users', 'company/users',);
     }
 
-    public function get_canceled_subscriptions()
+    public function get_not_active_subscriptions()
     {
         $MK = new MoyKlass();
-        $data = $MK->getAllDataFromApi('getUserSubscriptions', 'mk_user_subscriptions', 'subscriptions', ['statusId' => 4], 'company/userSubscriptions');
+        $data = $MK->getAllDataFromApi('getUserSubscriptions', 'mk_user_subscriptions', 'subscriptions', ['statusId' => 1], 'company/userSubscriptions');
 
-        $sql = "UPDATE mk_user_subscriptions SET statusId = 4 WHERE id in (" . implode(',', array_column($data, 'id')) . ")";
+        $sql = "UPDATE mk_user_subscriptions SET statusId = 1 WHERE id in (" . implode(',', array_column($data, 'id')) . ")";
 
         DB::exec($sql);
     }
@@ -223,6 +225,52 @@ class CronEvents extends Events
 
         $sql = Model::getInstance()->prepareBulkInsert('mk_user_subscriptions', array_keys($data[0]), $data);
         DB::exec($sql);
+    }
+
+    public function get_frozen_subscriptions()
+    {
+        $MK = new MoyKlass();
+        $data = $MK->getAllDataFromApi('getUserSubscriptions', 'mk_user_subscriptions', 'subscriptions', ['statusId' => 3], 'company/userSubscriptions');
+
+        if (array_column($data, 'id')){
+            $sql = "UPDATE mk_user_subscriptions SET statusId = 3 WHERE id in (" . implode(',', array_column($data, 'id')) . ")";
+            DB::exec($sql);
+        }
+    }
+
+    public function get_canceled_subscriptions()
+    {
+        $MK = new MoyKlass();
+        $data = $MK->getAllDataFromApi('getUserSubscriptions', 'mk_user_subscriptions', 'subscriptions', ['statusId' => 4], 'company/userSubscriptions');
+
+        $sql = "UPDATE mk_user_subscriptions SET statusId = 4 WHERE id in (" . implode(',', array_column($data, 'id')) . ")";
+
+        DB::exec($sql);
+    }
+
+    public function update_users_in_GK()
+    {
+        $sql = "
+            SELECT TIMESTAMPDIFF(HOUR, mu.last_update, CURRENT_TIMESTAMP()) as hour, mu.id, email FROM mk_users as mu
+            LEFT JOIN mk_user_subscriptions as mus ON mu.id = mus.userId
+            WHERE mus.statusId = 2 AND email is not null
+            GROUP BY email
+            HAVING hour > 6 OR hour IS null
+            LIMIT 30;
+        ";
+
+        $data = DB::getAll($sql);
+
+        foreach ($data as $item)
+        {
+            $userMk = MoyklassModel::getUserById(['userId' => $item['id']]);
+            $GetCourse = new GetcourseModel();
+            $GetCourse->updateUserDateVisitByUserIdMK($item['id'])
+                ->updateUserSubscriptionsByUserIdMK($item['id'])
+                ->setEmail($userMk['email'])
+                ->sendUser();
+            DB::exec("UPDATE mk_users set last_update = CURRENT_TIMESTAMP() where email = '" . $item['email'] . "'");
+        }
     }
 
     private function synchronizationchatmanagers_manual(){

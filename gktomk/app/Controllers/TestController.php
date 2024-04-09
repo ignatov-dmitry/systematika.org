@@ -241,9 +241,30 @@ class TestController extends Controller
 
     public function getCounts()
     {
-        $userSubscription = new UserSubscription();
-        $userSubscription->prepareForGK('89104170140@mail.ru');
+//        $userSubscription = new UserSubscription();
+//        $userSubscription->prepareForGK('89104170140@mail.ru');
 
+        $sql = "
+            SELECT TIMESTAMPDIFF(HOUR, mu.last_update, CURRENT_TIMESTAMP()) as hour, mu.id, email FROM mk_users as mu
+            LEFT JOIN mk_user_subscriptions as mus ON mu.id = mus.userId
+            WHERE mus.statusId = 2 AND email is not null
+            GROUP BY email
+            HAVING hour > 6 OR hour IS null
+            LIMIT 30;
+        ";
+
+        $data = DB::getAll($sql);
+
+        foreach ($data as $item)
+        {
+            $userMk = MoyklassModel::getUserById(['userId' => $item['id']]);
+            $GetCourse = new GetcourseModel();
+            $GetCourse->updateUserDateVisitByUserIdMK($item['id'])
+                ->updateUserSubscriptionsByUserIdMK($item['id'])
+                ->setEmail($userMk['email'])
+                ->sendUser();
+            DB::exec("UPDATE mk_users set last_update = CURRENT_TIMESTAMP() where email = '" . $item['email'] . "'");
+        }
     }
 
     public function getTest()
@@ -259,10 +280,10 @@ class TestController extends Controller
 //        DB::exec($sql);
 
 
-        $userMk = MoyklassModel::getUserByIdFromDb(4865185);
+        $userMk = MoyklassModel::getUserByIdFromDb(4439931);
         $GetCourse = new GetcourseModel();
-        $GetCourse->updateUserDateVisitByUserIdMK(4865185)
-            ->updateUserSubscriptionsByUserIdMK(4865185)
+        $GetCourse->updateUserDateVisitByUserIdMK(4439931)
+            ->updateUserSubscriptionsByUserIdMK(4439931)
             ->setEmail($userMk['email'])
             ->sendUser();
     }
