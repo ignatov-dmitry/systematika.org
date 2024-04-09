@@ -263,11 +263,11 @@ class CronEvents extends Events
 
         foreach ($data as $item)
         {
-            $userMk = MoyklassModel::getUserById(['userId' => $item['id']]);
+            //$userMk = MoyklassModel::getUserById(['userId' => $item['id']]);
             $GetCourse = new GetcourseModel();
             $GetCourse->updateUserDateVisitByUserIdMK($item['id'])
                 ->updateUserSubscriptionsByUserIdMK($item['id'])
-                ->setEmail($userMk['email'])
+                ->setEmail($item['email'])
                 ->sendUser();
             DB::exec("UPDATE mk_users set last_update = CURRENT_TIMESTAMP() where email = '" . $item['email'] . "'");
         }
