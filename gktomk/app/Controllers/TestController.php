@@ -257,11 +257,11 @@ class TestController extends Controller
 
         foreach ($data as $item)
         {
-            $userMk = MoyklassModel::getUserById(['userId' => $item['id']]);
+            //$userMk = MoyklassModel::getUserById(['userId' => $item['id']]);
             $GetCourse = new GetcourseModel();
             $GetCourse->updateUserDateVisitByUserIdMK($item['id'])
                 ->updateUserSubscriptionsByUserIdMK($item['id'])
-                ->setEmail($userMk['email'])
+                ->setEmail($item['email'])
                 ->sendUser();
             DB::exec("UPDATE mk_users set last_update = CURRENT_TIMESTAMP() where email = '" . $item['email'] . "'");
         }
@@ -280,11 +280,13 @@ class TestController extends Controller
 //        DB::exec($sql);
 
 
-        $userMk = MoyklassModel::getUserByIdFromDb(4439931);
-        $GetCourse = new GetcourseModel();
-        $GetCourse->updateUserDateVisitByUserIdMK(4439931)
-            ->updateUserSubscriptionsByUserIdMK(4439931)
-            ->setEmail($userMk['email'])
-            ->sendUser();
+//        $userMk = MoyklassModel::getUserByIdFromDb(4439931);
+//        $GetCourse = new GetcourseModel();
+//        $GetCourse->updateUserDateVisitByUserIdMK(4439931)
+//            ->updateUserSubscriptionsByUserIdMK(4439931)
+//            ->setEmail($userMk['email'])
+//            ->sendUser();
+
+        $userMk = MoyklassModel::getUserById(4439931);
     }
 }
