@@ -95,6 +95,7 @@ class GetcourseModel
 
         try {
             $result = $User->apiCall($action = 'add');
+            self::saveToLog($User->toArray());
         } catch (Exception $e) {
             $result = $e->getMessage();
         }
@@ -219,6 +220,7 @@ class GetcourseModel
 
         try {
             $result = $User->apiCall($action = 'add');
+            self::saveToLog($User->toArray());
         } catch (Exception $e) {
             $result = $e->getMessage();
         }
@@ -437,12 +439,14 @@ class GetcourseModel
         }
 
         return $this;
-
     }
+    private static function saveToLog($data)
+    {
 
+        $loggk= DB::dispense('loggk');
+        $loggk->request = json_encode($data, JSON_UNESCAPED_UNICODE);
+        $loggk->date_create = time();
 
-
-
-
-
+        return DB::store($loggk);
+    }
 }
