@@ -442,8 +442,8 @@ class GetcourseModel
     }
     private static function saveToLog($data)
     {
-
         $loggk= DB::dispense('loggk');
+        $loggk->email = $data['user']['email'];
         $loggk->request = json_encode($data, JSON_UNESCAPED_UNICODE);
         $loggk->date_create = time();
 
