@@ -40,6 +40,21 @@
 
                 </tbody>
             </table>
+            <div class="columns-2" style="display: none;">
+                <div class="flex font-sans">
+                    <div class="flex flex-wrap">
+                        <h1 class="flex-auto text-lg font-semibold text-gray-300">
+                            Классическая куртка в стиле милитари
+                        </h1>
+                        <div class="text-lg font-semibold text-gray-300">
+                            $110.00
+                        </div>
+                        <div class="w-full flex-none text-sm font-medium text-gray-300 mt-2">
+                            In stock
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection

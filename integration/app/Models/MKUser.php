@@ -33,6 +33,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|MKUser wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MKUser whereStateChangedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MKUser whereUpdatedAt($value)
+ * @property string|null $last_update
+ * @method static \Illuminate\Database\Eloquent\Builder|MKUser whereLastUpdate($value)
  * @mixin \Eloquent
  */
 class MKUser extends Model

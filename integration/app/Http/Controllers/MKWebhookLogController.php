@@ -8,7 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
-class MKWebhookController extends Controller
+class MKWebhookLogController extends Controller
 {
     public function list(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
@@ -16,7 +16,7 @@ class MKWebhookController extends Controller
         return view('logs.moyklass.list', compact('logs'));
     }
 
-    public function hookInfo(MKWebhookLog $log)
+    public function info(MKWebhookLog $log)
     {
         $event = $log->event;
         $hookRequest = json_decode($log->request, true);
