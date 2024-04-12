@@ -32,7 +32,11 @@
                                 {{ $log->id }}
                             </th>
                             <td class="px-6 py-4">
-                                <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href="https://app.moyklass.com/user/{{ $log->user->id }}/joins" target="_blank">Перейти</a>
+                                @if(isset($log->user->id))
+                                    <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href="https://app.moyklass.com/user/{{ $log->user->id }}/joins" target="_blank">Перейти</a>
+                                @else
+                                    Пользователь не найден в базе данных
+                                @endif
                             </td>
                             <td class="px-6 py-4">
                                 {{ $log->email }}
