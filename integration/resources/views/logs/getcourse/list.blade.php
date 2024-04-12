@@ -9,6 +9,9 @@
                             ID
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            MK
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Email
                         </th>
                         <th scope="col" class="px-6 py-3">
@@ -29,6 +32,9 @@
                                 {{ $log->id }}
                             </th>
                             <td class="px-6 py-4">
+                                <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href="https://app.moyklass.com/user/{{ $log->user->id }}/joins" target="_blank">Перейти</a>
+                            </td>
+                            <td class="px-6 py-4">
                                 {{ $log->email }}
                             </td>
                             <td class="px-6 py-4">
@@ -38,7 +44,7 @@
                                 {{ $log->date_create->format('H:i:s') }}
                             </td>
                             <td class="px-6 py-4">
-                                <a href="{{ route('getcource.info', $log) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Перейти</a>
+                                <a href="{{ route('getcource.info', $log) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Информация</a>
                             </td>
                         </tr>
                     @endforeach

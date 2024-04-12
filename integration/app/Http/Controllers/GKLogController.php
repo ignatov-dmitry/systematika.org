@@ -9,7 +9,7 @@ class GKLogController extends Controller
 {
     public function list()
     {
-        $logs = GKUpdateLog::orderBy('date_create', 'DESC')->paginate(25);
+        $logs = GKUpdateLog::with('user')->orderBy('date_create', 'DESC')->paginate(25);
 
         return view('logs.getcourse.list', compact('logs'));
     }

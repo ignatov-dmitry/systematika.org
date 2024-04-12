@@ -33,4 +33,9 @@ class GKUpdateLog extends Model
             'date_create'
         ];
     }
+
+    public function user()
+    {
+        return $this->hasOne(MKUser::class, 'email', 'email');
+    }
 }
