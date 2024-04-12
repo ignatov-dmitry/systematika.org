@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string|null $event
@@ -106,6 +106,52 @@ class MKWebhookLog extends Model
         $userId = $request['object']['userId'];
 
         $data['users'] = MKUser::where('id', '=', $userId)->get();
+
+        return $data;
+    }
+
+    private static function user_changed_state($request)
+    {
+        $data = array();
+        $userId = $request['object']['userId'];
+
+        $data['users'] = MKUser::where('id', '=', $userId)->get();
+
+        return $data;
+    }
+
+    private static function join_changed_state($request)
+    {
+        $data = array();
+        $userId = $request['object']['userId'];
+
+        $data['users'] = MKUser::where('id', '=', $userId)->get();
+
+        return $data;
+    }
+
+    private static function lesson_record_new($request)
+    {
+        $lessonId = $request['object']['lessonId'];
+
+        $data['users'] = MKUser::query()
+            ->select(['mk_users.*'])
+            ->leftJoin('mk_lesson_records as mlr', 'mlr.userId', '=', 'mk_users.id')
+            ->where('mlr.lessonId', '=', $lessonId)
+            ->get();
+
+        return $data;
+    }
+
+    private static function lesson_new($request)
+    {
+        $lessonId = $request['object']['lessonId'];
+
+        $data['users'] = MKUser::query()
+            ->select(['mk_users.*'])
+            ->leftJoin('mk_lesson_records as mlr', 'mlr.userId', '=', 'mk_users.id')
+            ->where('mlr.lessonId', '=', $lessonId)
+            ->get();
 
         return $data;
     }

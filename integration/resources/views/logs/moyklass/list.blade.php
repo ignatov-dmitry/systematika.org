@@ -45,7 +45,7 @@
                 </tbody>
             </table>
 
-            {{ $logs->links() }}
+            {{ $logs->links('vendor.pagination.default') }}
         </div>
     </div>
 @endsection
