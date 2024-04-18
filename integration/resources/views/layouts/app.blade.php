@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    <title>Document</title>
+    <title>Интеграция GetCourse и МойКласс</title>
 </head>
 <body class="dark:bg-gray-700">
 <section id="content">

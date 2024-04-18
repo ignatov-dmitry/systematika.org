@@ -14,6 +14,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="dropdownLogs" data-toggle="dropdown" aria-haspopup="false" aria-expanded="true">Логи</a>
                 <div class="dropdown-menu" aria-labelledby="dropdownLogs">
+                    <a class="dropdown-item" href="/integration/getcource/updates/list">Обновление полей getcource</a>
                     <a class="dropdown-item" href="{*URL_SITE*}/">Отправка абонементов</a>
                     <a class="dropdown-item" href="{*URL_SITE*}/homework">Домашние задания</a>
                     <a class="dropdown-item" href="{*URL_SITE*}/cancellesson">Отмены занятий</a>
