@@ -93,6 +93,16 @@ class GetcourseModel
             $User->setUserAddField(CONFIG['gk_field_date_missing_free_test'], $data['date_last_skip_test_lesson']);
         }
 
+        // Ближайшая платная запись (групповые)
+        if(isset($data['date_next_paid_lesson_group'])){
+            $User->setUserAddField(CONFIG['gk_field_next_paid_recording_group'], $data['date_next_paid_lesson_group']);
+        }
+
+        // Ближайшая платная запись (индивидуальные)
+        if(isset($data['date_next_paid_lesson_individual'])){
+            $User->setUserAddField(CONFIG['gk_field_next_paid_recording_individual'], $data['date_next_paid_lesson_individual']);
+        }
+
         try {
             $result = $User->apiCall($action = 'add');
             self::saveToLog($User->toArray());
@@ -302,6 +312,22 @@ class GetcourseModel
         if (isset($lessonNextPaid) and !empty($lessonNextPaid)) {
             $this->DataUser['date_next_paid_lesson'] = $lessonNextPaid['date_next_paid_lesson'];
             $this->DataUser['date_next_free_lesson'] = $lessonNextPaid['date_next_free_lesson'];
+        }
+
+        $lessonNextPaidGroup = MoyklassModel::getNextPaidGroupRecordingFromDb($userId);
+        if (isset($lessonNextPaidGroup) and !empty($lessonNextPaidGroup)){
+            $date_next_group_lesson = @date("d.m.Y", strtotime($lessonNextPaidGroup));
+            $this->DataUser['date_next_paid_lesson_group'] = $date_next_group_lesson;
+        } else { // Если даты нет, ставим "пустое значение поля"
+            $this->DataUser['date_next_paid_lesson_group'] = '01.01.1970';
+        }
+
+        $lessonNextPaidIndividual = MoyklassModel::getNextPaidIndividualRecordingFromDb($userId);
+        if (isset($lessonNextPaidIndividual) and !empty($lessonNextPaidIndividual)){
+            $date_next_individual_lesson = @date("d.m.Y", strtotime($lessonNextPaidIndividual));
+            $this->DataUser['date_next_paid_lesson_individual'] = $date_next_individual_lesson;
+        } else { // Если даты нет, ставим "пустое значение поля"
+            $this->DataUser['date_next_paid_lesson_individual'] = '01.01.1970';
         }
 
         // Дата последнего пропуска урока

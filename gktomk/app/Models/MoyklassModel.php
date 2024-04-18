@@ -476,6 +476,47 @@ class MoyklassModel
         return ['date_next_paid_lesson' => $nextDatePaid, 'date_next_free_lesson' => $nextDateFree];
     }
 
+    public static function getNextPaidGroupRecordingFromDb($userId)
+    {
+        $sqlPaid = "
+            SELECT * 
+            FROM mk_lessons as ml
+                LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
+                LEFT JOIN mk_classes as mc on ml.classId = mc.id
+            WHERE mlr.userId = ? AND date > CURRENT_DATE AND mlr.free is null and mc.courseId is not null
+            ORDER BY date ASC limit 1
+        ";
+
+        $nextDatePaid = '9999-12-31';
+
+        $paidLesson = DB::getRow($sqlPaid, [$userId]);
+        if ($paidLesson)
+            $nextDatePaid = $paidLesson['date'];
+
+        return $nextDatePaid !== '9999-12-31' ? (new \DateTime($nextDatePaid))->format('d.m.Y') : '';
+
+    }
+
+    public static function getNextPaidIndividualRecordingFromDb($userId)
+    {
+        $sqlPaid = "
+            SELECT * 
+            FROM mk_lessons as ml
+                LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
+                LEFT JOIN mk_classes as mc on ml.classId = mc.id
+            WHERE mlr.userId = ? AND date > CURRENT_DATE AND mlr.free is null and (mc.courseId is null or mc.courseId = 0)
+            ORDER BY date ASC limit 1
+        ";
+
+        $nextDatePaid = '9999-12-31';
+
+        $paidLesson = DB::getRow($sqlPaid, [$userId]);
+        if ($paidLesson)
+            $nextDatePaid = $paidLesson['date'];
+
+        return $nextDatePaid !== '9999-12-31' ? (new \DateTime($nextDatePaid))->format('d.m.Y') : '';
+    }
+
     /**
      * Возвращает дату последнего и пробного занятия
      *

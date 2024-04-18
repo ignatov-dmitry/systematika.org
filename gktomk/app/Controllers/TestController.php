@@ -280,13 +280,13 @@ class TestController extends Controller
 //        DB::exec($sql);
 
 
-//        $userMk = MoyklassModel::getUserByIdFromDb(4439931);
-//        $GetCourse = new GetcourseModel();
-//        $GetCourse->updateUserDateVisitByUserIdMK(4439931)
-//            ->updateUserSubscriptionsByUserIdMK(4439931)
-//            ->setEmail($userMk['email'])
-//            ->sendUser();
+        $userMk = MoyklassModel::getUserByIdFromDb(4439931);
+        $GetCourse = new GetcourseModel();
+        $GetCourse->updateUserDateVisitByUserIdMK(4439931)
+            ->updateUserSubscriptionsByUserIdMK(4439931)
+            ->setEmail($userMk['email'])
+            ->sendUser();
 
-        $userMk = MoyklassModel::getUserById(4439931);
+        //$userMk = MoyklassModel::getUserById(4439931);
     }
 }

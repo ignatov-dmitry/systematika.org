@@ -203,8 +203,8 @@ class EventsMoyklass extends Events
         foreach ($lessonRecords['lessonRecords'] as $record)
             LessonRecord::getInstance()->updateRecord($record);
 
-        GetcourseModel::updateUser($this->request['object']);
-
+        //GetcourseModel::updateUser($this->request['object']);
+        $this->updateUserGetcourse();
     }
 
     public function user_changed()
