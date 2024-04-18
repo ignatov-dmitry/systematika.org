@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  *
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|GKUpdateLog whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GKUpdateLog whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|GKUpdateLog whereRequest($value)
+ * @property-read \App\Models\MKUser|null $user
  * @mixin \Eloquent
  */
 class GKUpdateLog extends Model
@@ -34,8 +36,13 @@ class GKUpdateLog extends Model
         ];
     }
 
-    public function user()
+    public function mk_user(): HasOne
     {
         return $this->hasOne(MKUser::class, 'email', 'email');
+    }
+
+    public function integration_user(): HasOne
+    {
+        return $this->hasOne(IntegrationUser::class, 'gk_email', 'email');
     }
 }

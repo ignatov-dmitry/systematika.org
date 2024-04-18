@@ -23,7 +23,7 @@ class GKLogController extends Controller
             ->setSecond(59)
             ->timestamp;
 
-        $logs = GKUpdateLog::with('user')
+        $logs = GKUpdateLog::with(['mk_user', 'integration_user'])
             ->orderBy('date_create', 'DESC')
             ->where('date_create', '>=', $minDateTimestamp)
             ->where('date_create', '<=', $maxDateTimestamp)

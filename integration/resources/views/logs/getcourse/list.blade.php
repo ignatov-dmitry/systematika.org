@@ -40,6 +40,9 @@ $nextDay = Carbon::parse(request('date'))->addDay()->format('Y-m-d');
                             MK
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            GK
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Email
                         </th>
                         <th scope="col" class="px-6 py-3">
@@ -60,8 +63,15 @@ $nextDay = Carbon::parse(request('date'))->addDay()->format('Y-m-d');
                                 {{ $log->id }}
                             </th>
                             <td class="px-6 py-4">
-                                @if(isset($log->user->id))
-                                    <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href="https://app.moyklass.com/user/{{ $log->user->id }}/joins" target="_blank">Перейти</a>
+                                @if(isset($log->mk_user->id))
+                                    <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href="https://app.moyklass.com/user/{{ $log->mk_user->id }}/joins" target="_blank">Мой класс</a>
+                                @else
+                                    Пользователь не найден в базе данных
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                @if(isset($log->integration_user->gk_uid))
+                                    <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href="https://online.systematika.org/user/control/user/update/id/{{ $log->integration_user->gk_uid }}" target="_blank">Getcource</a>
                                 @else
                                     Пользователь не найден в базе данных
                                 @endif
