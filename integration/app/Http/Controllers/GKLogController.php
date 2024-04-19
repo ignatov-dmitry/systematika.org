@@ -23,10 +23,19 @@ class GKLogController extends Controller
             ->setSecond(59)
             ->timestamp;
 
-        $logs = GKUpdateLog::with(['mk_user', 'integration_user'])
-            ->orderBy('date_create', 'DESC')
-            ->where('date_create', '>=', $minDateTimestamp)
-            ->where('date_create', '<=', $maxDateTimestamp)
+        $logs = GKUpdateLog::query()
+            ->with(['mk_user', 'integration_user'])
+            ->orderBy('date_create', 'DESC');
+
+        if ($email = $request->get('email'))
+            $logs->where('email', '=', $email);
+        else
+        {
+            $logs
+                ->where('date_create', '>=', $minDateTimestamp)
+                ->where('date_create', '<=', $maxDateTimestamp);
+        }
+        $logs = $logs
             ->paginate(25)
             ->withQueryString();
 
