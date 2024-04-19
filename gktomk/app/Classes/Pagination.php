@@ -46,7 +46,7 @@ class Pagination
         $output = '<nav aria-label="Page navigation example"><ul class="pagination">';
 
         if ($page > 1) {
-            $output .= '<li class="page-item"><a class="page-link" href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $this->text_first . '</a></li>';
+            $output .= '<li class="page-item"><a class="page-link" href="' . explode('?', $_SERVER['REQUEST_URI'])[0] . '">' . $this->text_first . '</a></li>';
 
             if ($page - 1 === 1) {
                 $output .= '<li class="page-item"><a class="page-link" href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $this->text_prev . '</a></li>';

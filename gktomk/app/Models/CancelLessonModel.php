@@ -376,10 +376,15 @@ class CancelLessonModel
     /**
      * Вывод списка отмен для шаблона
      * */
-    public function buildLogs()
+    public function buildLogs($args = array())
     {
+        $offset = 0;
+        if (isset($args['page']) && $args['page'] !== ''){
+            $offset = $args['offset'];
+        }
+
         $Member = new MemberModel();
-        $cancels = DB::find('cancellesson', 'ORDER by `id` DESC');
+        $cancels = DB::find('cancellesson', 'ORDER by `id` DESC LIMIT ' . $args['limit'] . ' OFFSET ' . $offset);
         $cancels = DB::exportAll($cancels);
 
         $result = [];
@@ -392,6 +397,11 @@ class CancelLessonModel
         return $result;
     }
 
+    public function getCountCancelLesson()
+    {
+        $result = DB::getRow('SELECT COUNT(`id`) as count FROM `cancellesson`');
 
+        return $result['count'];
+    }
 
 }
