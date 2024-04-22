@@ -612,7 +612,7 @@ class MoyklassModel
             FROM mk_lessons as ml
             LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
             
-            WHERE mlr.userId = ? AND date <= CURRENT_DATE and mlr.visit = 1
+            WHERE mlr.userId = ? AND CONCAT(date, ' ', endTime) <= CONCAT(CURRENT_DATE, ' ', CURRENT_TIME) and mlr.visit = 1
             ORDER BY date DESC limit 1
         ";
 
@@ -664,11 +664,15 @@ class MoyklassModel
             FROM mk_lessons as ml
             LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
             
-            WHERE mlr.userId = ? AND date <= CURRENT_DATE and (mlr.visit is null or mlr.visit = 0) and (mlr.test is null or mlr.test = 0)
+            WHERE mlr.userId = ? 
+              AND CONCAT(date, ' ', endTime) <= CONCAT(CURRENT_DATE, ' ', CURRENT_TIME) 
+              AND (mlr.visit is null or mlr.visit = 0) 
+              AND (mlr.test is null or mlr.test = 0) 
+              AND mlr.id = (SELECT id FROM mk_lesson_records WHERE mlr.lessonId = lessonId AND userId = ? ORDER BY id DESC LIMIT 1)
             ORDER BY date DESC limit 1
         ";
 
-        return DB::getRow($sql, [$userId]);
+        return DB::getRow($sql, [$userId, $userId]);
     }
 
     public static function getLessonSkipLastTestFromDb($userId)
@@ -677,12 +681,15 @@ class MoyklassModel
             SELECT * 
             FROM mk_lessons as ml
             LEFT JOIN mk_lesson_records as mlr on ml.id = mlr.lessonId
-            
-            WHERE mlr.userId = ? AND date <= CURRENT_DATE and (mlr.visit is null or mlr.visit = 0) AND mlr.test = 1
+            WHERE mlr.userId = ? 
+              AND date <= CURRENT_DATE 
+              AND (mlr.visit is null or mlr.visit = 0) 
+              AND mlr.test = 1
+              AND mlr.id = (SELECT id FROM mk_lesson_records WHERE mlr.lessonId = lessonId AND userId = ? ORDER BY id DESC LIMIT 1)
             ORDER BY date DESC limit 1
         ";
 
-        return DB::getRow($sql, [$userId]);
+        return DB::getRow($sql, [$userId, $userId]);
     }
 
     /**
