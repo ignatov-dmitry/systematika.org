@@ -253,9 +253,35 @@ class CronEvents extends Events
         $sql = "
             SELECT TIMESTAMPDIFF(HOUR, mu.last_update, CURRENT_TIMESTAMP()) as hour, mu.id, email FROM mk_users as mu
             LEFT JOIN mk_user_subscriptions as mus ON mu.id = mus.userId
-            WHERE mus.statusId = 2 AND email is not null
+            WHERE mus.statusId IN (1,2) AND email is not null
             GROUP BY email
             HAVING hour > 6 OR hour IS null
+            LIMIT 30;
+        ";
+
+        $data = DB::getAll($sql);
+
+        foreach ($data as $item)
+        {
+            //$userMk = MoyklassModel::getUserById(['userId' => $item['id']]);
+            $GetCourse = new GetcourseModel();
+            $GetCourse->updateUserDateVisitByUserIdMK($item['id'])
+                ->updateUserSubscriptionsByUserIdMK($item['id'])
+                ->setEmail($item['email'])
+                ->sendUser();
+            DB::exec("UPDATE mk_users set last_update = CURRENT_TIMESTAMP() where email = '" . $item['email'] . "'");
+        }
+    }
+
+
+    public function update_users_in_GK_finished()
+    {
+        $sql = "
+            SELECT TIMESTAMPDIFF(HOUR, mu.last_update, CURRENT_TIMESTAMP()) as hour, mu.id, email FROM mk_users as mu
+            LEFT JOIN mk_user_subscriptions as mus ON mu.id = mus.userId
+            WHERE mus.statusId IN (4) AND email is not null
+            GROUP BY email
+            HAVING hour > 12 OR hour IS null
             LIMIT 30;
         ";
 

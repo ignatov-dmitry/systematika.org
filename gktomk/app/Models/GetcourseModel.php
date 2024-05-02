@@ -295,7 +295,7 @@ class GetcourseModel
             $date_last_lesson = @date("d.m.Y", strtotime($lesson_last_test['date']));
             $this->DataUser['date_last_test_lesson'] = $date_last_lesson;
         } else { // Если даты нет, ставим "пустое значение поля"
-            $this->DataUser['date_last_test_lesson'] = '01.01.1970';
+            $this->DataUser['date_last_test_lesson'] = '';
         }
 
         // Дата последнего посещения урока
@@ -304,7 +304,7 @@ class GetcourseModel
             $date_last_lesson = @date("d.m.Y", strtotime($lesson_last['date']));
             $this->DataUser['date_last_lesson'] = $date_last_lesson;
         } else { // Если даты нет, ставим "пустое значение поля"
-            $this->DataUser['date_last_lesson'] = '01.01.1970';
+            $this->DataUser['date_last_lesson'] = '';
         }
 
         $lessonNextPaid = MoyklassModel::getNextPaidAndFreeRecordingFromDb($userId);
@@ -319,7 +319,7 @@ class GetcourseModel
             $date_next_group_lesson = @date("d.m.Y", strtotime($lessonNextPaidGroup));
             $this->DataUser['date_next_paid_lesson_group'] = $date_next_group_lesson;
         } else { // Если даты нет, ставим "пустое значение поля"
-            $this->DataUser['date_next_paid_lesson_group'] = '01.01.1970';
+            $this->DataUser['date_next_paid_lesson_group'] = '';
         }
 
         $lessonNextPaidIndividual = MoyklassModel::getNextPaidIndividualRecordingFromDb($userId);
@@ -327,7 +327,7 @@ class GetcourseModel
             $date_next_individual_lesson = @date("d.m.Y", strtotime($lessonNextPaidIndividual));
             $this->DataUser['date_next_paid_lesson_individual'] = $date_next_individual_lesson;
         } else { // Если даты нет, ставим "пустое значение поля"
-            $this->DataUser['date_next_paid_lesson_individual'] = '01.01.1970';
+            $this->DataUser['date_next_paid_lesson_individual'] = '';
         }
 
         // Дата последнего пропуска урока
@@ -336,7 +336,7 @@ class GetcourseModel
             $date_last_skip_lesson = @date("d.m.Y", strtotime($lessonLastSkip['date']));
             $this->DataUser['date_last_skip_lesson'] = $date_last_skip_lesson;
         } else { // Если даты нет, ставим "пустое значение поля"
-            $this->DataUser['date_last_skip_lesson'] = '01.01.1970';
+            $this->DataUser['date_last_skip_lesson'] = '';
         }
 
 
@@ -346,7 +346,7 @@ class GetcourseModel
             $date_last_skip_test_lesson = @date("d.m.Y", strtotime($lessonLastSkipTest['date']));
             $this->DataUser['date_last_skip_test_lesson'] = $date_last_skip_test_lesson;
         } else { // Если даты нет, ставим "пустое значение поля"
-            $this->DataUser['date_last_skip_test_lesson'] = '01.01.1970';
+            $this->DataUser['date_last_skip_test_lesson'] = '';
         }
 
         return $this;
