@@ -31,12 +31,18 @@ class EventsMoyklass extends Events
      * */
     private function updateUserGetcourse()
     {
-        $userMk = MoyklassModel::getUserById(['userId' => $this->request['object']['userId']]);
-        $GetCourse = new GetcourseModel();
-        $GetCourse->updateUserDateVisitByUserIdMK($this->request['object']['userId'])
-            ->updateUserSubscriptionsByUserIdMK($this->request['object']['userId'])
-            ->setEmail($userMk['email'])
-            ->sendUser();
+        try {
+            $userMk = MoyklassModel::getUserById(['userId' => $this->request['object']['userId']]);
+            $GetCourse = new GetcourseModel();
+            $GetCourse->updateUserDateVisitByUserIdMK($this->request['object']['userId'])
+                ->updateUserSubscriptionsByUserIdMK($this->request['object']['userId'])
+                ->setEmail($userMk['email'])
+                ->sendUser();
+        }
+        catch (\Exception $exception)
+        {
+
+        }
     }
 
 
@@ -195,16 +201,22 @@ class EventsMoyklass extends Events
 
     public function join_changed()
     {
-        $lessonRecords = MoyklassModel::getUserLessonRecords($this->request['object']['userId']);
+        try {
+            $lessonRecords = MoyklassModel::getUserLessonRecords($this->request['object']['userId']);
 
-        foreach ($lessonRecords['lessonRecords'] as $record)
-            (new LessonsModel())->editRecordLesson($record);
+            foreach ($lessonRecords['lessonRecords'] as $record)
+                (new LessonsModel())->editRecordLesson($record);
 
-        foreach ($lessonRecords['lessonRecords'] as $record)
-            LessonRecord::getInstance()->updateRecord($record);
+            foreach ($lessonRecords['lessonRecords'] as $record)
+                LessonRecord::getInstance()->updateRecord($record);
 
-        //GetcourseModel::updateUser($this->request['object']);
-        $this->updateUserGetcourse();
+            //GetcourseModel::updateUser($this->request['object']);
+            $this->updateUserGetcourse();
+        }
+        catch (\Exception $e)
+        {
+
+        }
     }
 
     public function user_changed()

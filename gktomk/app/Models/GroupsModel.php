@@ -101,7 +101,8 @@ class GroupsModel
 
     public function getAllGroupsync()
     {
-        return DB::exportAll(DB::findAll('groupsync'));
+        return DB::getAll('SELECT * FROM groupsync;');
+        //return DB::exportAll(DB::findAll('groupsync'));
         //return DB::getAssoc('SELECT * FROM class ORDER BY `sort` ASC');
     }
 
