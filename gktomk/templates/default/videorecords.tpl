@@ -54,25 +54,25 @@
         </thead>
         <tbody>
         {%*LOGS*}
-        <tr data-id="{*LOGS:id*}" data-date="{*LOGS:date*}" data-unassigned="{?*LOGS:unassigned*}true{?}{?!*LOGS:unassigned*}false{?}" data-meeting-topic="{*LOGS:meeting_topic*}" data-class-name="{*LOGS:class_name*}">
+        <tr data-file-path="{*LOGS:file_path*}" data-id="{*LOGS:id*}" data-date="{*LOGS:date*}" data-modify="{?*LOGS:modify | LOGS:file_path*}true{?}{?!*LOGS:modify | !LOGS:file_path*}false{?}" data-unassigned="{?*LOGS:unassigned*}true{?}{?!*LOGS:unassigned*}false{?}" data-meeting-topic="{*LOGS:meeting_topic*}" data-class-name="{*LOGS:class_name*}">
             <td><strong>{*LOGS:id*}</strong> <br/>(ID: {*LOGS:lesson_id_mk*})</td>
             <td>{*LOGS:date*}, {*LOGS:begin_time*} - {*LOGS:end_time*} <br/>{?*LOGS:course_name*}{*LOGS:course_name*},{?} {*LOGS:class_name*}</td>
             <td data-id-meeting_topic="{*LOGS:id*}">{*LOGS:meeting_topic*}</td>
             <td data-id-status="{*LOGS:id*}"><i>{?*LOGS:status="new"*}<span style="color: yellow;">В ожидании</span>{?}{?*LOGS:status="OK" | LOGS:path!=false *}<span style="color: green;">Обработан</span>, попыток: {*LOGS:try_num*}{?}{?*LOGS:status!="new" && LOGS:status!="OK" && LOGS:path=false *}{*LOGS:status*}, попыток: {*LOGS:try_num*}{?}</i></td>
             <td>
                 <button class="btn" onclick="videorecords.redownload.openModal({*LOGS:id*});" title="Перезакачать"><i class="fas fa-redo"></i></button>
-                <button class="btn {?!*LOGS:status="OK" | LOGS:path!=false*}d-none{?}" data-id-btnview="{*LOGS:id*}" onclick="videorecords.view.openModal({*LOGS:id*});"><i class="far fa-eye"></i></button>
+                <button class="btn {?!*LOGS:status="OK" | LOGS:path!=false | LOGS:file_path*}d-none{?}" data-id-btnview="{*LOGS:id*}" onclick="videorecords.view.openModal({*LOGS:id*});"><i class="far fa-eye"></i></button>
             </td>
             <td>
                 {?!*LOGS:path!=false*}{?}
                 <button class="btn" onclick="videorecords.openUnassignedFolder.openModal({*LOGS:id*});" title="Открыть папку с неопределенными видео"><i class="fas fa-folder"></i></button>
 
-                {?*LOGS:status="OK" | LOGS:path!=false*}
+                {?*LOGS:status="OK" | LOGS:path!=false | LOGS:file_path*}
                 <button class="btn" data-id-btnview="{*LOGS:id*}" title="Копировать ссылку" onclick="videorecords.view.copyLink({*LOGS:id*});"><i class="far fa-copy"></i></button>
                 {?}
             </td>
             <td>
-                {?*LOGS:status="OK" | LOGS:path!=false*}
+                {?*LOGS:status="OK" | LOGS:path!=false | LOGS:file_path*}
                 <button class="btn" data-id-btnview="{*LOGS:id*}" title="Копировать html код для вставки" onclick="videorecords.view.copyHtmlModal({*LOGS:id*});">
                     <i class="fa fa-code"></i>
                     {?*LOGS:is_safe="1"*}

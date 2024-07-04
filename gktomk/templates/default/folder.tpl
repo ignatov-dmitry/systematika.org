@@ -7,7 +7,7 @@
 <table class="table">
     {%*ITEMS*}
     <tr>
-        <td><a onclick="{?!*ITEMS:is_file!=false*}videorecords.openUnassignedFolder.openDir(event, '{*PATH*}{*ITEMS:path*}');{?}{?!*ITEMS:is_file=false*}videorecords.openUnassignedFolder.selectVideo(event, '{*ITEMS:file_name*}');{?}" href="?path={*PATH*}/{*ITEMS:path*}">{*ITEMS:path*}</a></td>
+        <td><a onclick="{?!*ITEMS:is_file!=false*}videorecords.openUnassignedFolder.openDir(event, '{*PATH*}{*ITEMS:path*}');{?}{?!*ITEMS:is_file=false*}videorecords.openUnassignedFolder.selectVideo(event, '{*ITEMS:file_name*}', '{*PATH*}');{?}" href="?path={*PATH*}/{*ITEMS:path*}">{*ITEMS:path*}</a></td>
     </tr>
     {*ITEMS*%}
 </table>

@@ -191,9 +191,10 @@ class VideorecordsModel
         return $status;
     }
 
-    public function setMeetingTopicName($recordId, $name)
+    public function setMeetingTopicName($recordId, $name, $path)
     {
         $this->setDataRecord($recordId, 'meeting_topic', $name);
+        $this->setDataRecord($recordId, 'file_path', $path);
         return $name;
     }
 

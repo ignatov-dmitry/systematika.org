@@ -38,14 +38,22 @@ class VideorecordsController extends Controller
         foreach ($logs as $key => $log)
         {
             $logs[$key]['unassigned'] = false;
+            $logs[$key]['modify'] = false;
             $path = DIR_PATH . '/videorecord/' . str_replace('-', '/', $log['date']) . '/' . $log['class_name'];
+            $modifyPath = DIR_PATH . '/videorecord/' . str_replace('-', '/', $log['date']) . '/' . $log['meeting_topic'];
+
             $unassignedPath = DIR_PATH . '/videorecord/unassigned_videos/' . str_replace('-', '/', $log['date']) . '/' . $log['meeting_topic'];
-//            var_dump($unassignedPath);
-            if (glob($path . '.{mp4,MP4}', GLOB_BRACE))
+
+            if (glob($path . '*.{mp4,MP4}', GLOB_BRACE))
                 $logs[$key]['path'] = $path;
+            elseif (glob($modifyPath . '*.{mp4,MP4}', GLOB_BRACE)) {
+                $logs[$key]['path'] = $modifyPath;
+                $logs[$key]['modify'] = true;
+            }
             elseif (glob($unassignedPath . '*.{mp4,MP4}', GLOB_BRACE)) {
                 $logs[$key]['path'] = $unassignedPath;
                 $logs[$key]['unassigned'] = true;
+                $logs[$key]['modify'] = true;
             }
             else
                 $logs[$key]['path'] = false;
@@ -123,7 +131,7 @@ class VideorecordsController extends Controller
     public function postSetTopicName()
     {
         $VideorecordsModel = new VideorecordsModel();
-        $VideorecordsModel->setMeetingTopicName($_POST['record_id'], $_POST['name']);
+        $VideorecordsModel->setMeetingTopicName($_POST['record_id'], $_POST['name'], $_POST['file_path']);
         return json_encode($_POST);
     }
 

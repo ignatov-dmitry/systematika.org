@@ -22,7 +22,7 @@ let videorecords = {
             e.preventDefault();
             this.getVideoFolder(backUrl);
         },
-        selectVideo: function (e, name){
+        selectVideo: function (e, name, path = ''){
             e.preventDefault();
             $.ajax({
                 url: '/gktomk/videorecords/set-topic-name',
@@ -30,7 +30,8 @@ let videorecords = {
                 dataType: 'json',
                 data: {
                     record_id: this.videoRecordId,
-                    name: name
+                    name: name,
+                    file_path: path + name
                 },
                 success: function(data){
                     alert('Видео выбрано');
@@ -106,17 +107,23 @@ let videorecords = {
             let classname = tr.data('class-name');
             let meeting_topic = tr.data('meeting-topic');
             let unassigned = tr.data('unassigned');
+            let modify = tr.data('modify');
+            let file_path = tr.data('file-path');
 
             let re = '-';
             let newstr = date.replaceAll(re, '/');
 
+            let url = SETT.URL_SITE + '/zoom/video?v=videorecord/'+newstr+'/'+classname;
+
             if (unassigned){
                 newstr = 'unassigned_videos/' + newstr;
-                classname = meeting_topic;
+                url = SETT.URL_SITE + '/zoom/video?v=videorecord/'+newstr+'/'+meeting_topic;
             }
 
+            if (modify){
+                url = SETT.URL_SITE + '/zoom/video?v=videorecord/'+file_path;
+            }
 
-            let url = SETT.URL_SITE + '/zoom/video?v=videorecord/'+newstr+'/'+classname;
             let url_prev = SETT.URL_SITE + "/templates/default/images/logo-new.png.webp";
 
             /*$('#player').html('<iframe src="'+url+'" width="100%" height="100%" border="0">\n' +
@@ -242,16 +249,29 @@ function getEncryptedLink(id)
     let classname = tr.data('class-name');
     let meeting_topic = tr.data('meeting-topic');
     let unassigned = tr.data('unassigned');
-
+    let modify = tr.data('modify');
+    let file_path = tr.data('file-path');
     let re = '-';
     let newstr = date.replaceAll(re, '/');
 
+    let url = 'videorecord/' + newstr + '/' + classname;
+
+    // if (unassigned){
+    //     newstr = 'unassigned_videos/' + newstr;
+    //     classname = meeting_topic;
+    // }
+
     if (unassigned){
         newstr = 'unassigned_videos/' + newstr;
-        classname = meeting_topic;
+        url = 'videorecord/' + newstr + '/' + meeting_topic;
     }
 
-    let url = 'videorecord/'+newstr+'/'+classname;
+    if (modify){
+        url = 'videorecord/' + file_path;
+    }
+
+
+
     $.ajax({
         async: false,
         url: '/gktomk/watch/encrypt-link',
