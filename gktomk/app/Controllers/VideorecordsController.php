@@ -167,9 +167,15 @@ class VideorecordsController extends Controller
         $VideorecordsModel->getLoadOldLesson();
     }
 
-    public function getSafe(int $id)
+    public function postSafe(int $id): void
     {
         $VideorecordsModel = new VideorecordsModel();
         $VideorecordsModel->setSafe($id, 1);
+    }
+
+    public function postNotMatchedSafe($id): void
+    {
+        $zoomModel = new ZoomModel();
+        $zoomModel->setSafe($id, 1);
     }
 }

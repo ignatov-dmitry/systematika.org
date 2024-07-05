@@ -52,15 +52,15 @@ let zoomRecords = {
         copyHtmlSafe: function () {
             let id = $('#copySafe').attr('data-video-id');
 
-            // $.ajax({
-            //     async: false,
-            //     url: '/gktomk/videorecords/safe/' + id,
-            //     method: 'get',
-            //     dataType: 'json',
-            //     success: function(data){
-            //         alert('Видео сохранено');
-            //     }
-            // });
+            $.ajax({
+                async: false,
+                url: '/gktomk/videorecords/not-matched-safe/' + id,
+                method: 'post',
+                dataType: 'json',
+                success: function(data){
+                    alert('Видео сохранено');
+                }
+            });
 
             copyToHtml(getEncryptedLink(id));
         },
@@ -94,22 +94,9 @@ function copyToHtml(link)
 
 function getEncryptedLink(id)
 {
-    let link = '';
     let tr = $('tr[data-id="'+id+'"]');
-    let date = tr.data('date');
-    let classname = tr.data('class-name');
-    let meeting_topic = tr.data('meeting-topic');
-    let unassigned = tr.data('unassigned');
-
-    let re = '-';
-    let newstr = date.replaceAll(re, '/');
-
-    if (unassigned){
-        newstr = 'unassigned_videos/' + newstr;
-        classname = meeting_topic;
-    }
-
-    let url = 'videorecord/'+newstr+'/'+classname;
+    let url = tr.data('filename');
+    console.log(url);
     $.ajax({
         async: false,
         url: '/gktomk/watch/encrypt-link',

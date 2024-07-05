@@ -166,7 +166,7 @@ let videorecords = {
             $.ajax({
                 async: false,
                 url: '/gktomk/videorecords/safe/' + id,
-                method: 'get',
+                method: 'post',
                 dataType: 'json',
                 success: function(data){
                     alert('Видео сохранено');

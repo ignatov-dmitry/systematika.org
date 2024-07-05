@@ -296,4 +296,9 @@ class ZoomModel extends Model
         $record->{$key} = $value;
         DB::store($record);
     }
+
+    public function setSafe($recordId, $value): void
+    {
+        $this->setDataRecord($recordId, 'is_safe', $value);
+    }
 }
