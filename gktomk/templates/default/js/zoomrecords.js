@@ -43,6 +43,9 @@ let zoomRecords = {
             $('#modalView').modal();
 
         },
+        copyLink: function (id) {
+            copyToClipboard(getEncryptedLink(id));
+        },
         copyHtmlModal: function (id) {
             $('#copySafe').attr('data-video-id', id);
             $('#copyUnsafe').attr('data-video-id', id);
@@ -74,6 +77,35 @@ let zoomRecords = {
 
 zoomRecords.init();
 
+function copyToClipboard(text) {
+    var textarea = document.createElement("textarea");
+    textarea.value = text;
+
+    textarea.style.position = "fixed";
+    textarea.style.top = 0;
+    textarea.style.left = 0;
+    textarea.style.width = "2em";
+    textarea.style.height = "2em";
+    textarea.style.padding = 0;
+    textarea.style.border = "none";
+    textarea.style.outline = "none";
+    textarea.style.boxShadow = "none";
+    textarea.style.background = "transparent";
+
+    document.body.appendChild(textarea);
+
+    textarea.select();
+
+    try {
+        // Копируем текст в буфер обмена
+        var successful = document.execCommand("copy");
+        var msg = successful ? "Скопировано!" : "Не удалось скопировать текст!";
+        alert(msg);
+    } catch (err) {
+        console.error("Ошибка при копировании: ", err);
+    }
+    document.body.removeChild(textarea);
+}
 function copyToHtml(link)
 {
     var videoTag = '<video width="1024" controls><source src="' + link + '" type="video/mp4">Your browser does not support the video tag.</video>';

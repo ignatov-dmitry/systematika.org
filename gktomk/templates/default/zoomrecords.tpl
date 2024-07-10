@@ -49,6 +49,8 @@
             <th scope="col">Тип записи</th>
             <th scope="col">Дата записи</th>
             <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <tbody>
@@ -58,18 +60,22 @@
             <td data-id-meeting_topic="{*ZOOM_RECORDS:id*}">{*ZOOM_RECORDS:topic*}</td>
             <td>{*ZOOM_RECORDS:recording_type*}</td>
             <td data-id-status="{*ZOOM_RECORDS:id*}">{*ZOOM_RECORDS:start_time*}</td>
-            <td><button class="btn" data-id-btnview="{*ZOOM_RECORDS:id*}" onclick="zoomRecords.view.openModal('{*ZOOM_RECORDS:id*}');"><i class="far fa-eye"></i></button></td>
+            <td>
+                <button class="btn" data-id-btnview="{*ZOOM_RECORDS:id*}" onclick="zoomRecords.view.openModal('{*ZOOM_RECORDS:id*}');"><i class="far fa-eye"></i></button>
+                <button class="btn" data-id-btnview="'{*ZOOM_RECORDS:id*}'" title="Копировать ссылку" onclick="zoomRecords.view.copyLink('{*ZOOM_RECORDS:id*}');"><i class="far fa-copy"></i></button>
+            </td>
             <td>
 
                 {?*ZOOM_RECORDS:download_status="downloaded" | ZOOM_RECORDS:file_name!=false*}
                 <button class="btn" data-id-btnview="'{*ZOOM_RECORDS:id*}'" title="Копировать html код для вставки" onclick="zoomRecords.view.copyHtmlModal('{*ZOOM_RECORDS:id*}');">
                     <i class="fa fa-code"></i>
-                    {?*ZOOM_RECORDS:is_safe="1"*}
-                    <img title="Защищено от удаления" src="https://lh7-us.googleusercontent.com/g3e7G82I6BFLXlQKlVy8aD0HzF4zoRlH5T_Ez3cWi_22PXN2qji2VB5LVMBxnBKberStAX6TIrWa6sUJYvO_zvc6MFffH7E0WKDbrpHSGiWQk9lAP4qttfLpWGIS-oHQXNZkCiOlw_jun1hfjrDZu5Q" width="23" height="20" style="margin-left:0px;margin-top:0px;">
-                    {?}
                 </button>
                 {?}
-
+            </td>
+            <td>
+                {?*ZOOM_RECORDS:is_safe="1"*}
+                <img title="Защищено от удаления" src="https://lh7-us.googleusercontent.com/g3e7G82I6BFLXlQKlVy8aD0HzF4zoRlH5T_Ez3cWi_22PXN2qji2VB5LVMBxnBKberStAX6TIrWa6sUJYvO_zvc6MFffH7E0WKDbrpHSGiWQk9lAP4qttfLpWGIS-oHQXNZkCiOlw_jun1hfjrDZu5Q" width="23" height="20" style="margin-left:0px;margin-top:0px;">
+                {?}
             </td>
         </tr>
         {*ZOOM_RECORDS*%}
