@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\GKUpdateLog;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
 class GKLogController extends Controller
@@ -42,7 +45,7 @@ class GKLogController extends Controller
         return view('logs.getcourse.list', compact('logs'));
     }
 
-    public function info(GKUpdateLog $log)
+    public function info(GKUpdateLog $log): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
         $info = json_decode($log->request, true);
         return view('logs.getcourse.show', compact('log', 'info'));

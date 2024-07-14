@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\GKLogController;
 use App\Http\Controllers\MKWebhookLogController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserNotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,3 +25,24 @@ Route::group([
     Route::get('updates/list', [GKLogController::class, 'list'])->name('list');
     Route::get('update/{log}', [GKLogController::class, 'info'])->name('info');
 });
+
+Route::group([
+    'as' => 'user-notification.',
+    'prefix' => 'user-notification',
+    'middleware' => ['auth']
+], function () {
+    Route::get('users', [UserNotificationController::class, 'list'])->name('users');
+    Route::get('user/{user}', [UserNotificationController::class, 'info'])->name('info');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
