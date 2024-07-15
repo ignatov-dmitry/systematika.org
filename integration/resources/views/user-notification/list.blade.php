@@ -12,13 +12,13 @@ $nextDay = Carbon::parse(request('date'))->addDay()->format('Y-m-d');
         <form>
             <div class="grid gap-6 mb-6 md:grid-cols-2">
                 <div>
-                    <input value="{{ request('email') }}" type="email" name="email" class="bg-gray-50 border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 border dark:focus:border-blue-500" placeholder="Найти по email" required="">
+                    <input value="{{ request('email') }}" type="email" name="email" class="form-control me-2" placeholder="Найти по email" required="">
                 </div>
             </div>
-            <input type="submit" value="" class="hidden">
+            <input type="submit" value="" class="hidden" style="display: none;">
         </form>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table class="table">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
@@ -55,7 +55,7 @@ $nextDay = Carbon::parse(request('date'))->addDay()->format('Y-m-d');
                 </tbody>
             </table>
 
-            {{ $users->links('vendor.pagination.default') }}
+            {{ $users->links('vendor.pagination.bootstrap-5') }}
         </div>
     </div>
 @endsection

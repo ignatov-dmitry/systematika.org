@@ -10,33 +10,33 @@ $nextDay = Carbon::parse(request('date'))->addDay()->format('Y-m-d');
 @section('content')
     <div class="container mx-auto px-4">
         <form>
-            <nav class="flex justify-center m-5" aria-label="Page navigation example">
-                <ul class="inline-flex -space-x-px text-base h-10">
-                    <li>
-                        <a href="?date={{ $nextDay }}" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{ $nextDay }}</a>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light" aria-label="Page navigation example">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a href="?date={{ $nextDay }}" class="nav-link">{{ $nextDay }}</a>
                     </li>
-                    <li>
+                    <li class="nav-item">
                         <div class="grid gap-6 mb-6 md:grid-cols-2">
                             <div>
-                                <input value="{{ request('date') ?? $currDay }}" type="date" name="date" class="bg-gray-50 border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required="">
+                                <input value="{{ request('date') ?? $currDay }}" type="date" name="date" class="form-control me-2" placeholder="John" required="">
                             </div>
                         </div>
                     </li>
-                    <li>
-                        <a href="?date={{ $prevDay }}" class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{ $prevDay }}</a>
+                    <li class="nav-item">
+                        <a href="?date={{ $prevDay }}" class="nav-link">{{ $prevDay }}</a>
                     </li>
                 </ul>
             </nav>
             <div class="grid gap-6 mb-6 md:grid-cols-2">
                 <div>
-                    <input value="{{ request('email') }}" type="email" name="email" class="bg-gray-50 border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 border dark:focus:border-blue-500" placeholder="Найти по email" required="">
+                    <input value="{{ request('email') }}" type="email" name="email" class="form-control me-2" placeholder="Найти по email" required="">
                 </div>
             </div>
-            <input type="submit" value="" class="hidden">
+            <input type="submit" value="" style="display: none;">
         </form>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <table class="table">
+                <thead>
                     <tr>
                         <th scope="col" class="px-6 py-3">
                             ID
@@ -98,7 +98,7 @@ $nextDay = Carbon::parse(request('date'))->addDay()->format('Y-m-d');
                 </tbody>
             </table>
 
-            {{ $logs->links('vendor.pagination.default') }}
+            {{ $logs->links('vendor.pagination.bootstrap-5') }}
         </div>
     </div>
 @endsection
