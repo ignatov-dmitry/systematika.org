@@ -68,10 +68,10 @@
         </div>
     </div>
     <script>
+        const tableBody = document.getElementById('contacts').getElementsByTagName('tbody')[0];
+        let rowCount = tableBody.rows.length;
         document.getElementById('addRowBtn').addEventListener('click', function () {
-            const tableBody = document.getElementById('contacts').getElementsByTagName('tbody')[0];
             const newRow = document.createElement('tr');
-            const rowCount = tableBody.rows.length;
             newRow.innerHTML = `
                 <td>
                     <input value="{{ request('contact') }}" type="text" name="user_notifications[${rowCount + 1}][contact]" class="form-control me-2" placeholder="Контакт">
@@ -92,6 +92,7 @@
             `;
 
             tableBody.appendChild(newRow);
+            rowCount++;
         });
     </script>
 @endsection
