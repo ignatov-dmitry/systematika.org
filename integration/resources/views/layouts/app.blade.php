@@ -18,6 +18,54 @@
 </head>
 <body>
     <div id="app">
+        <nav class="navbar navbar-expand-lg navbar-dark rounded" style="background-color: #6f42c1;">
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample10" aria-controls="navbarsExample10" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample10">
+                <a class="navbar-brand" href="https://systematika.org/gktomk/">GetCourse + MoyKlass</a>
+                <br>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://systematika.org/gktomk/">Главная</a>
+                    </li>
+                    <li class="nav-item dropdown">
+
+                        <a id="navbarDropdown2" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            Логи
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown2">
+                            <a class="dropdown-item" href="/integration/getcource/updates/list">Обновление полей getcource</a>
+                            <a class="dropdown-item" href="/integration/moyklass/webhooks/list">Хуки моего класса</a>
+                            <a class="dropdown-item" href="https://systematika.org/gktomk/">Отправка абонементов</a>
+                            <a class="dropdown-item" href="https://systematika.org/gktomk/homework">Домашние задания</a>
+                            <a class="dropdown-item" href="https://systematika.org/gktomk/cancellesson">Отмены занятий</a>
+                            <a class="dropdown-item" href="https://systematika.org/gktomk/videorecords">Видео-записи занятий</a>
+                            <a class="dropdown-item" href="https://systematika.org/gktomk/videorecords/not-matched-videos">Нераспознанные видео</a>
+                        </div>
+
+                    </li>
+                    <li class="nav-item dropdown">
+
+                        <a id="navbarDropdown1" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            Настройки
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown1">
+                            <a class="dropdown-item" href="https://systematika.org/gktomk/settings/sync">Синхронизация абонементов</a>
+                            <a class="dropdown-item" href="https://systematika.org/gktomk/settings/groups">Синхронизация программ и классов</a>
+                            <a class="dropdown-item" href="https://systematika.org/gktomk/settings/homework-links">Синхронизация домашних заданий</a>
+                            <a class="dropdown-item" href="https://systematika.org/gktomk/settings/whatsapp">WhatsApp</a>
+                            <a class="dropdown-item" href="https://systematika.org/integration/user-notification/users">Уведомления</a>
+                        </div>
+
+                    </li>
+                </ul>
+            </div>
+        </nav>
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
