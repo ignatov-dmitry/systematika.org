@@ -8,6 +8,7 @@ $nextDay = Carbon::parse(request('date'))->addDay()->format('Y-m-d');
 @endphp
 @extends('layouts.app')
 @section('content')
+    <h1 class="mt-3 text-center">Уведомление о начале занятия</h1>
     <div class="container mx-auto px-4">
         <form>
             <div class="grid gap-6 mb-6 md:grid-cols-2">

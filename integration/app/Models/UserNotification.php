@@ -5,10 +5,37 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ *
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property string $contact
+ * @property string $type
+ * @property string|null $comment
+ * @property int $is_checked
+ * @method static \Illuminate\Database\Eloquent\Builder|UserNotification newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserNotification newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserNotification query()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserNotification whereComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserNotification whereContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserNotification whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserNotification whereIsChecked($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserNotification whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserNotification whereUserId($value)
+ * @mixin \Eloquent
+ */
 class UserNotification extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'contact',
+        'type',
+        'comment',
+        'is_checked'
+    ];
     public $timestamps = false;
     public const EMAIL = 'EMAIL';
     public const WHATSAPP = 'WHATSAPP';

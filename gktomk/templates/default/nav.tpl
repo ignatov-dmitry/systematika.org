@@ -30,7 +30,7 @@
                     <a class="dropdown-item" href="{*URL_SITE*}/settings/groups">Синхронизация программ и классов</a>
                     <a class="dropdown-item" href="{*URL_SITE*}/settings/homework-links">Синхронизация домашних заданий</a>
                     <a class="dropdown-item" href="{*URL_SITE*}/settings/whatsapp">WhatsApp</a>
-
+                    <a class="dropdown-item" href="https://systematika.org/integration/user-notification/users">Уведомления</a>
                 </div>
             </li>
         </ul>

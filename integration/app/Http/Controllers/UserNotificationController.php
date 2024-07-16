@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MKUser;
+use App\Models\UserNotification;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -26,6 +27,26 @@ class UserNotificationController extends Controller
 
     public function info(MKUser $user): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        return view('user-notification.show', compact('user'));
+        $notifications = UserNotification::where('user_id', '=', $user->id)->get();
+        return view('user-notification.show', compact('user', 'notifications'));
+    }
+
+    public function save(Request $request, MKUser $user)
+    {
+        UserNotification::where('user_id', '=', $user->id)->delete();
+
+        foreach ($request->get('user_notifications') as $notification)
+        {
+            if ($notification['contact'] && $notification['type'])
+                UserNotification::create([
+                    'user_id'       => $user->id,
+                    'contact'       => $notification['contact'],
+                    'type'          => $notification['type'],
+                    'comment'       => $notification['comment'],
+                    'is_checked'    => $notification['is_checked'] ?? 0
+                ]);
+        }
+
+        return redirect()->back();
     }
 }
