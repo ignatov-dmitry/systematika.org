@@ -35,7 +35,8 @@ class UserNotification extends Model
         'type',
         'comment',
         'is_checked',
-        'request_code'
+        'request_code',
+        'is_active'
     ];
     public $timestamps = false;
     public const EMAIL = 'EMAIL';

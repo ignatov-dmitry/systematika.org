@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('user_notifications', function (Blueprint $table) {
-            $table->integer('request_code')->default(0);
+            $table->smallInteger('is_active')->default(0);
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('user_notifications', function (Blueprint $table) {
+        Schema::table('user_notification', function (Blueprint $table) {
             //
         });
     }
