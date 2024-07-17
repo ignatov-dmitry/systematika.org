@@ -39,18 +39,29 @@ class UserNotificationController extends Controller
 
     public function save(Request $request, MKUser $user)
     {
-        UserNotification::where('user_id', '=', $user->id)->delete();
-
-        foreach ($request->get('user_notifications') as $notification)
+        foreach ($request->get('user_notifications') as $key => $notification)
         {
             if ($notification['contact'] && $notification['type'])
-                UserNotification::create([
-                    'user_id'       => $user->id,
-                    'contact'       => $notification['contact'],
-                    'type'          => $notification['type'],
-                    'comment'       => $notification['comment'],
-                    'is_checked'    => $notification['is_checked'] ?? 0
+                if (str_contains($key, 'new_'))
+                    UserNotification::create([
+                        'user_id'       => $user->id,
+                        'contact'       => $notification['contact'],
+                        'type'          => $notification['type'],
+                        'comment'       => $notification['comment'],
+                        'is_checked'    => $notification['is_checked'] ?? 0,
+                        'request_code'  => $notification['type'] == UserNotification::TELEGRAM ? rand(111111, 999999) : null
+                    ]);
+            else
+            {
+                $id = (explode('_', $key))[1];
+                UserNotification::where('id', '=', $id)
+                    ->update([
+                        'contact'       => $notification['contact'],
+                        'type'          => $notification['type'],
+                        'comment'       => $notification['comment'],
+                        'is_checked'    => $notification['is_checked'] ?? 0,
                 ]);
+            }
         }
 
         return redirect()->back();

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $user_id
@@ -34,7 +34,8 @@ class UserNotification extends Model
         'contact',
         'type',
         'comment',
-        'is_checked'
+        'is_checked',
+        'request_code'
     ];
     public $timestamps = false;
     public const EMAIL = 'EMAIL';

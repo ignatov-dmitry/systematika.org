@@ -35,11 +35,11 @@
                             <tr>
                                 <td>
                                     <input value="{{ request('contact') ?? $notification->contact }}" type="text"
-                                           name="user_notifications[{{ $row }}][contact]" class="form-control me-2"
+                                           name="user_notifications[{{ 'id_' . $notification->id }}][contact]" class="form-control me-2"
                                            placeholder="Контакт" required>
                                 </td>
                                 <td>
-                                    <select name="user_notifications[{{ $row }}][type]" class="form-control" required>
+                                    <select name="user_notifications[{{ 'id_' . $notification->id }}][type]" class="form-control" required>
                                         <option>Выберете тип</option>
                                         @foreach(UserNotification::getContacts() as $key => $contact)
                                             <option @if($notification->type == $key) selected
@@ -49,11 +49,11 @@
                                 </td>
                                 <td>
                                     <input value="{{ request('comment') ?? $notification->comment }}" type="text"
-                                           name="user_notifications[{{ $row }}][comment]" class="form-control me-2"
+                                           name="user_notifications[{{ 'id_' . $notification->id }}][comment]" class="form-control me-2"
                                            placeholder="Описание">
                                 </td>
                                 <td>
-                                    <input @if($notification->is_checked == 1) checked @endif type="checkbox" value="1" name="user_notifications[{{ $row }}][is_checked]"
+                                    <input @if($notification->is_checked == 1) checked @endif type="checkbox" value="1" name="user_notifications[{{ 'id_' . $notification->id }}][is_checked]"
                                            class="form-check-input">
                                 </td>
                             </tr>
@@ -74,20 +74,20 @@
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
                 <td>
-                    <input value="{{ request('contact') }}" type="text" name="user_notifications[${rowCount + 1}][contact]" class="form-control me-2" placeholder="Контакт">
+                    <input value="{{ request('contact') }}" type="text" name="user_notifications[new_${rowCount + 1}][contact]" class="form-control me-2" placeholder="Контакт">
                 </td>
                 <td>
-                    <select name="user_notifications[${rowCount + 1}][type]" class="form-control">
+                    <select name="user_notifications[new_${rowCount + 1}][type]" class="form-control">
                         @foreach(UserNotification::getContacts() as $key => $contact)
             <option value="{{ $key }}">{{ $contact }}</option>
                         @endforeach
             </select>
         </td>
         <td>
-            <input value="{{ request('comment') }}" type="text" name="user_notifications[${rowCount + 1}][comment]" class="form-control me-2" placeholder="Описание">
+            <input value="{{ request('comment') }}" type="text" name="user_notifications[new_${rowCount + 1}][comment]" class="form-control me-2" placeholder="Описание">
                 </td>
                 <td>
-                    <input type="checkbox" name="user_notifications[${rowCount + 1}][is_checked]" value="1" class="form-check-input">
+                    <input type="checkbox" name="user_notifications[new_${rowCount + 1}][is_checked]" value="1" class="form-check-input">
                 </td>
             `;
 
