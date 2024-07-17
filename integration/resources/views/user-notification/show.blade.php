@@ -1,6 +1,7 @@
 @php use App\Models\UserNotification; @endphp
 @extends('layouts.app_get_cource')
 @section('content')
+    <h1 class="mt-3 text-center">Уведомление о начале занятия</h1>
     <div class="container-md">
         <div
             class="w-full max-w-[877px] p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
