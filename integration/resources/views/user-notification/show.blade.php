@@ -1,5 +1,5 @@
 @php use App\Models\UserNotification; @endphp
-@extends('layouts.app')
+@extends('layouts.app_get_cource')
 @section('content')
     <div class="container-md">
         <div

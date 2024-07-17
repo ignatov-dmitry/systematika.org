@@ -32,7 +32,7 @@ Route::group([
     //'middleware' => ['auth']
 ], function () {
     Route::get('users', [UserNotificationController::class, 'list'])->name('users');
-    Route::get('user/{user}', [UserNotificationController::class, 'info'])->name('info');
+    Route::get('user/{hash}', [UserNotificationController::class, 'info'])->name('info');
     Route::post('user/{user}', [UserNotificationController::class, 'save'])->name('save');
 });
 

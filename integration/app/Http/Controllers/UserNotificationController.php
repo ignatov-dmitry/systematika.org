@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Member;
 use App\Models\MKUser;
 use App\Models\UserNotification;
 use Illuminate\Contracts\View\Factory;
@@ -25,8 +26,13 @@ class UserNotificationController extends Controller
         return view('user-notification.list', compact('users'));
     }
 
-    public function info(MKUser $user): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+    public function info($hash): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
+        // Нужно будет проверять при возникновении проблем на дубли
+
+        $member = Member::where('gk_uhash', '=', $hash)->first();
+        $user = MKUser::where('email', '=', $member->email)->first();
+
         $notifications = UserNotification::where('user_id', '=', $user->id)->get();
         return view('user-notification.show', compact('user', 'notifications'));
     }
