@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('user_notifications', function (Blueprint $table) {
-            $table->integer('request_code')->default(0);
+            $table->string('request_code')->default(0);
         });
     }
 

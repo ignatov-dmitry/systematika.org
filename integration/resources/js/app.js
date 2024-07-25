@@ -1,5 +1,8 @@
-import 'bootstrap';
-import 'flowbite';
+import './bootstrap';
+import * as bootstrap from 'bootstrap';
+import jQuery from 'jquery';
+window.$ = jQuery;
+window.bootstrap = bootstrap;
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;

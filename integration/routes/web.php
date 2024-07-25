@@ -33,7 +33,10 @@ Route::group([
 ], function () {
     Route::get('users', [UserNotificationController::class, 'list'])->name('users');
     Route::get('user/{hash}', [UserNotificationController::class, 'info'])->name('info');
-    Route::post('user/{user}', [UserNotificationController::class, 'save'])->name('save');
+    Route::post('user/{hash}', [UserNotificationController::class, 'save'])->name('save');
+    Route::post('user/check-email/{member}', [UserNotificationController::class, 'sendCodeForEmail'])->name('sendCodeForEmail');
+    Route::get('verify-email', [UserNotificationController::class, 'verifyEmail'])->name('verifyCodeForEmail');
+
 });
 
 Route::get('/dashboard', function () {

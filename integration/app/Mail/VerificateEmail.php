@@ -17,7 +17,7 @@ class VerificateEmail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public $code)
+    public function __construct(public $code, public $hash, public $email)
     {
         //
     }
@@ -38,7 +38,7 @@ class VerificateEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.mail.verify',
+            view: 'mail.verify',
         );
     }
 

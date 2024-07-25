@@ -9,7 +9,7 @@
                 <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">{{ $member->email}}</h5>
             </div>
             <div class="row">
-                <div class="col-2"><button class="btn btn-info">Подключить email</button></div>
+                <div class="col-2"><button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#emailModal">Подключить email</button></div>
                 <div class="col-2"><button class="btn btn-info">Подключить Whatsapp</button></div>
                 <div class="col-2"><button class="btn btn-info">Подключить Телеграм</button></div>
                 <div class="col-2"><button class="btn btn-info">Подключить ВК</button></div>
@@ -31,9 +31,6 @@
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Активность
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Код подтверждения
                         </th>
                     </tr>
                     </thead>
@@ -91,10 +88,6 @@
                                     <input @if($notification->is_checked == 1) checked @endif type="checkbox" value="1" name="user_notifications[{{ 'id_' . $notification->id }}][is_checked]"
                                            class="form-check-input">
                                 </td>
-                                <td>
-                                    <input readonly type="text" value="1"
-                                           class="form-control">
-                                </td>
                             </tr>
                             @php $row++ @endphp
                         @endforeach
@@ -106,7 +99,49 @@
             </form>
         </div>
     </div>
+    <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Подключить почту</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('user-notification.sendCodeForEmail', $member) }}" id="emailForm">
+                        @method('POST')
+                        @csrf
+                        <input class="form-control" type="text" name="email" placeholder="email">
+                        <br>
+                        <button class="btn btn-primary" id="sendEmailCheck">Отправить проверочный код</button>
+                        <p style="color: #198754;" id="sendMessageSuccessText"></p>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeEmailModal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
+        document.getElementById('emailForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting via the browser
 
+            const formData = new FormData(this);
+
+            const formObject = {};
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+
+            window.axios.post('{{ route('user-notification.sendCodeForEmail', $member) }}', formObject)
+                .then(function (response) {
+                    alert('Ссылка на активацию отправлена вам на почту');
+                    document.getElementById('sendMessageSuccessText').textContent = 'Ссылка для активации отправлена вам на почту!';
+                    $('#emailModal #closeEmailModal').click();
+                })
+                .catch(function (error) {
+                    alert(error.response.data.message);
+                });
+        });
     </script>
 @endsection

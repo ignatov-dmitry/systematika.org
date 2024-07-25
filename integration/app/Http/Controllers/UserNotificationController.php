@@ -39,17 +39,19 @@ class UserNotificationController extends Controller
         return view('user-notification.show', compact('member', 'notifications'));
     }
 
-    public function save(Request $request, MKUser $user): RedirectResponse
+    public function save(Request $request, string $hash): RedirectResponse
     {
+        $member = Member::where('gk_uhash', '=', $hash)->first();
         foreach ($request->get('user_notifications') as $key => $notification)
         {
             if (str_contains($key, 'id_'))
             {
                 $id = (explode('_', $key))[1];
                 UserNotification::where('id', '=', $id)
+                    ->where('user_id', '=', $member->id)
                     ->update([
-                        'comment'       => $notification['comment'],
-                        'is_active'    => $notification['is_checked'] ?? 0,
+                        'comment'   => $notification['comment'],
+                        'is_active' => $notification['is_checked'] ?? 0,
                 ]);
             }
         }
@@ -57,34 +59,52 @@ class UserNotificationController extends Controller
         return redirect()->back();
     }
 
-    public function sendCodeForEmail(Request $request, string $hash): JsonResponse
+    public function sendCodeForEmail(Request $request, Member $member): JsonResponse
     {
-        $code = rand(111111, 999999);
-        $email = $request->get('email');
-        Mail::to($email)->send(new VerificateEmail($code));
-
-        $member = Member::where('gk_uhash', '=', $hash)->first();
-
-        UserNotification::create([
-            'user_id'       => $member->id,
-            'contact'       => $email,
-            'type'          => UserNotification::EMAIL,
-            'request_code'  => $code
+        $request->validate([
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:user_notifications,contact'],
         ]);
+        $code = md5(rand(111111, 999999));
+        $email = $request->get('email');
+        Mail::to($email)->send(new VerificateEmail($code, $member->gk_uhash, $email));
 
-        return response()->json(['status' => 'OK']);
+        $member = Member::where('id', '=', $member->id)->first();
+
+        $userNotification = UserNotification::where('user_id', '=', $member->id)
+            ->where('contact', '=', $email)
+            ->where('is_checked', '=', 1)
+            ->first();
+
+        if ($userNotification)
+            return response()->json(['status' => 'Почта уже подтверждена']);
+
+        else
+            UserNotification::updateOrCreate([
+                'user_id'       => $member->id,
+                'contact'       => $email,
+            ],[
+                'user_id'       => $member->id,
+                'contact'       => $email,
+                'type'          => UserNotification::EMAIL,
+                'request_code'  => $code,
+                'is_checked'    => 0
+            ]);
+
+        return response()->json(['status' => 'Ссылка отправлена']);
     }
 
-    public function verifyEmail(Request $request, string $hash)
+    public function verifyEmail(Request $request): JsonResponse
     {
         $email = $request->get('email');
-        $code = $request->get('code');
+        $code = $request->get('request_code');
+        $hash = $request->get('hash');
         $member = Member::where('gk_uhash', '=', $hash)->first();
 
         $userNotification = UserNotification::where('user_id', '=', $member->id)
             ->where('contact', '=', $email)->first();
 
-        if ($code == $userNotification->request_code)
+
+        if ($code == @$userNotification->request_code && isset($userNotification->request_code))
         {
             $userNotification->request_code = null;
             $userNotification->is_checked = 1;
