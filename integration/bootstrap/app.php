@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\isAdminUser::class
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'user-notification/get-updates'
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

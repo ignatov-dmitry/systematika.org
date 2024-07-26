@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property int $user_id
@@ -23,6 +23,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|UserNotification whereIsChecked($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserNotification whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserNotification whereUserId($value)
+ * @property string|null $request_code
+ * @property int $is_active
+ * @method static \Illuminate\Database\Eloquent\Builder|UserNotification whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserNotification whereRequestCode($value)
  * @mixin \Eloquent
  */
 class UserNotification extends Model

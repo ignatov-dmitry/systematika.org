@@ -11,10 +11,10 @@
             <div class="row">
                 <div class="col-2"><button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#emailModal">Подключить email</button></div>
                 <div class="col-2"><button class="btn btn-info">Подключить Whatsapp</button></div>
-                <div class="col-2"><button class="btn btn-info">Подключить Телеграм</button></div>
+                <div class="col-2"><button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#telegramModal">Подключить Telegram</button></div>
                 <div class="col-2"><button class="btn btn-info">Подключить ВК</button></div>
             </div>
-            <form action="{{ route('user-notification.save', $member) }}" method="post">
+            <form action="{{ route('user-notification.save', $member->gk_uhash) }}" method="post">
                 @method('POST')
                 @csrf
                 <table class="table" id="contacts">
@@ -85,7 +85,9 @@
                                            placeholder="Описание">
                                 </td>
                                 <td>
-                                    <input @if($notification->is_checked == 1) checked @endif type="checkbox" value="1" name="user_notifications[{{ 'id_' . $notification->id }}][is_checked]"
+                                    <input style="display: none;" checked type="checkbox" value="0" name="user_notifications[{{ 'id_' . $notification->id }}][is_checked]"
+                                           class="form-check-input">
+                                    <input @if($notification->is_active == 1) checked @endif type="checkbox" value="1" name="user_notifications[{{ 'id_' . $notification->id }}][is_checked]"
                                            class="form-check-input">
                                 </td>
                             </tr>
@@ -113,6 +115,30 @@
                         <input class="form-control" type="text" name="email" placeholder="email">
                         <br>
                         <button class="btn btn-primary" id="sendEmailCheck">Отправить проверочный код</button>
+                        <p style="color: #198754;" id="sendMessageSuccessText"></p>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeEmailModal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="telegramModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Подключить телеграм</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('user-notification.telegramSubscribe', $member) }}" id="telegramForm">
+                        @method('POST')
+                        @csrf
+                        <input required class="form-control" type="text" name="token" placeholder="Код из телеграм бота">
+                        <br>
+                        <button class="btn btn-primary" id="sendTelegramCheck">Отправить проверочный код</button>
+                        <a target="_blank" href="https://t.me/SystematikaNotifybot?start" class="btn btn-info">Получить код авторизации</a>
                         <p style="color: #198754;" id="sendMessageSuccessText"></p>
                     </form>
                 </div>

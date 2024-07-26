@@ -37,6 +37,8 @@ Route::group([
     Route::post('user/check-email/{member}', [UserNotificationController::class, 'sendCodeForEmail'])->name('sendCodeForEmail');
     Route::get('verify-email', [UserNotificationController::class, 'verifyEmail'])->name('verifyCodeForEmail');
 
+    Route::any('/get-updates', [UserNotificationController::class, 'telegramStart'])->name('start');
+    Route::post('/telegram-subscribe/{member}', [UserNotificationController::class, 'telegramSubscribe'])->name('telegramSubscribe');
 });
 
 Route::get('/dashboard', function () {

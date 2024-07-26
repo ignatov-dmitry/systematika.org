@@ -5,15 +5,23 @@ namespace App\Http\Controllers;
 use App\Mail\VerificateEmail;
 use App\Models\Member;
 use App\Models\MKUser;
+use App\Models\TelegramToken;
 use App\Models\User\User;
 use App\Models\UserNotification;
+use App\Notifications\AlreadySubscribed;
+use App\Notifications\CustomTelegramMessage;
+use App\Notifications\SubscribeToBot;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
 
 class UserNotificationController extends Controller
 {
@@ -46,8 +54,9 @@ class UserNotificationController extends Controller
         {
             if (str_contains($key, 'id_'))
             {
+
                 $id = (explode('_', $key))[1];
-                UserNotification::where('id', '=', $id)
+                UserNotification::where('id', '=', (int)$id)
                     ->where('user_id', '=', $member->id)
                     ->update([
                         'comment'   => $notification['comment'],
@@ -115,5 +124,78 @@ class UserNotificationController extends Controller
 
         else
             return response()->json(['status' => 'Wrong code']);
+    }
+
+    public function telegramStart(Request $request)
+    {
+        $text = false;
+        $chatId = false;
+
+        $updates = $request->all();
+        Log::debug('telegram-get-updates', $updates);
+
+        if (!empty($updates['message']['chat']['id'])) {
+            // Chat ID
+            $chatId = $updates['message']['chat']['id'];
+            $text = strtolower(trim($updates['message']['text']));
+        }
+
+        if ($text == '/start' || $text == 'start') {
+            $user = UserNotification::where('contact', '=', $chatId)->first();
+            if ($user) {
+                Notification::route('telegram', $chatId)->notify(new AlreadySubscribed());
+                return 'OK';
+            }
+
+            $token = rand(100000, 9999999);
+            $tgToken = TelegramToken::where('chat_id', $chatId)->first();
+            if ($tgToken !== null) {
+                $token = $tgToken->token;
+            }
+
+            $tgToken = new TelegramToken();
+            $tgToken->token = $token;
+            $tgToken->chat_id = $chatId;
+            $tgToken->save();
+
+            Notification::route('telegram', $chatId)
+                ->notify(new SubscribeToBot($token));
+        }
+
+        return 'OK';
+    }
+
+    public function telegramSubscribe(Request $request, Member $member): JsonResponse
+    {
+        $token = $request->get('token');
+        $tgToken = TelegramToken::where('token', $token)->first();
+
+        $userNotification = UserNotification::where('user_id', '=', $member->id)
+            ->where('contact', '=', $tgToken->chat_id)->first();
+
+        if ($tgToken !== null && !$userNotification) {
+            $notification = UserNotification::create([
+                'user_id'       => $member->id,
+                'type'          => UserNotification::TELEGRAM,
+                'contact'       => $tgToken->chat_id,
+                'is_checked'    => 1
+            ]);
+
+
+            $tgToken->delete();
+            Notification::route('telegram', $notification->contact)
+                ->notify(new CustomTelegramMessage(
+                    'Приветствуем, ' . $member->first_name . '! Теперь ты будешь получать уведомления о всех важных событиях :)'
+                ));
+
+            return response()->json(['status' => 'verified']);
+        }
+        else
+            return response()->json(['status' => 'Wrong code']);
+    }
+
+    protected function getSubscribeUrl(string $token): string
+    {
+        return route('user-notification.telegramSubscribe', ['token' => $token], true);
     }
 }
