@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\Wazzup;
 use App\Mail\VerificateEmail;
 use App\Models\Member;
 use App\Models\MKUser;
@@ -192,6 +193,57 @@ class UserNotificationController extends Controller
         }
         else
             return response()->json(['status' => 'Wrong code']);
+    }
+
+    public function sendWhatsappCode(Request $request, Member $member)
+    {
+        $data = [
+            'channelId' => 'a7d9355f-4d4b-452e-ad7d-d1348f64ea5f',
+            'chatType' => 'whatsapp',
+            'chatId' => $request->get('phone')
+        ];
+
+        $notification = UserNotification::where('contact', '=', $request->get('phone'))
+            ->first();
+
+        if (@$notification->is_checked == 1)
+            return response()->json(['status' => 'Ваш номер уже есть в системе']);
+        else
+        {
+            $token = rand(1000, 9999);
+            $data['text'] = 'Ваш код: ' . $token;
+
+            UserNotification::updateOrCreate(
+                [
+                    'user_id'       => $member->id,
+                    'contact'       => $request->get('phone')
+                ],
+                [
+                    'type'          => UserNotification::WHATSAPP,
+                    'is_checked'    => 0,
+                    'request_code'  => $token
+                ]);
+        }
+        Wazzup::sendMessage($data);
+        return response()->json(['status' => 'Код отправлен вам в whatsapp']);
+    }
+
+    public function checkWhatsappCode(Request $request, Member $member): JsonResponse
+    {
+        $user = UserNotification::where('contact', '=', $request->get('phone'))
+            ->where('user_id', '=', $member->id)
+            ->first();
+
+        if ($user->request_code == $request->get('token'))
+        {
+            $user->is_checked = 1;
+            $user->request_code = null;
+            $user->save();
+
+            return response()->json(['status' => 'Номер привязан']);
+        }
+
+        return response()->json(['status' => 'Wrong code']);
     }
 
     protected function getSubscribeUrl(string $token): string

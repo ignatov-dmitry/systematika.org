@@ -39,6 +39,9 @@ Route::group([
 
     Route::any('/get-updates', [UserNotificationController::class, 'telegramStart'])->name('start');
     Route::post('/telegram-subscribe/{member}', [UserNotificationController::class, 'telegramSubscribe'])->name('telegramSubscribe');
+    Route::post('/send-whatsapp-code/{member}', [UserNotificationController::class, 'sendWhatsappCode'])->name('sendCodeForWhatsapp');
+    Route::post('/check-whatsapp-code/{member}', [UserNotificationController::class, 'checkWhatsappCode'])->name('checkCodeForWhatsapp');
+
 });
 
 Route::get('/dashboard', function () {

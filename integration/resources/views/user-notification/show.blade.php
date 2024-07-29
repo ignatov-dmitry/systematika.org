@@ -10,7 +10,7 @@
             </div>
             <div class="row">
                 <div class="col-2"><button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#emailModal">Подключить email</button></div>
-                <div class="col-2"><button class="btn btn-info">Подключить Whatsapp</button></div>
+                <div class="col-2"><button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#whatsappModal">Подключить Whatsapp</button></div>
                 <div class="col-2"><button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#telegramModal">Подключить Telegram</button></div>
                 <div class="col-2"><button class="btn btn-info">Подключить ВК</button></div>
             </div>
@@ -148,6 +148,32 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="whatsappModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Подключить Whatsapp</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('user-notification.sendCodeForWhatsapp', $member) }}" id="whatsappForm">
+                        @method('POST')
+                        @csrf
+                        <input required class="form-control" type="text" name="phone" placeholder="Номер телефона">
+                        <br>
+                        <input required class="form-control" type="text" name="token" placeholder="Код из Whatsapp">
+                        <br>
+                        <button class="btn btn-primary" id="checkWhatsappCode">Проверить код</button>
+                        <button id="sendWhatsappCode" class="btn btn-info">Получить код авторизации</button>
+                        <p style="color: #198754;" id="whatsappSendMessageSuccessText"></p>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeWhatsappModal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         document.getElementById('emailForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent the form from submitting via the browser
@@ -166,6 +192,47 @@
                     $('#emailModal #closeEmailModal').click();
                 })
                 .catch(function (error) {
+                    alert(error.response.data.message);
+                });
+        });
+
+        document.getElementById('sendWhatsappCode').addEventListener('click', function(event) {
+            event.preventDefault();
+
+            let form = document.getElementById('whatsappForm');
+            const formData = new FormData(form);
+            const formObject = {};
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+
+            window.axios.post('{{ route('user-notification.sendCodeForWhatsapp', $member) }}', formObject)
+                .then(function (response) {
+                    alert(response.data.status);
+                    document.getElementById('whatsappSendMessageSuccessText').textContent = 'Код отправлен вам в whatsapp!';
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert(error.response.data.message);
+                });
+        });
+        document.getElementById('checkWhatsappCode').addEventListener('click', function(event) {
+            event.preventDefault();
+
+            let form = document.getElementById('whatsappForm');
+            const formData = new FormData(form);
+            const formObject = {};
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+
+            window.axios.post('{{ route('user-notification.checkCodeForWhatsapp', $member) }}', formObject)
+                .then(function (response) {
+                    alert(response.data.status);
+                    $('#whatsappModal #closeWhatsappModal').click();
+                })
+                .catch(function (error) {
+                    console.log(error.response);
                     alert(error.response.data.message);
                 });
         });
