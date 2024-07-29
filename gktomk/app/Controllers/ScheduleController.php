@@ -82,8 +82,10 @@ class ScheduleController extends Controller
 
     public function main()
     {
+        $lessons = [];
         $Schedule = new ScheduleModel();
-        $lessons = $Schedule->getSchedule($this->userData['id'], $this->mk_uid);
+        if ($this->mk_uid)
+            $lessons = $Schedule->getSchedule($this->userData['id'], $this->mk_uid);
         //print_r($lessons);
         //echo 'Gen time schedule: '.$this->genTime('schedule');
 
