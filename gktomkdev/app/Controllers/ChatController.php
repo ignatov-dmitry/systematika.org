@@ -69,7 +69,6 @@ class ChatController extends Controller
         }
         // Для админов
         if ($this->Member->isAccess(1)) {
-
             $res = $this->chatAdminModel->getTeacherDialogsOpenForAdminsByDateUpdate(0);
             $data = [
                 'dialogs' => $res
