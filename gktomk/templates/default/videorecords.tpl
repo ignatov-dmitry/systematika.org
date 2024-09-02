@@ -54,7 +54,7 @@
         </thead>
         <tbody>
         {%*LOGS*}
-        <tr data-file-path="{*LOGS:file_path*}" data-id="{*LOGS:id*}" data-date="{*LOGS:date*}" data-modify="{?*LOGS:modify | LOGS:file_path*}true{?}{?!*LOGS:modify | !LOGS:file_path*}false{?}" data-unassigned="{?*LOGS:unassigned*}true{?}{?!*LOGS:unassigned*}false{?}" data-meeting-topic="{*LOGS:meeting_topic*}" data-class-name="{*LOGS:class_name*}">
+        <tr data-file-path='{*LOGS:file_path*}' data-id='{*LOGS:id*}' data-date='{*LOGS:date*}' data-modify="{?*LOGS:modify | LOGS:file_path*}true{?}{?!*LOGS:modify | !LOGS:file_path*}false{?}" data-unassigned="{?*LOGS:unassigned*}true{?}{?!*LOGS:unassigned*}false{?}" data-meeting-topic='{*LOGS:meeting_topic*}' data-class-name="{*LOGS:class_name*}">
             <td><strong>{*LOGS:id*}</strong> <br/>(ID: {*LOGS:lesson_id_mk*})</td>
             <td>{*LOGS:date*}, {*LOGS:begin_time*} - {*LOGS:end_time*} <br/>{?*LOGS:course_name*}{*LOGS:course_name*},{?} {*LOGS:class_name*}</td>
             <td data-id-meeting_topic="{*LOGS:id*}">{*LOGS:meeting_topic*}</td>

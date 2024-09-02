@@ -78,6 +78,12 @@ class ScheduleController extends Controller
         if ('julietta.tm@gmail.com' == mb_strtolower(@$this->email))
             $this->mk_uid = 4520450;
 
+        if ('zybastik84@gmail.com' == mb_strtolower(@$this->email))
+            $this->mk_uid = 3003792;
+
+        if ('tmaya1@yandex.ru' == mb_strtolower(@$this->email))
+            $this->mk_uid = 5074264;
+
     }
 
     public function main()

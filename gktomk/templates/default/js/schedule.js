@@ -176,7 +176,9 @@ let schedule = {
 
                 $('#player').html('<iframe src="' + url + '" width="500" height="280" border="0">\n' +
                     '    Ваш браузер не поддерживает плавающие фреймы!\n' +
-                    ' </iframe>');
+                    +
+                        '    <source src=\''+url+'\' type=\'video/mp4; codecs="avc1.42E01E, mp4a.40.2"\'>\n' +
+                ' </iframe>');
                 if (!schedule.history.view.player.obj) {
 
 

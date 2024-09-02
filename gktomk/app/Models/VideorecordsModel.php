@@ -302,6 +302,8 @@ class VideorecordsModel
             $videoload = 'active_speaker';
         } elseif (!empty($searchRecordings['shared_screen'])) {
             $videoload = 'shared_screen';
+        } elseif (!empty($searchRecordings['gallery_view'])) {
+            $videoload = 'gallery_view';
         }
 
         if (empty($videoload) or empty($searchRecordings[$videoload])) {

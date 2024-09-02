@@ -118,7 +118,7 @@
 
     </style>
             {%*LESSONS*}
-            <div class="card" data-id="{*LESSONS:id*}" data-date="{*LESSONS:date*}" data-unassigned="{?*LESSONS:unassigned*}true{?}{?!*LESSONS:unassigned*}false{?}" data-meeting-topic="{*LESSONS:meeting_topic*}" data-class-name="{*LESSONS:class_name*}">
+            <div class="card" data-id="{*LESSONS:id*}" data-date="{*LESSONS:date*}" data-unassigned="{?*LESSONS:unassigned*}true{?}{?!*LESSONS:unassigned*}false{?}" data-meeting-topic='{*LESSONS:meeting_topic*}' data-class-name="{*LESSONS:class_name*}">
                 <div class="card-top">
                     <div class="first">
                         <div class="date-item">
