@@ -31,3 +31,5 @@
 /resendbot/vendor
 /resendbot/logs/*
 /resendbot/composer.lock
+/gktomk/php_errors.log
+/gktomk/systematika_gktomk_without_log.sql

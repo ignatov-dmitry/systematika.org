@@ -87,7 +87,7 @@ class AddgroupController extends Controller
         return json_encode($data);
     }
 
-    public function getDataGroupAjax($idGroupMK=0){
+    public function getDataGroupAjax($idGroupMK = 0){
 
         if(empty($this->email)){
             return json_encode(['addgroup' => ['message' => 'Не указан email']]);
