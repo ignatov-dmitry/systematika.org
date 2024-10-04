@@ -10,9 +10,19 @@ use Illuminate\Http\Request;
 
 class MKWebhookLogController extends Controller
 {
-    public function list(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
+    public function list(Request $request): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        $logs = MKWebhookLog::select(['id', 'event', 'date_loaded'])->orderBy('date_loaded', 'DESC')->paginate(25);
+        $logs = MKWebhookLog::select(['id', 'event', 'date_loaded', 'status', 'request'])
+            ->where('date_create', '>=', 1726952400);
+
+        if ($request->has('status'))
+        {
+            $status = $request->get('status');
+            $logs = $logs->where('status', '=', $status);
+        }
+
+
+        $logs = $logs->orderBy('id', 'DESC')->paginate(25)->appends($request->query());
         return view('logs.moyklass.list', compact('logs'));
     }
 

@@ -31,22 +31,22 @@ class MoyklassController extends Controller
         $WebhookModel = new WebhookModel();
         $WebhookID = $WebhookModel->editLogWebhook(['event' => $input['event'],'request' => json_encode($input), 'date_create' => time(), 'status' => 'new']);
 
-        $this->writeToLog($input, 'Дебаг MK. Получение данных - php/input', 'mk');
-
-        if (!empty($input['event']) and ($input['event'] == 'lesson_record_new' or $input['event'] == 'lesson_record_changed') and ($input['object']['visit'] and $input['object']['visit'] == 1)) {
-            ///$this->Hwk->createHwk($input['object']);
-
-            // Добавляем занятие на проверку пропусков. Даелаем отметку в гк, если человек пропустил занятие
-            $MissingTrial = new MissingTrialModel();
-            $MissingTrial->addMissing($input['object']['lessonId']);
-        }
-
-        // Запускаем событие
-        $EventMoyklass = new EventsMoyklass($input);
-        $res = $EventMoyklass->handle();
-
-        $this->writeToLog([$res], 'Event handle', 'mk');
-        $WebhookModel->editLogWebhook(['id' => $WebhookID, 'date_loaded' => time(), 'status' => 'loaded']);
+//        $this->writeToLog($input, 'Дебаг MK. Получение данных - php/input', 'mk');
+//
+//        if (!empty($input['event']) and ($input['event'] == 'lesson_record_new' or $input['event'] == 'lesson_record_changed') and ($input['object']['visit'] and $input['object']['visit'] == 1)) {
+//            ///$this->Hwk->createHwk($input['object']);
+//
+//            // Добавляем занятие на проверку пропусков. Даелаем отметку в гк, если человек пропустил занятие
+//            $MissingTrial = new MissingTrialModel();
+//            $MissingTrial->addMissing($input['object']['lessonId']);
+//        }
+//
+//        // Запускаем событие
+//        $EventMoyklass = new EventsMoyklass($input);
+//        $res = $EventMoyklass->handle();
+//
+//        $this->writeToLog([$res], 'Event handle', 'mk');
+//        $WebhookModel->editLogWebhook(['id' => $WebhookID, 'date_loaded' => time(), 'status' => 'loaded']);
     }
 
     public function getCron()

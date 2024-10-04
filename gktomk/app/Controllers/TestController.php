@@ -12,6 +12,7 @@ use GKTOMK\Models\GetCourse\Account;
 use GKTOMK\Models\GetcourseModel;
 use GKTOMK\Models\LessonsModel;
 use GKTOMK\Models\MemberModel;
+use GKTOMK\Models\MissingTrialModel;
 use GKTOMK\Models\MoyklassModel;
 use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\Systematika\MoyKlass\Lesson;
@@ -20,8 +21,10 @@ use GKTOMK\Models\Systematika\MoyKlass\User;
 use GKTOMK\Models\Systematika\MoyKlass\UserSubscription;
 use GKTOMK\Models\VideorecordsModel;
 use GKTOMK\Models\Wazzup24Model;
+use GKTOMK\Models\WebhookModel;
 use GKTOMK\Models\WhatsappModel;
 use GKTOMK\Models\ZoomModel;
+use Mockery\Exception;
 
 class TestController extends Controller
 {
@@ -288,5 +291,35 @@ class TestController extends Controller
             ->sendUser();
 
         //$userMk = MoyklassModel::getUserById(4439931);
+    }
+
+    public function getWebhook()
+    {
+        $WebhookModel = new WebhookModel();
+        $logWrbHooks = DB::findAll('logwebhook', 'status in (?, ?) and date_create >= 1726952400 ORDER BY status LIMIT 5', ['new', 'fail']);
+
+        foreach ($logWrbHooks as $logWebbHook)
+        {
+            $WebhookModel->editLogWebhook(['id' => $logWebbHook->id, 'status' => 'processing']);
+            $input = json_decode($logWebbHook->request, true);
+
+            try {
+                if (!empty($input['event']) and ($input['event'] == 'lesson_record_new' or $input['event'] == 'lesson_record_changed') and ($input['object']['visit'] and $input['object']['visit'] == 1)) {
+                    // Добавляем занятие на проверку пропусков. Даелаем отметку в гк, если человек пропустил занятие
+                    $MissingTrial = new MissingTrialModel();
+                    $MissingTrial->addMissing($input['object']['lessonId']);
+                }
+
+                // Запускаем событие
+                $EventMoyklass = new EventsMoyklass($input);
+                $EventMoyklass->handle();
+
+                $WebhookModel->editLogWebhook(['id' => $logWebbHook->id, 'date_loaded' => time(), 'status' => 'loaded']);
+            }
+            catch (\Throwable $exception)
+            {
+                $WebhookModel->editLogWebhook(['id' => $logWebbHook->id, 'status' => 'fail']);
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ use GKTOMK\Classes\Api\MoyKlass;
 use GKTOMK\Models\ChatModels\ChatAdminModel;
 use GKTOMK\Models\DB;
 use GKTOMK\Models\Events;
+use GKTOMK\Models\EventsMoyklass;
 use GKTOMK\Models\GetcourseModel;
 use GKTOMK\Models\HandlerHwkModel;
 use GKTOMK\Models\LessonsModel;
@@ -16,6 +17,7 @@ use GKTOMK\Models\MoyklassModel;
 use GKTOMK\Models\StatisticsModel;
 use GKTOMK\Models\Systematika\Model;
 use GKTOMK\Models\VideorecordsModel;
+use GKTOMK\Models\WebhookModel;
 use GKTOMK\Models\ZoomModel;
 
 class CronEvents extends Events
@@ -303,5 +305,35 @@ class CronEvents extends Events
     private function synchronizationchatmanagers_manual(){
         $ChatAdminModel = new ChatAdminModel();
         $ChatAdminModel->getSyncManagers();
+    }
+
+    public function processMkWebhook(): void
+    {
+        $WebhookModel = new WebhookModel();
+        $logWrbHooks = DB::findAll('logwebhook', 'status in (?, ?) and date_create >= 1726952400 ORDER BY status LIMIT 100', ['new', 'fail']);
+
+        foreach ($logWrbHooks as $logWebbHook)
+        {
+            $WebhookModel->editLogWebhook(['id' => $logWebbHook->id, 'status' => 'processing']);
+            $input = json_decode($logWebbHook->request, true);
+
+            try {
+                if (!empty($input['event']) and ($input['event'] == 'lesson_record_new' or $input['event'] == 'lesson_record_changed') and ($input['object']['visit'] and $input['object']['visit'] == 1)) {
+                    // Добавляем занятие на проверку пропусков. Даелаем отметку в гк, если человек пропустил занятие
+                    $MissingTrial = new MissingTrialModel();
+                    $MissingTrial->addMissing($input['object']['lessonId']);
+                }
+
+                // Запускаем событие
+                $EventMoyklass = new EventsMoyklass($input);
+                $EventMoyklass->handle();
+
+                $WebhookModel->editLogWebhook(['id' => $logWebbHook->id, 'date_loaded' => time(), 'status' => 'loaded']);
+            }
+            catch (\Throwable $exception)
+            {
+                $WebhookModel->editLogWebhook(['id' => $logWebbHook->id, 'status' => 'fail']);
+            }
+        }
     }
 }
