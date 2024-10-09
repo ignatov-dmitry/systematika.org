@@ -111,6 +111,9 @@
                             Время инициализации
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Время прихода на сервер
+                        </th>
+                        <th scope="col" class="px-6 py-3">
                             Время выполнения
                         </th>
                         <th>
@@ -135,7 +138,10 @@
                                 {{ formatCustomDate((json_decode($log->request, true))['init']['time']) }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ $log->date_loaded?->format('d.m.Y') }} {{ $log->date_loaded?->format('H:i:s') }}
+                                {{ formatCustomDate($log->date_create->timestamp) }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ formatCustomDate($log->date_loaded->timestamp) }}
                             </td>
                             <td class="px-6 py-4">
                                 {{ $log->status }}

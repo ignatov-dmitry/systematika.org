@@ -37,7 +37,7 @@ if (!function_exists('formatCustomDate')) {
      * @return string
      */
     function formatCustomDate($timestamp) {
-        $date = Carbon::createFromTimestamp($timestamp);
+        $date = Carbon::createFromTimestamp($timestamp, 'Europe/Moscow');
         $now = Carbon::now();
 
         if ($date->isToday()) {

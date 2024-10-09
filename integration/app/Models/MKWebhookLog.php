@@ -69,10 +69,11 @@ class MKWebhookLog extends Model
         return self::$events[$slug];
     }
 
-    public function getDates()
+    public function getDates(): array
     {
         return [
-            'date_loaded'
+            'date_loaded',
+            'date_create'
         ];
     }
 

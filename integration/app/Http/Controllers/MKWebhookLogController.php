@@ -15,7 +15,7 @@ class MKWebhookLogController extends Controller
 {
     public function list(Request $request): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        $logs = MKWebhookLog::select(['id', 'event', 'date_loaded', 'status', 'request', 'priority'])
+        $logs = MKWebhookLog::select(['id', 'event', 'date_loaded', 'status', 'request', 'priority', 'date_create'])
             ->where('date_create', '>=', 1726952400);
 
         if ($request->has('status'))
