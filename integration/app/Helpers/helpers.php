@@ -36,7 +36,8 @@ if (!function_exists('formatCustomDate')) {
      * @param int $seconds
      * @return string
      */
-    function formatCustomDate($timestamp) {
+    function formatCustomDate($timestamp): string
+    {
         $date = Carbon::createFromTimestamp($timestamp, 'Europe/Moscow');
         $now = Carbon::now();
 
