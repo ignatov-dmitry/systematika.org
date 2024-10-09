@@ -252,6 +252,7 @@ class CronEvents extends Events
 
     public function update_users_in_GK()
     {
+        return false;
         $sql = "
             SELECT TIMESTAMPDIFF(HOUR, mu.last_update, CURRENT_TIMESTAMP()) as hour, mu.id, email FROM mk_users as mu
             LEFT JOIN mk_user_subscriptions as mus ON mu.id = mus.userId
