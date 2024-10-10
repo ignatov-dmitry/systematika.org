@@ -13,6 +13,7 @@ Route::get('/', function () {
 Route::group([
     'as' => 'moyklass.',
     'prefix' => 'moyklass',
+    'middleware' => ['auth', 'admin']
 ], function () {
     Route::get('webhooks/list', [MKWebhookLogController::class, 'list'])->name('list');
     Route::get('webhook/{log}', [MKWebhookLogController::class, 'info'])->name('info');
@@ -21,6 +22,7 @@ Route::group([
 Route::group([
     'as' => 'getcource.',
     'prefix' => 'getcource',
+    'middleware' => ['auth', 'admin']
 ], function () {
     Route::get('updates/list', [GKLogController::class, 'list'])->name('list');
     Route::get('update/{log}', [GKLogController::class, 'info'])->name('info');
@@ -29,7 +31,7 @@ Route::group([
 Route::group([
     'as' => 'user-notification.',
     'prefix' => 'user-notification',
-    //'middleware' => ['auth']
+    'middleware' => ['auth', 'admin']
 ], function () {
     Route::get('users', [UserNotificationController::class, 'list'])->name('users');
     Route::get('user/{hash}', [UserNotificationController::class, 'info'])->name('info');

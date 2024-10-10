@@ -38,21 +38,26 @@ if (!function_exists('formatCustomDate')) {
      */
     function formatCustomDate($timestamp): string
     {
-        $date = Carbon::createFromTimestamp($timestamp, 'Europe/Moscow');
-        $now = Carbon::now();
+        if ($timestamp)
+        {
+            $date = Carbon::createFromTimestamp($timestamp, 'Europe/Moscow');
+            $now = Carbon::now();
 
-        if ($date->isToday()) {
-            return 'сегодня ' . $date->format('H:i:s');
+            if ($date->isToday()) {
+                return 'сегодня ' . $date->format('H:i:s');
+            }
+
+            if ($date->isYesterday()) {
+                return 'вчера ' . $date->format('H:i:s');
+            }
+
+            if ($date->year === $now->year) {
+                return $date->format('d M H:i:s');
+            }
+
+            return $date->format('d.m.Y H:i:s');
         }
 
-        if ($date->isYesterday()) {
-            return 'вчера ' . $date->format('H:i:s');
-        }
-
-        if ($date->year === $now->year) {
-            return $date->format('d M H:i:s');
-        }
-
-        return $date->format('d.m.Y H:i:s');
+        return '';
     }
 }

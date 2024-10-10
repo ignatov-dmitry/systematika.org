@@ -141,7 +141,7 @@
                                 {{ formatCustomDate($log->date_create->timestamp) }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ formatCustomDate($log->date_loaded->timestamp) }}
+                                {{ formatCustomDate($log->date_loaded?->timestamp) }}
                             </td>
                             <td class="px-6 py-4">
                                 {{ $log->status }}

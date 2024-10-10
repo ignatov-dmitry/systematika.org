@@ -16,6 +16,7 @@ class VideorecordsController extends Controller
     public function __construct()
     {
         parent::__construct();
+        $this->Member->is_auth();
     }
 
     public function main(){
