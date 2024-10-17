@@ -15,7 +15,7 @@ class MKWebhookLogController extends Controller
 {
     public function list(Request $request): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        $logs = MKWebhookLog::select(['id', 'event', 'date_loaded', 'status', 'request', 'priority', 'date_create'])
+        $logs = MKWebhookLog::select(['id', 'event', 'date_loaded', 'status', 'request', 'priority', 'date_create', 'run_time'])
             ->where('date_create', '>=', 1726952400);
 
         if ($request->has('status'))
@@ -96,6 +96,7 @@ class MKWebhookLogController extends Controller
             'logwebhook.date_loaded as dl',
             DB::raw('ABS(unix_timestamp(now()) - logwebhook.date_create) as difference'),
             'sub.event_count',
+            DB::raw('(SELECT COUNT(*) FROM logwebhook as lw WHERE logwebhook.event = lw.event) as total'),
             DB::raw('(SELECT COUNT(*) FROM logwebhook as lw WHERE logwebhook.event = lw.event AND date_create >= unix_timestamp(DATE_SUB(now(), INTERVAL 7 DAY))) as count_last_7_days'),
             DB::raw('(SELECT COUNT(*) FROM logwebhook as lw WHERE logwebhook.event = lw.event AND DATE(FROM_UNIXTIME(date_create)) = CURDATE()) as count_today'),
             DB::raw('(SELECT COUNT(*) FROM logwebhook as lw WHERE logwebhook.event = lw.event AND DATE(FROM_UNIXTIME(date_create)) = CURDATE() - INTERVAL 1 DAY) as count_yesterday'),

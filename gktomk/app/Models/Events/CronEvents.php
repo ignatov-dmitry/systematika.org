@@ -319,6 +319,7 @@ class CronEvents extends Events
             $input = json_decode($logWebbHook->request, true);
 
             try {
+                $startTime = microtime(true);
                 if (!empty($input['event']) and ($input['event'] == 'lesson_record_new' or $input['event'] == 'lesson_record_changed') and ($input['object']['visit'] and $input['object']['visit'] == 1)) {
                     // Добавляем занятие на проверку пропусков. Даелаем отметку в гк, если человек пропустил занятие
                     $MissingTrial = new MissingTrialModel();
@@ -328,8 +329,8 @@ class CronEvents extends Events
                 // Запускаем событие
                 $EventMoyklass = new EventsMoyklass($input);
                 $EventMoyklass->handle();
-
-                $WebhookModel->editLogWebhook(['id' => $logWebbHook->id, 'date_loaded' => time(), 'status' => 'loaded']);
+                $endTime = microtime(true);
+                $WebhookModel->editLogWebhook(['id' => $logWebbHook->id, 'date_loaded' => time(), 'status' => 'loaded', 'run_time' => $endTime - $startTime]);
             }
             catch (\Throwable $exception)
             {
