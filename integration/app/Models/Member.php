@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int|null $gk_uid
@@ -54,4 +55,9 @@ class Member extends Model
     use HasFactory;
 
     protected $table = 'member';
+
+    public function lessonRecords(): HasMany
+    {
+        return $this->hasMany(LessonRecord::class, 'user_id_mk', 'mk_uid')->with(['lesson']);
+    }
 }

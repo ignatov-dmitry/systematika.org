@@ -2,27 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Classes\Wazzup;
 use App\Mail\VerificateEmail;
 use App\Models\Member;
 use App\Models\MKUser;
 use App\Models\TelegramToken;
-use App\Models\User\User;
 use App\Models\UserNotification;
 use App\Notifications\AlreadySubscribed;
 use App\Notifications\CustomTelegramMessage;
 use App\Notifications\SubscribeToBot;
+use App\Services\Wazzup;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Str;
 
 class UserNotificationController extends Controller
 {

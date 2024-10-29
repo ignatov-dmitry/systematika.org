@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property string|null $event
@@ -23,6 +23,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|MKWebhookLog whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MKWebhookLog whereRequest($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MKWebhookLog whereStatus($value)
+ * @property int $priority
+ * @property float|null $run_time
+ * @method static \Illuminate\Database\Eloquent\Builder|MKWebhookLog wherePriority($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MKWebhookLog whereRunTime($value)
  * @mixin \Eloquent
  */
 class MKWebhookLog extends Model

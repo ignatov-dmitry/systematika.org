@@ -21,6 +21,7 @@
         <div class="body-head">
             <a class="link-navigation-active" href="{*URL_SITE*}/schedule">Будущие занятия</a>
             <a class="link-navigation" href="{*URL_SITE*}/schedule/history">Прошедшие занятия</a>
+            <a class="btn btn-info" href="https://online.systematika.org/meet-all" target="_blank">Курсы</a>
         </div>
         <div class="body-content">
 
