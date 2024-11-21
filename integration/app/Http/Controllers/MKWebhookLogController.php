@@ -96,8 +96,7 @@ class MKWebhookLogController extends Controller
             'logwebhook.date_loaded as dl',
             DB::raw('ABS(unix_timestamp(now()) - logwebhook.date_create) as difference'),
             'sub.event_count',
-            DB::raw('(SELECT COUNT(*) FROM logwebhook as lw WHERE logwebhook.event = lw.event) as total'),
-            DB::raw('(SELECT COUNT(*) FROM logwebhook as lw WHERE logwebhook.event = lw.event AND date_create >= unix_timestamp(DATE_SUB(now(), INTERVAL 7 DAY))) as count_last_7_days'),
+            //DB::raw('(SELECT COUNT(*) FROM logwebhook as lw WHERE logwebhook.event = lw.event AND date_create >= unix_timestamp(DATE_SUB(now(), INTERVAL 7 DAY))) as count_last_7_days'),
             DB::raw('(SELECT COUNT(*) FROM logwebhook as lw WHERE logwebhook.event = lw.event AND DATE(FROM_UNIXTIME(date_create)) = CURDATE()) as count_today'),
             DB::raw('(SELECT COUNT(*) FROM logwebhook as lw WHERE logwebhook.event = lw.event AND DATE(FROM_UNIXTIME(date_create)) = CURDATE() - INTERVAL 1 DAY) as count_yesterday'),
             DB::raw('(SELECT COUNT(*) FROM logwebhook as lw WHERE logwebhook.event = lw.event AND DATE(FROM_UNIXTIME(date_create)) = CURDATE() - INTERVAL 2 DAY) as count_day_2'),
@@ -115,8 +114,31 @@ class MKWebhookLogController extends Controller
             ->groupBy('logwebhook.event', 'logwebhook.date_create', 'logwebhook.date_loaded', 'sub.event_count')
             ->get();
 
+        $logWithTotalForWebhooksWeek = MKWebhookLog::select(
+            DB::raw('(SELECT COUNT(id) FROM logwebhook WHERE DATE(FROM_UNIXTIME(date_create)) = CURDATE()) as count_today'),
+            DB::raw('(SELECT COUNT(id) FROM logwebhook WHERE DATE(FROM_UNIXTIME(date_create)) = CURDATE() - INTERVAL 1 DAY) as count_day_1'),
+            DB::raw('(SELECT COUNT(id) FROM logwebhook WHERE DATE(FROM_UNIXTIME(date_create)) = CURDATE() - INTERVAL 2 DAY) as count_day_2'),
+            DB::raw('(SELECT COUNT(id) FROM logwebhook WHERE DATE(FROM_UNIXTIME(date_create)) = CURDATE() - INTERVAL 3 DAY) as count_day_3'),
+            DB::raw('(SELECT COUNT(id) FROM logwebhook WHERE DATE(FROM_UNIXTIME(date_create)) = CURDATE() - INTERVAL 4 DAY) as count_day_4'),
+            DB::raw('(SELECT COUNT(id) FROM logwebhook WHERE DATE(FROM_UNIXTIME(date_create)) = CURDATE() - INTERVAL 5 DAY) as count_day_5'),
+            DB::raw('(SELECT COUNT(id) FROM logwebhook WHERE DATE(FROM_UNIXTIME(date_create)) = CURDATE() - INTERVAL 6 DAY) as count_day_6')
+        )
+            ->where('date_create', '>=', 1726952400)
+            ->groupBy(['count_day_1'])
+            ->first();
+
         $logs = $logs->orderBy('id', 'DESC')->paginate(25)->appends($request->query());
-        return view('logs.moyklass.list', compact('logs', 'progressCount', 'newCount', 'failCount', 'logWithMaxDifference', 'logWithMaxDifferenceForWebhooks', 'logWithMaxDifferenceForWebhooksWeek'));
+        return view(
+            'logs.moyklass.list',
+            compact('logs',
+                'progressCount',
+                'newCount',
+                'failCount',
+                'logWithMaxDifference',
+                'logWithMaxDifferenceForWebhooks',
+                'logWithMaxDifferenceForWebhooksWeek',
+                'logWithTotalForWebhooksWeek'
+            ));
     }
 
     public function info(MKWebhookLog $log)

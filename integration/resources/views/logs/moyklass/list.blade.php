@@ -62,8 +62,7 @@
                             <thead>
                             <tr>
                                 <th>Событие</th>
-                                <th>Всего вебхуков</th>
-                                <th>Вебхуки за 7 дней</th>
+{{--                                <th>Вебхуки за 7 дней</th>--}}
                                 <th>Вебхуки за сегодня</th>
                                 <th>Вебхуки за вчера</th>
                                 <th>2 дня назад</th>
@@ -74,11 +73,21 @@
                             </tr>
                             </thead>
                             <tbody>
+                            <tr>
+                                <th>Всего вебхуков по дням</th>
+{{--                                <td></td>--}}
+                                <th>{{ $logWithTotalForWebhooksWeek->count_today }}</th>
+                                <th>{{ $logWithTotalForWebhooksWeek->count_day_1 }}</th>
+                                <th>{{ $logWithTotalForWebhooksWeek->count_day_2 }}</th>
+                                <th>{{ $logWithTotalForWebhooksWeek->count_day_3 }}</th>
+                                <th>{{ $logWithTotalForWebhooksWeek->count_day_4 }}</th>
+                                <th>{{ $logWithTotalForWebhooksWeek->count_day_5 }}</th>
+                                <th>{{ $logWithTotalForWebhooksWeek->count_day_6 }}</th>
+                            </tr>
                             @foreach ($logWithMaxDifferenceForWebhooksWeek as $log)
                                 <tr>
                                     <td>{{ MKWebhookLog::getEventName($log->event) }} (<span class="small">{{ $log->event }}</span>)</td>
-                                    <td>{{ $log->total }}</td>
-                                    <td>{{ $log->count_last_7_days }}</td>
+{{--                                    <td>{{ $log->count_last_7_days }}</td>--}}
                                     <td>{{ $log->count_today }}</td>
                                     <td>{{ $log->count_yesterday }}</td>
                                     <td>{{ $log->count_day_2 }}</td>
